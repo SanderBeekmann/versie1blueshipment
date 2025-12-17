@@ -56,7 +56,7 @@ function ProcessSection() {
             <GlassTagline>
               <p>Ons proces</p>
             </GlassTagline>
-            <h2 className="process-title">Van artikel tot blije klant in zes stappen</h2>
+            <h2 className="process-title" data-animate-title>Van artikel tot blije klant in zes stappen</h2>
             <p className="process-subtitle">Dit is hoe we het doen.</p>
           </div>
 
@@ -68,7 +68,7 @@ function ProcessSection() {
                   {step.align === 'left' ? (
                     <div className="step-title-container">
                       <p className="step-number">Stap {step.number}.</p>
-                      <h3 className="step-title">{step.title}</h3>
+                      <h3 className="step-title" data-animate-title>{step.title}</h3>
                     </div>
                   ) : (
                     <div className="step-info">
@@ -92,7 +92,7 @@ function ProcessSection() {
                   {step.align === 'right' ? (
                     <div className="step-title-container">
                       <p className="step-number">Stap {step.number}.</p>
-                      <h3 className="step-title">{step.title}</h3>
+                      <h3 className="step-title" data-animate-title>{step.title}</h3>
                     </div>
                   ) : (
                     <div className="step-info">
@@ -111,7 +111,7 @@ function ProcessSection() {
 
           {/* Step 6 */}
           <div className="process-step-final">
-            <h3 className="step-final-title">
+            <h3 className="step-final-title" data-animate-title>
               Stap 6.<br />Repeat!
             </h3>
           </div>
@@ -121,7 +121,7 @@ function ProcessSection() {
             <GlassTagline>
               <p>Het resultaat?</p>
             </GlassTagline>
-            <h2 className="result-title">
+            <h2 className="result-title" data-animate-title>
               Blije klanten en meer winst<br />voor jou!
             </h2>
             <p className="result-description">

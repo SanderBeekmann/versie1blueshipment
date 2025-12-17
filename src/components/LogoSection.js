@@ -19,7 +19,7 @@ function LogoSection() {
   return (
     <section className="logo-section">
       <div className="logo-container w-full">
-        <p className="logo-title">
+        <p className="logo-title" data-animate-title>
           In samenwerking met de juiste partners
         </p>
         <div className="logo-marquee-wrapper">

@@ -13,7 +13,7 @@ function Hero() {
           </GlassTagline>
           
           <div className="hero-title-section">
-            <h1 className="hero-title">
+            <h1 className="hero-title" data-animate-title>
               Jouw all-in<br />bol.com partner
             </h1>
             <p className="hero-subtitle">

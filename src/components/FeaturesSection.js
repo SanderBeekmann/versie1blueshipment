@@ -65,7 +65,7 @@ function FeaturesSection() {
           <GlassTagline>
             <p>Voordelen</p>
           </GlassTagline>
-          <h2 className="features-title">
+          <h2 className="features-title" data-animate-title>
             Wat maakt ons <span className="text-blue">anders</span>
           </h2>
           <p className="features-subtitle">

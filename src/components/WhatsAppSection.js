@@ -16,7 +16,7 @@ function WhatsAppSection() {
           <GlassTagline>
             <p>Communicatie</p>
           </GlassTagline>
-          <h5 className="whatsapp-title">
+          <h5 className="whatsapp-title" data-animate-title>
             WhatsApp support binnen 30 minuten
           </h5>
         </div>
@@ -25,7 +25,7 @@ function WhatsAppSection() {
           <div className="card-indicator">
             <BlueDot />
           </div>
-          <h3 className="card-title">Neem contact op met Colin</h3>
+          <h3 className="card-title" data-animate-title>Neem contact op met Colin</h3>
           <p className="card-description">
             Ben je klaar om te starten? Colin staat klaar om met je in gesprek te gaan via WhatsApp en je dé perfecte begeleiding te geven die je nodig hebt om het beste uit <span className="logo-text"><span className="logo-blue">Blue</span>Shipment</span> te halen.
           </p>

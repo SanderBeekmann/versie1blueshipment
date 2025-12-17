@@ -7,7 +7,7 @@ function CTASection() {
       <div className="cta-container">
         <div className="cta-card">
           <div className="cta-content">
-            <h2 className="cta-title">Boek een kennismakingsgesprek</h2>
+            <h2 className="cta-title" data-animate-title>Boek een kennismakingsgesprek</h2>
             <p className="cta-description">
               Ga met ons in gesprek en ontdek wat we voor je kunnen betekenen. Geen verplichtingen.
             </p>

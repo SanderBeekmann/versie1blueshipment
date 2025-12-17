@@ -14,7 +14,7 @@ function VideoSection() {
       <div className="video-container">
         <div className="video-content">
           <div className="video-text">
-            <h2 className="video-title">
+            <h2 className="video-title" data-animate-title>
               Krijg je eerste bestelling <span className="text-blue">zonder </span>investering of risico
             </h2>
             <p className="video-subtitle">

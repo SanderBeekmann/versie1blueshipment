@@ -59,7 +59,7 @@ function TestimonialSection() {
     <section className="testimonial-section">
       <div className="testimonial-container">
         <div className="testimonial-header">
-          <h2 className="testimonial-title">
+          <h2 className="testimonial-title" data-animate-title>
             Wat zeggen onze <span className="text-blue">klanten?</span>
           </h2>
           <p className="testimonial-subtitle">

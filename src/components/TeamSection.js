@@ -45,7 +45,7 @@ function TeamSection() {
           <GlassTagline>
             <p>Mensen</p>
           </GlassTagline>
-          <h2 className="team-title">
+          <h2 className="team-title" data-animate-title>
             Het team achter <span className="text-blue">Blue</span>Shipment
           </h2>
           <p className="team-subtitle">

@@ -13,11 +13,12 @@ import TestimonialSection from './components/TestimonialSection';
 import CTASection from './components/CTASection';
 import FAQSection from './components/FAQSection';
 import Footer from './components/Footer';
-import { initScrollAnimations, cleanupScrollAnimations } from './utils/scrollAnimations';
+import { initScrollAnimations, initTitleAnimations, cleanupScrollAnimations } from './utils/scrollAnimations';
 
 function App() {
   useEffect(() => {
     initScrollAnimations();
+    initTitleAnimations();
 
     return () => {
       cleanupScrollAnimations();

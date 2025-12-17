@@ -52,7 +52,7 @@ function FAQSection() {
       <div className="faq-container">
         <div className="faq-content">
           <div className="faq-header">
-            <h2 className="faq-title">Vragen</h2>
+            <h2 className="faq-title" data-animate-title>Vragen</h2>
             <p className="faq-description">
               Alles wat je wilt weten over hoe we werken en wat we voor je kunnen doen.
             </p>

@@ -83,6 +83,71 @@ export const initScrollAnimations = () => {
   });
 };
 
+const titleAnimationConfig = {
+  h1: {
+    y: 24,
+    duration: 0.9,
+  },
+  h2: {
+    y: 18,
+    duration: 0.8,
+  },
+  h3: {
+    y: 16,
+    duration: 0.75,
+  },
+  h4: {
+    y: 14,
+    duration: 0.7,
+  },
+  h5: {
+    y: 12,
+    duration: 0.65,
+  },
+};
+
+export const initTitleAnimations = () => {
+  const titles = document.querySelectorAll('[data-animate-title]');
+
+  titles.forEach((title) => {
+    const tagName = title.tagName.toLowerCase();
+    const config = titleAnimationConfig[tagName] || titleAnimationConfig.h3;
+
+    if (prefersReducedMotion) {
+      gsap.set(title, { opacity: 0, y: 0 });
+      gsap.to(title, {
+        opacity: 1,
+        duration: 0.3,
+        scrollTrigger: {
+          trigger: title,
+          start: 'top 90%',
+          toggleActions: 'play none none none',
+        },
+      });
+      return;
+    }
+
+    gsap.set(title, {
+      opacity: 0,
+      y: config.y,
+    });
+
+    gsap.to(title, {
+      opacity: 1,
+      y: 0,
+      duration: config.duration,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: title,
+        start: 'top 85%',
+        end: 'top 50%',
+        toggleActions: 'play none none reverse',
+        markers: false,
+      },
+    });
+  });
+};
+
 export const cleanupScrollAnimations = () => {
   ScrollTrigger.getAll().forEach(trigger => trigger.kill());
 };
