@@ -17,7 +17,7 @@ function LogoSection() {
 
   return (
     <section className="logo-section">
-      <div className="logo-container">
+      <div className="logo-container w-full">
         <p className="logo-title">
           In samenwerking met de juiste partners
         </p>

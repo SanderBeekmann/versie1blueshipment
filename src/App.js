@@ -5,7 +5,7 @@ import Hero from './components/Hero';
 import VideoSection from './components/VideoSection';
 import LogoSection from './components/LogoSection';
 import ProcessSection from './components/ProcessSection';
-import GallerySection from './components/GallerySection';
+import GallerySection from './components/GallerySection/GallerySection';
 import TeamSection from './components/TeamSection';
 import FeaturesSection from './components/FeaturesSection';
 import WhatsAppSection from './components/WhatsAppSection';
