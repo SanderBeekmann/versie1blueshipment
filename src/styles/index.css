@@ -1,0 +1,359 @@
+/* CSS Reset and Base Styles */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-primary);
+  font-size: var(--text-regular);
+  line-height: 1.5;
+  color: var(--color-neutral-darkest);
+  background-color: var(--color-background);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+/* Design System CSS Variables */
+:root {
+  /* Colors - Primary */
+  --color-blue-ribbon: #0070ff;
+  --color-blue-ribbon-light: #004399;
+  --color-blue-ribbon-lightest: #e5f0ff;
+  
+  /* Colors - Accent */
+  --color-blaze-orange: #ff6f00;
+  --color-green-haze: #04ab38;
+  --color-whatsapp-green: #25d366;
+  --color-star-gold: #ecb22e;
+  
+  /* Colors - Neutral */
+  --color-neutral-darkest: #0d0600;
+  --color-white: #ffffff;
+  --color-background: #f2f2f2;
+  --color-card-white: #fafafa;
+  
+  /* Colors - Transparency */
+  --color-border-light: rgba(13, 6, 0, 0.15);
+  
+  /* Typography - Font Families */
+  --font-primary: 'Inter', sans-serif;
+  --font-secondary: 'Sora', sans-serif;
+  
+  /* Typography - Font Sizes (Responsive with clamp) */
+  --heading-1: clamp(2.5rem, 1.5rem + 4vw, 4.5rem);
+  --heading-2: clamp(1.75rem, 1rem + 2.5vw, 3.25rem);
+  --heading-3: clamp(1.5rem, 0.9rem + 2vw, 2.75rem);
+  --heading-4: clamp(1.375rem, 0.85rem + 1.5vw, 2.25rem);
+  --heading-5: clamp(1.25rem, 0.8rem + 1.25vw, 1.75rem);
+  --heading-6: clamp(1.125rem, 0.85rem + 0.75vw, 1.375rem);
+  --text-large: clamp(1.125rem, 0.85rem + 0.75vw, 1.375rem);
+  --text-medium: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
+  --text-regular: 1rem;
+  --text-small: 0.875rem;
+  
+  /* Typography - Font Weights */
+  --font-regular: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+  
+  /* Typography - Line Heights */
+  --line-tight: 1.2;
+  --line-snug: 1.3;
+  --line-normal: 1.4;
+  --line-relaxed: 1.5;
+  --leading-heading: 1.1;
+  
+  /* Typography - Letter Spacing */
+  --tracking-h1: -4.32px;
+  --tracking-h2: -2.08px;
+  --tracking-h3: -1.76px;
+  --tracking-h4: -1.44px;
+  --tracking-h5: -0.56px;
+  --tracking-h6: -0.22px;
+  
+  /* Spacing - Page Level */
+  --page-padding: 64px;
+  --section-padding-small: 48px;
+  --section-padding-medium: 80px;
+  --section-padding-large: 112px;
+  --splitted-gap: 280px;
+  
+  /* Spacing - Gaps */
+  --gap-large: 80px;
+  --gap-medium: 64px;
+  --gap-small: 32px;
+  --gap-xsmall: 24px;
+  --gap-xxsmall: 16px;
+  
+  /* Spacing - Element Level */
+  --space-3xs: 0.25rem;
+  --space-2xs: 0.5rem;
+  --space-xs: 0.75rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2rem;
+  --space-xl: 3rem;
+  
+  /* Border Radius */
+  --radius-small: 8px;
+  --radius-button: 10px;
+  --radius-medium: 32px;
+  --radius-large: 40px;
+  
+  /* Shadows */
+  --shadow-xsmall: 0px 1px 2px rgba(0, 0, 0, 0.06), 0px 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-small: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  --shadow-medium: 0px 6px 4px rgba(0, 0, 0, 0.25);
+  --shadow-large: 5px 8px 4px rgba(0, 0, 0, 0.25);
+  --shadow-inset: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
+  
+  /* Containers */
+  --container-large: 1280px;
+  --container-medium: 768px;
+  --container-small: 400px;
+  
+  /* Gradients */
+  --gradient-blue: linear-gradient(180deg, #0070ff 0%, #004399 100%);
+  --gradient-hero: linear-gradient(209.92deg, rgba(0, 112, 255, 0.34) 1.66%, rgba(242, 242, 242, 0.34) 36.93%), linear-gradient(90deg, #f2f2f2 0%, #f2f2f2 100%);
+  --gradient-team: linear-gradient(180deg, #f2f2f2 23.56%, #0070ff 100%);
+}
+
+/* Global Typography Styles */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-primary);
+  font-weight: var(--font-bold);
+  color: var(--color-neutral-darkest);
+  margin: 0;
+}
+
+h1 {
+  font-size: var(--heading-1);
+  line-height: var(--line-tight);
+  letter-spacing: var(--tracking-h1);
+}
+
+h2 {
+  font-size: var(--heading-2);
+  line-height: var(--line-tight);
+  letter-spacing: var(--tracking-h2);
+}
+
+h3 {
+  font-family: var(--font-secondary);
+  font-size: var(--heading-3);
+  line-height: var(--line-tight);
+  letter-spacing: var(--tracking-h3);
+}
+
+h4 {
+  font-size: var(--heading-4);
+  line-height: var(--line-snug);
+  letter-spacing: var(--tracking-h4);
+}
+
+h5 {
+  font-size: var(--heading-5);
+  line-height: var(--line-normal);
+  letter-spacing: var(--tracking-h5);
+}
+
+h6 {
+  font-family: var(--font-secondary);
+  font-size: var(--heading-6);
+  font-weight: var(--font-semibold);
+  line-height: var(--line-normal);
+  letter-spacing: var(--tracking-h6);
+}
+
+p {
+  margin: 0;
+}
+
+/* Button Styles */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 24px;
+  font-family: var(--font-primary);
+  font-size: var(--text-regular);
+  font-weight: var(--font-medium);
+  line-height: 1.5;
+  border-radius: var(--radius-button);
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background-color: var(--color-blue-ribbon);
+  color: var(--color-white);
+  box-shadow: var(--shadow-small);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 112, 255, 0.4);
+}
+
+.btn-secondary {
+  background-color: var(--color-blaze-orange);
+  color: var(--color-white);
+}
+
+.btn-secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 111, 0, 0.4);
+}
+
+.btn-whatsapp {
+  background-color: var(--color-green-haze);
+  color: var(--color-white);
+  box-shadow: var(--shadow-small);
+}
+
+.btn-whatsapp:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(4, 171, 56, 0.4);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--color-neutral-darkest);
+  border: 1px solid var(--color-border-light);
+}
+
+.btn-outline:hover {
+  background-color: rgba(0, 112, 255, 0.05);
+}
+
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* Text Link Style */
+.text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-primary);
+  font-size: var(--text-regular);
+  font-weight: var(--font-medium);
+  color: var(--color-white);
+  transition: opacity 0.2s ease;
+}
+
+.text-link:hover {
+  opacity: 0.8;
+}
+
+/* Section Base Styles */
+.section {
+  width: 100%;
+  padding: var(--section-padding-medium) var(--page-padding);
+  background-color: var(--color-background);
+}
+
+.section-container {
+  max-width: var(--container-large);
+  margin: 0 auto;
+}
+
+/* Section Title */
+.section-title {
+  text-align: center;
+  max-width: var(--container-medium);
+  margin: 0 auto var(--gap-medium);
+}
+
+.section-tagline {
+  font-family: var(--font-primary);
+  font-size: var(--text-regular);
+  font-weight: var(--font-semibold);
+  line-height: 1.5;
+  color: var(--color-neutral-darkest);
+  margin-bottom: var(--gap-xxsmall);
+}
+
+.section-heading {
+  font-size: var(--heading-2);
+  margin-bottom: var(--gap-xsmall);
+}
+
+.section-description {
+  font-size: var(--text-medium);
+  line-height: 1.5;
+  color: var(--color-neutral-darkest);
+}
+
+/* Text Color Utilities */
+.text-blue {
+  color: var(--color-blue-ribbon);
+}
+
+.text-white {
+  color: var(--color-white);
+}
+
+/* Card Base Style */
+.card {
+  background-color: var(--color-card-white);
+  border-radius: var(--radius-large);
+  box-shadow: var(--shadow-xsmall);
+  overflow: hidden;
+}
+
+/* Responsive Padding */
+@media (max-width: 1024px) {
+  :root {
+    --page-padding: 48px;
+    --section-padding-medium: 64px;
+    --section-padding-large: 80px;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --page-padding: 24px;
+    --section-padding-small: 32px;
+    --section-padding-medium: 48px;
+    --section-padding-large: 64px;
+    --gap-large: 48px;
+    --gap-medium: 32px;
+  }
+}

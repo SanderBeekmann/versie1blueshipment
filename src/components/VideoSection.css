@@ -1,0 +1,133 @@
+/* Video Section */
+.video-section {
+  width: 100%;
+  padding: var(--page-padding);
+  background-color: var(--color-background);
+}
+
+.video-container {
+  max-width: var(--container-large);
+  margin: 0 auto;
+}
+
+.video-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 223px;
+}
+
+.video-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 0;
+}
+
+.video-title {
+  font-family: var(--font-primary);
+  font-size: var(--heading-2);
+  font-weight: var(--font-bold);
+  line-height: var(--line-tight);
+  letter-spacing: var(--tracking-h2);
+  color: var(--color-neutral-darkest);
+  margin-bottom: 0.75rem;
+  margin-top: 0;
+}
+
+.video-subtitle {
+  font-family: var(--font-primary);
+  font-size: var(--text-medium);
+  font-weight: var(--font-regular);
+  line-height: 1.5;
+  color: var(--color-neutral-darkest);
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.video-text .btn {
+  width: auto;
+  display: inline-flex;
+  padding: 0.625rem 1.25rem;
+  margin-top: 1.5rem;
+  font-size: var(--text-regular);
+  font-weight: var(--font-medium);
+  align-self: flex-start;
+}
+
+.video-player {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.video-thumbnail {
+  position: relative;
+  width: 100%;
+  max-width: 528px;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-large);
+  overflow: hidden;
+  background-color: var(--color-neutral-darkest);
+  box-shadow: var(--shadow-small);
+}
+
+.video-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(13, 6, 0, 0.6);
+}
+
+.play-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.play-button:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .video-content {
+    gap: 80px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .video-content {
+    flex-direction: column;
+    gap: var(--gap-medium);
+    align-items: stretch;
+  }
+
+  .video-text {
+    text-align: center;
+    align-items: center;
+  }
+
+  .video-text .btn {
+    align-self: center;
+  }
+
+  .video-player {
+    justify-content: center;
+  }
+
+  .video-thumbnail {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .video-section {
+    padding: var(--section-padding-small) var(--gap-xsmall);
+  }
+}
+
