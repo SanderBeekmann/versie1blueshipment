@@ -1,5 +1,6 @@
 import React from 'react';
 import './WhatsAppSection.css';
+import GlassTagline from './GlassTagline';
 
 const BlueDot = () => (
   <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
@@ -12,7 +13,9 @@ function WhatsAppSection() {
     <section className="whatsapp-section">
       <div className="whatsapp-container">
         <div className="whatsapp-header">
-          <p className="whatsapp-tagline">Communicatie</p>
+          <GlassTagline>
+            <p>Communicatie</p>
+          </GlassTagline>
           <h5 className="whatsapp-title">
             WhatsApp support binnen 30 minuten
           </h5>

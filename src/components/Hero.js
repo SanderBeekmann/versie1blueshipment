@@ -1,16 +1,16 @@
 import React from 'react';
 import './Hero.css';
 import { ReactComponent as FeatureContainerSVG } from '../assets/svg/Feature Container.svg';
+import GlassTagline from './GlassTagline';
 
 function Hero() {
   return (
     <section className="hero">
       <div className="hero-content">
         <div className="hero-text">
-          <div className="hero-tagline">
-            <span className="tagline-dot"></span>
-            <p className="tagline-text">Al meer dan 10.000 voltooide bestellingen</p>
-          </div>
+          <GlassTagline withDot>
+            <p>Al meer dan 10.000 voltooide bestellingen</p>
+          </GlassTagline>
           
           <div className="hero-title-section">
             <h1 className="hero-title">

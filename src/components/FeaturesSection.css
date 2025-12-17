@@ -24,12 +24,8 @@
   margin-bottom: var(--gap-medium);
 }
 
-.features-tagline {
-  font-family: var(--font-primary);
-  font-size: var(--text-regular);
-  font-weight: var(--font-semibold);
-  line-height: 1.5;
-  color: var(--color-neutral-darkest);
+.features-header .glass-tagline {
+  margin-bottom: var(--gap-xxsmall);
 }
 
 .features-title {

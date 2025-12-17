@@ -1,5 +1,6 @@
 import React from 'react';
 import './ProcessSection.css';
+import GlassTagline from './GlassTagline';
 
 const ChevronRight = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -52,7 +53,9 @@ function ProcessSection() {
         <div className="process-container">
           {/* Header */}
           <div className="process-header">
-            <p className="process-tagline">Ons proces</p>
+            <GlassTagline>
+              <p>Ons proces</p>
+            </GlassTagline>
             <h2 className="process-title">Van artikel tot blije klant in zes stappen</h2>
             <p className="process-subtitle">Dit is hoe we het doen.</p>
           </div>
@@ -115,7 +118,9 @@ function ProcessSection() {
 
           {/* Result */}
           <div className="process-result">
-            <p className="result-tagline">Het resultaat?</p>
+            <GlassTagline>
+              <p>Het resultaat?</p>
+            </GlassTagline>
             <h2 className="result-title">
               Blije klanten en meer winst<br />voor jou!
             </h2>

@@ -4,6 +4,7 @@ import './TeamSection.css';
 import timoImg from '../assets/timo.jpg';
 import reitzeImg from '../assets/reitze.jpg';
 import colinImg from '../assets/colin.jpg';
+import GlassTagline from './GlassTagline';
 
 const BlueDot = () => (
   <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
@@ -41,7 +42,9 @@ function TeamSection() {
       <div className="team-background"></div>
       <div className="team-container">
         <div className="team-header">
-          <p className="team-tagline">Mensen</p>
+          <GlassTagline>
+            <p>Mensen</p>
+          </GlassTagline>
           <h2 className="team-title">
             Het team achter <span className="text-blue">Blue</span>Shipment
           </h2>

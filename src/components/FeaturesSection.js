@@ -1,5 +1,6 @@
 import React from 'react';
 import './FeaturesSection.css';
+import GlassTagline from './GlassTagline';
 
 const ListsIcon = () => (
   <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
@@ -61,7 +62,9 @@ function FeaturesSection() {
     <section className="features-section">
       <div className="features-container">
         <div className="features-header">
-          <p className="features-tagline">Voordelen</p>
+          <GlassTagline>
+            <p>Voordelen</p>
+          </GlassTagline>
           <h2 className="features-title">
             Wat maakt ons <span className="text-blue">anders</span>
           </h2>
