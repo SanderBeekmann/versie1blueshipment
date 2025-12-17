@@ -86,16 +86,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--color-white);
-  border-radius: var(--radius-small);
-  opacity: 0.7;
   flex-shrink: 0;
-  padding: 16px;
-  transition: opacity 0.3s ease;
-}
-
-.logo-placeholder:hover {
-  opacity: 1;
+  padding: 12px;
 }
 
 .logo-image {
@@ -104,6 +96,11 @@
   width: auto;
   height: auto;
   object-fit: contain;
+  transition: opacity 0.2s ease;
+}
+
+.logo-placeholder:hover .logo-image {
+  opacity: 0.85;
 }
 
 /* Responsive */
@@ -124,7 +121,7 @@
   .logo-placeholder {
     width: 180px;
     height: 69px;
-    padding: 12px;
+    padding: 10px;
   }
 }
 
@@ -150,7 +147,7 @@
   .logo-placeholder {
     width: 150px;
     height: 57px;
-    padding: 10px;
+    padding: 8px;
   }
 }
 
