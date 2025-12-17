@@ -4,6 +4,17 @@
   background-color: var(--color-background);
 }
 
+/* Animation wrapper styling */
+[data-animate] {
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-animate] {
+    will-change: auto;
+  }
+}
+
 /* Ensure smooth scrolling for anchor links */
 html {
   scroll-behavior: smooth;

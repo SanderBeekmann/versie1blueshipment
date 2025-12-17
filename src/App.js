@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './styles/App.css';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -13,23 +13,54 @@ import TestimonialSection from './components/TestimonialSection';
 import CTASection from './components/CTASection';
 import FAQSection from './components/FAQSection';
 import Footer from './components/Footer';
+import { initScrollAnimations, cleanupScrollAnimations } from './utils/scrollAnimations';
 
 function App() {
+  useEffect(() => {
+    initScrollAnimations();
+
+    return () => {
+      cleanupScrollAnimations();
+    };
+  }, []);
+
   return (
     <div className="app">
       <Navbar />
       <Hero />
-      <VideoSection />
-      <LogoSection />
-      <ProcessSection />
-      <GallerySection />
-      <TeamSection />
-      <FeaturesSection />
-      <WhatsAppSection />
-      <TestimonialSection />
-      <CTASection />
-      <FAQSection />
-      <Footer />
+      <div data-animate="fadeUp">
+        <VideoSection />
+      </div>
+      <div data-animate="fadeLeft">
+        <LogoSection />
+      </div>
+      <div data-animate="fadeRight">
+        <ProcessSection />
+      </div>
+      <div data-animate="scaleIn">
+        <GallerySection />
+      </div>
+      <div data-animate="fadeUp">
+        <TeamSection />
+      </div>
+      <div data-animate="fadeLeft">
+        <FeaturesSection />
+      </div>
+      <div data-animate="fadeUpScale">
+        <WhatsAppSection />
+      </div>
+      <div data-animate="fadeRight">
+        <TestimonialSection />
+      </div>
+      <div data-animate="scaleIn">
+        <CTASection />
+      </div>
+      <div data-animate="fadeUp">
+        <FAQSection />
+      </div>
+      <div data-animate="fadeUpScale">
+        <Footer />
+      </div>
     </div>
   );
 }
