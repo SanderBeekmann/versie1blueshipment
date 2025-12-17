@@ -62,10 +62,6 @@
   will-change: transform;
 }
 
-.logo-marquee-wrapper:hover .logo-marquee-track {
-  animation-play-state: paused;
-}
-
 /* Keyframes for infinite scrolling */
 @keyframes marquee-scroll {
   0% {
