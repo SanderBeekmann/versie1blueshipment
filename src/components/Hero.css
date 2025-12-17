@@ -43,10 +43,10 @@
 
 .hero-title {
   font-family: var(--font-primary);
-  font-size: clamp(2.25rem, 1rem + 3vw, 3.75rem);
+  font-size: clamp(2.7rem, 1.2rem + 3vw, 4.5rem);
   font-weight: var(--font-bold);
   line-height: var(--leading-heading);
-  letter-spacing: clamp(-1.5px, -0.3vw, -3px);
+  letter-spacing: clamp(-1.8px, -0.36vw, -3.6px);
   color: var(--color-neutral-darkest);
   margin: 0;
 }
