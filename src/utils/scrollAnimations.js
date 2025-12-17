@@ -248,6 +248,191 @@ export const initHeroTitleAnimation = () => {
   });
 };
 
+/**
+ * Initialize timeline animations for ProcessSection
+ * - Images fly in from left/right based on step alignment
+ * - Progress line fills from top to bottom based on scroll position
+ */
+export const initTimelineAnimations = (stepsContainer, processContainer) => {
+  if (!stepsContainer || !processContainer) return;
+
+  // Check for reduced motion preference
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Get all step items once for reuse
+  const stepItems = stepsContainer.querySelectorAll('.process-step');
+
+  // Get all timeline text elements (titles, descriptions, step numbers)
+  // Animate per step to allow for stagger within each step
+  
+  stepItems.forEach((stepItem) => {
+    const isLeft = stepItem.classList.contains('is-left');
+    const isRight = stepItem.classList.contains('is-right');
+    const textElements = stepItem.querySelectorAll('.timeline-text');
+    
+    if (textElements.length === 0) return;
+
+    if (prefersReducedMotion) {
+      gsap.set(textElements, { opacity: 0 });
+      gsap.to(textElements, {
+        opacity: 1,
+        duration: 0.3,
+        scrollTrigger: {
+          trigger: stepItem,
+          start: 'top 80%',
+          toggleActions: 'play none none reverse',
+        },
+      });
+      return;
+    }
+
+    // Set initial state based on alignment
+    // Left-aligned steps: text comes from left (negative x)
+    // Right-aligned steps: text comes from right (positive x)
+    const xOffset = isLeft ? -60 : isRight ? 60 : 0;
+    gsap.set(textElements, {
+      opacity: 0,
+      x: xOffset,
+      willChange: 'transform, opacity',
+    });
+
+    // Animate in with small stagger
+    gsap.to(textElements, {
+      opacity: 1,
+      x: 0,
+      duration: 0.8,
+      ease: 'power2.out',
+      stagger: 0.1,
+      scrollTrigger: {
+        trigger: stepItem,
+        start: 'top 80%',
+        end: 'top 55%',
+        toggleActions: 'play none none reverse',
+        onComplete: () => {
+          gsap.set(textElements, { willChange: 'auto' });
+        },
+      },
+    });
+  });
+
+  // Get all timeline media elements (images)
+  const timelineMedia = stepsContainer.querySelectorAll('.timeline-media');
+  
+  // Animate each image based on its parent's alignment
+  timelineMedia.forEach((media) => {
+    const stepItem = media.closest('.process-step');
+    if (!stepItem) return;
+
+    const isLeft = stepItem.classList.contains('is-left');
+    const isRight = stepItem.classList.contains('is-right');
+
+    if (prefersReducedMotion) {
+      gsap.set(media, { opacity: 0 });
+      gsap.to(media, {
+        opacity: 1,
+        duration: 0.3,
+        scrollTrigger: {
+          trigger: stepItem,
+          start: 'top 80%',
+          toggleActions: 'play none none reverse',
+        },
+      });
+      return;
+    }
+
+    // Set initial state based on alignment
+    // When align is 'left', image is on the right, so it comes from right (positive x)
+    // When align is 'right', image is on the left, so it comes from left (negative x)
+    const xOffset = isLeft ? 60 : isRight ? -60 : 0;
+    gsap.set(media, {
+      opacity: 0,
+      x: xOffset,
+      willChange: 'transform, opacity',
+    });
+
+    // Animate in
+    gsap.to(media, {
+      opacity: 1,
+      x: 0,
+      duration: 0.8,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: stepItem,
+        start: 'top 80%',
+        end: 'top 55%',
+        toggleActions: 'play none none reverse',
+        onComplete: () => {
+          gsap.set(media, { willChange: 'auto' });
+        },
+      },
+    });
+  });
+
+  // Animate progress line - fill based on scroll position in center of screen
+  const progressLines = stepsContainer.querySelectorAll('.timeline-line-progress');
+  
+  if (progressLines.length > 0 && !prefersReducedMotion) {
+    // Set initial state
+    gsap.set(progressLines, {
+      scaleY: 0,
+      transformOrigin: 'top',
+    });
+
+    // Track progress based on center of screen
+    // The line should fill continuously as steps pass through the center
+    const updateProgressLines = () => {
+      const viewportCenter = window.innerHeight / 2;
+      
+      stepItems.forEach((step, index) => {
+        const rect = step.getBoundingClientRect();
+        const stepTop = rect.top;
+        const stepBottom = rect.bottom;
+        const stepHeight = step.offsetHeight;
+        
+        let lineProgress = 0;
+        
+        // Check position relative to viewport center
+        if (stepBottom < viewportCenter) {
+          // Step has completely passed center - fully filled
+          lineProgress = 1;
+        } else if (stepTop <= viewportCenter && stepBottom >= viewportCenter) {
+          // Step is currently at center - calculate partial fill
+          // Progress is based on how much of the step has passed the center
+          const distanceFromTop = viewportCenter - stepTop;
+          lineProgress = distanceFromTop / stepHeight;
+        }
+        // If stepTop > viewportCenter, step hasn't reached center yet, progress stays 0
+        
+        // Set progress for this step's timeline line
+        if (progressLines[index]) {
+          gsap.set(progressLines[index], { scaleY: Math.max(0, Math.min(1, lineProgress)) });
+        }
+      });
+    };
+
+    // Create scroll trigger that updates on scroll
+    ScrollTrigger.create({
+      trigger: processContainer,
+      start: 'top center',
+      end: 'bottom center',
+      scrub: true,
+      onUpdate: updateProgressLines,
+      onEnter: updateProgressLines,
+      onLeave: updateProgressLines,
+      onEnterBack: updateProgressLines,
+      onLeaveBack: updateProgressLines,
+    });
+  } else if (prefersReducedMotion && progressLines.length > 0) {
+    // For reduced motion, just show the lines
+    gsap.set(progressLines, { scaleY: 1 });
+  }
+};
+
+export const cleanupTimelineAnimations = () => {
+  // Cleanup is handled by cleanupScrollAnimations, but we can add specific cleanup here if needed
+  // ScrollTrigger.getAll() will catch all triggers including timeline ones
+};
+
 export const cleanupScrollAnimations = () => {
   ScrollTrigger.getAll().forEach(trigger => trigger.kill());
 };

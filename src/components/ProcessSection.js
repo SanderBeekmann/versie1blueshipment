@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import './ProcessSection.css';
 import GlassTagline from './GlassTagline';
+import { initTimelineAnimations, cleanupTimelineAnimations } from '../utils/scrollAnimations';
 
 const ChevronRight = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -9,6 +10,19 @@ const ChevronRight = () => (
 );
 
 function ProcessSection() {
+  const processStepsRef = useRef(null);
+  const processContainerRef = useRef(null);
+
+  useEffect(() => {
+    if (processStepsRef.current && processContainerRef.current) {
+      initTimelineAnimations(processStepsRef.current, processContainerRef.current);
+    }
+
+    return () => {
+      cleanupTimelineAnimations();
+    };
+  }, []);
+
   const steps = [
     {
       number: 1,
@@ -50,58 +64,62 @@ function ProcessSection() {
   return (
     <section className="process-section">
       <div className="process-wrapper">
-        <div className="process-container">
+        <div className="process-container" ref={processContainerRef}>
           {/* Header */}
           <div className="process-header">
             <GlassTagline>
               <p>Ons proces</p>
             </GlassTagline>
-            <h2 className="process-title" data-animate-title>Van artikel tot blije klant in zes stappen</h2>
+            <h2 className="process-title">Van artikel tot blije klant in zes stappen</h2>
             <p className="process-subtitle">Dit is hoe we het doen.</p>
           </div>
 
           {/* Steps */}
-          <div className="process-steps">
+          <div className="process-steps" ref={processStepsRef}>
             {steps.map((step, index) => (
-              <div key={step.number} className={`process-step ${step.align === 'right' ? 'reverse' : ''}`}>
+              <div 
+                key={step.number} 
+                className={`process-step ${step.align === 'right' ? 'reverse' : ''} ${step.align === 'left' ? 'is-left' : 'is-right'}`}
+              >
                 <div className="step-content-left">
                   {step.align === 'left' ? (
-                    <div className="step-title-container">
-                      <p className="step-number">Stap {step.number}.</p>
-                      <h3 className="step-title" data-animate-title>{step.title}</h3>
+                    <div className="step-title-container timeline-text">
+                      <p className="step-number timeline-text">Stap {step.number}.</p>
+                      <h3 className="step-title timeline-text">{step.title}</h3>
                     </div>
                   ) : (
-                    <div className="step-info">
-                      <p className="step-description">{step.description}</p>
+                    <div className="step-info timeline-text">
+                      <p className="step-description timeline-text">{step.description}</p>
                       <button className="btn btn-secondary btn-icon">
                         {step.buttonText}
                         <ChevronRight />
                       </button>
-                      <div className="step-image-placeholder"></div>
+                      <div className="step-image-placeholder timeline-media"></div>
                     </div>
                   )}
                 </div>
                 
                 <div className="step-timeline">
-                  <div className="timeline-line"></div>
+                  <div className="timeline-line timeline-line-base"></div>
                   <div className="timeline-dot"></div>
-                  <div className="timeline-line"></div>
+                  <div className="timeline-line timeline-line-base"></div>
+                  <div className="timeline-line-progress"></div>
                 </div>
                 
                 <div className="step-content-right">
                   {step.align === 'right' ? (
-                    <div className="step-title-container">
-                      <p className="step-number">Stap {step.number}.</p>
-                      <h3 className="step-title" data-animate-title>{step.title}</h3>
+                    <div className="step-title-container timeline-text">
+                      <p className="step-number timeline-text">Stap {step.number}.</p>
+                      <h3 className="step-title timeline-text">{step.title}</h3>
                     </div>
                   ) : (
-                    <div className="step-info">
-                      <p className="step-description">{step.description}</p>
+                    <div className="step-info timeline-text">
+                      <p className="step-description timeline-text">{step.description}</p>
                       <button className="btn btn-secondary btn-icon">
                         {step.buttonText}
                         <ChevronRight />
                       </button>
-                      <div className="step-image-placeholder"></div>
+                      <div className="step-image-placeholder timeline-media"></div>
                     </div>
                   )}
                 </div>
@@ -111,7 +129,7 @@ function ProcessSection() {
 
           {/* Step 6 */}
           <div className="process-step-final">
-            <h3 className="step-final-title" data-animate-title>
+            <h3 className="step-final-title">
               Stap 6.<br />Repeat!
             </h3>
           </div>
@@ -121,7 +139,7 @@ function ProcessSection() {
             <GlassTagline>
               <p>Het resultaat?</p>
             </GlassTagline>
-            <h2 className="result-title" data-animate-title>
+            <h2 className="result-title">
               Blije klanten en meer winst<br />voor jou!
             </h2>
             <p className="result-description">

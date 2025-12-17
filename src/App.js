@@ -33,9 +33,6 @@ function App() {
       <div data-animate="fadeUp">
         <VideoSection />
       </div>
-      <div data-animate="fadeLeft">
-        <LogoSection />
-      </div>
       <div data-animate="fadeRight">
         <ProcessSection />
       </div>
@@ -56,6 +53,9 @@ function App() {
       </div>
       <div data-animate="scaleIn">
         <CTASection />
+      </div>
+      <div data-animate="fadeLeft">
+        <LogoSection />
       </div>
       <div data-animate="fadeUp">
         <FAQSection />

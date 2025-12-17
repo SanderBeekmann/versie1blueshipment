@@ -48,6 +48,7 @@ function Navbar() {
 
         <div className="navbar-content">
           <div className={`navbar-links ${isMenuOpen ? 'active' : ''}`}>
+            <a href="#" className="nav-link">Home</a>
             <a href="#over-ons" className="nav-link">Over ons</a>
             <a href="#diensten" className="nav-link">Diensten</a>
             <a href="#listings" className="nav-link">listings</a>
