@@ -71,7 +71,7 @@ ul, ol {
   --font-secondary: 'Sora', sans-serif;
   
   /* Typography - Font Sizes (Responsive with clamp) */
-  --heading-1: clamp(2.5rem, 1.5rem + 4vw, 4.5rem);
+  --heading-1: clamp(2.875rem, 1.725rem + 4vw, 5.175rem);
   --heading-2: clamp(1.75rem, 1rem + 2.5vw, 3.25rem);
   --heading-3: clamp(1.5rem, 0.9rem + 2vw, 2.75rem);
   --heading-4: clamp(1.375rem, 0.85rem + 1.5vw, 2.25rem);
@@ -96,7 +96,7 @@ ul, ol {
   --leading-heading: 1.1;
   
   /* Typography - Letter Spacing */
-  --tracking-h1: -4.32px;
+  --tracking-h1: -4.968px;
   --tracking-h2: -2.08px;
   --tracking-h3: -1.76px;
   --tracking-h4: -1.44px;
