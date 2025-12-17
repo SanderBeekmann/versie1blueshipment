@@ -51,6 +51,19 @@
   margin: 0;
 }
 
+/* Hero title letter-by-letter animation styling */
+.hero-title .hero-letter {
+  display: inline-block;
+  white-space: pre;
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-title .hero-letter {
+    will-change: auto;
+  }
+}
+
 .hero-subtitle {
   font-family: var(--font-primary);
   font-size: var(--text-regular);
@@ -67,23 +80,6 @@
   margin-top: var(--space-md);
 }
 
-.hero-features {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  max-width: 400px;
-  margin: 0;
-  transform: none;
-}
-
-.feature-container-svg {
-  width: 100%;
-  height: auto;
-  max-width: 100%;
-  object-fit: contain;
-}
-
 /* Tablet: 768px+ */
 @media (min-width: 768px) {
   .hero {
@@ -95,9 +91,6 @@
     padding: 0 var(--gap-small);
   }
 
-  .hero-features {
-    max-width: 450px;
-  }
 }
 
 /* Desktop: 1024px+ */
@@ -107,36 +100,23 @@
   }
 
   .hero-content {
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    gap: clamp(3rem, 5vw, 6rem);
+    justify-content: center;
+    gap: var(--gap-medium);
     padding: 0;
     max-width: var(--container-large);
     margin: 0 auto;
   }
 
   .hero-text {
-    flex: 1;
-    align-items: flex-start;
-    text-align: left;
-    max-width: 560px;
+    align-items: center;
+    text-align: center;
+    max-width: 600px;
   }
 
   .hero-cta {
-    align-self: flex-start;
-  }
-
-  .hero-features {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    max-width: 500px;
-  }
-
-  .feature-container-svg {
-    max-width: 480px;
+    align-self: center;
   }
 }
 
@@ -147,15 +127,7 @@
   }
 
   .hero-text {
-    max-width: 620px;
-  }
-
-  .hero-features {
-    max-width: 540px;
-  }
-
-  .feature-container-svg {
-    max-width: 520px;
+    max-width: 700px;
   }
 }
 
@@ -164,10 +136,6 @@
   .hero {
     min-height: auto;
     padding-bottom: var(--gap-medium);
-  }
-
-  .hero-features {
-    display: none;
   }
 
   .hero-text .glass-tagline {

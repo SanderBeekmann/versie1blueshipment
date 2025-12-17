@@ -28,7 +28,7 @@
   position: relative;
   width: 100%;
   overflow: hidden;
-  padding: var(--gap-medium) 0;
+  padding: 0;
 }
 
 .logo-marquee-wrapper::before,
@@ -116,7 +116,7 @@
 /* Responsive */
 @media (max-width: 1024px) {
   .logo-marquee-wrapper {
-    padding: var(--gap-small) 0;
+    padding: 0;
   }
 
   .logo-marquee-wrapper::before,
@@ -141,7 +141,7 @@
   }
 
   .logo-marquee-wrapper {
-    padding: var(--gap-xsmall) 0;
+    padding: 0;
   }
 
   .logo-marquee-wrapper::before,

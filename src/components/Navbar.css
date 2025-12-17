@@ -15,6 +15,23 @@
   max-width: 1440px;
   margin: 0 auto;
   padding: 6px 24px;
+  /* Default state: transparent, no container styling */
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 1px solid transparent;
+  border-radius: 0;
+  box-shadow: none;
+  transition: background 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              backdrop-filter 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              -webkit-backdrop-filter 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              border 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              border-radius 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Scrolled state: container styling with glasmorphism */
+.navbar--scrolled .navbar-wrapper {
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(12px) saturate(180%);
   -webkit-backdrop-filter: blur(12px) saturate(180%);
@@ -22,7 +39,6 @@
   border-radius: var(--radius-medium);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08),
               inset 0 1px 0 rgba(255, 255, 255, 0.6);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .navbar-logo {
@@ -208,6 +224,10 @@
 
   .navbar-wrapper {
     padding: 5px 12px;
+  }
+
+  /* Border radius only in scrolled state on mobile */
+  .navbar--scrolled .navbar-wrapper {
     border-radius: var(--radius-button);
   }
 
@@ -218,5 +238,12 @@
 
   .logo-text {
     font-size: 1rem;
+  }
+}
+
+/* Reduced motion: disable transitions */
+@media (prefers-reduced-motion: reduce) {
+  .navbar-wrapper {
+    transition: none;
   }
 }

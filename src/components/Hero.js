@@ -1,6 +1,5 @@
 import React from 'react';
 import './Hero.css';
-import { ReactComponent as FeatureContainerSVG } from '../assets/svg/Feature Container.svg';
 import GlassTagline from './GlassTagline';
 
 function Hero() {
@@ -24,10 +23,6 @@ function Hero() {
           <button className="btn btn-primary hero-cta">
             Boek een kennismakingsgesprek
           </button>
-        </div>
-
-        <div className="hero-features">
-          <FeatureContainerSVG className="feature-container-svg" />
         </div>
       </div>
     </section>
