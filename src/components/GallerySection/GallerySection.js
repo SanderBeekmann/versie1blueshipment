@@ -1,5 +1,9 @@
 import React, { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { gsap } from "gsap";
+import analytics1 from '../../assets/analytics/analytics.png';
+import analytics2 from '../../assets/analytics/analytics2.png';
+import analytics3 from '../../assets/analytics/analytics3.png';
+import analytics4 from '../../assets/analytics/analytics4.png';
 
 function GallerySection() {
   const sectionRef = useRef(null);
@@ -13,10 +17,10 @@ function GallerySection() {
 
   const items = useMemo(
     () => [
-      { id: 1, title: "Performance", subtitle: "Real-time analytics dashboard" },
-      { id: 2, title: "Omzet", subtitle: "Verkoopcijfers en trends" },
-      { id: 3, title: "Conversie", subtitle: "Optimalisatie en resultaten" },
-      { id: 4, title: "Voorraad", subtitle: "Voorraadbeheer en planning" },
+      { id: 1, image: analytics1, alt: "Analytics dashboard met bestellingen en omzet" },
+      { id: 2, image: analytics2, alt: "Analytics dashboard met verkoopcijfers" },
+      { id: 3, image: analytics3, alt: "Analytics dashboard met conversie data" },
+      { id: 4, image: analytics4, alt: "Analytics dashboard met voorraad statistieken" },
     ],
     []
   );
@@ -179,7 +183,7 @@ function GallerySection() {
             return (
               <article
                 key={key}
-                className="gallery-card shrink-0 w-[560px] max-w-[90vw] bg-white rounded-3xl border-2 border-blue-500 shadow-md overflow-hidden relative"
+                className="gallery-card shrink-0 w-[560px] max-w-[90vw] rounded-3xl border-2 border-blue-500 shadow-md overflow-hidden relative bg-white"
                 style={{
                   flex: "0 0 auto",
                   width: 560,
@@ -190,47 +194,16 @@ function GallerySection() {
                 onMouseEnter={onEnter}
                 onMouseLeave={onLeave}
               >
-                <div className="w-full h-72 bg-white p-6 flex flex-col gap-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex gap-2">
-                      <div className="h-8 w-20 bg-blue-100 rounded-lg" />
-                      <div className="h-8 w-16 bg-slate-100 rounded-lg" />
-                      <div className="h-8 w-24 bg-slate-100 rounded-lg" />
-                    </div>
-                    <div className="h-8 w-8 bg-blue-500 rounded-lg" />
-                  </div>
-
-                  <div className="flex-1 grid grid-cols-3 gap-4">
-                    <div className="bg-blue-50 rounded-lg p-3 flex flex-col justify-end">
-                      <div className="space-y-2">
-                        <div className="h-16 bg-blue-500 rounded w-full" />
-                        <div className="h-12 bg-blue-400 rounded w-[85%]" />
-                        <div className="h-8 bg-blue-300 rounded w-[70%]" />
-                      </div>
-                    </div>
-
-                    <div className="bg-blue-50 rounded-lg p-3 flex flex-col justify-end">
-                      <div className="space-y-2">
-                        <div className="h-20 bg-blue-600 rounded w-full" />
-                        <div className="h-14 bg-blue-500 rounded w-[90%]" />
-                        <div className="h-10 bg-blue-400 rounded w-[75%]" />
-                      </div>
-                    </div>
-
-                    <div className="bg-blue-50 rounded-lg p-3 flex flex-col justify-end">
-                      <div className="space-y-2">
-                        <div className="h-14 bg-blue-500 rounded w-full" />
-                        <div className="h-10 bg-blue-400 rounded w-[80%]" />
-                        <div className="h-6 bg-blue-300 rounded w-[65%]" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="px-6 pb-6">
-                  <h3 className="text-xl font-bold text-[#0d0600] mb-1">{item.title}</h3>
-                  <p className="text-sm text-[#0d0600] opacity-70">{item.subtitle}</p>
-                </div>
+                <img
+                  src={item.image}
+                  alt={item.alt}
+                  className="w-full h-full object-cover"
+                  style={{
+                    display: 'block',
+                    width: '100%',
+                    height: 'auto'
+                  }}
+                />
               </article>
             );
           })}
