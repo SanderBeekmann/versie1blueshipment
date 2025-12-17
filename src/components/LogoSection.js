@@ -1,15 +1,16 @@
 import React from 'react';
 import './LogoSection.css';
+import bpostLogo from '../assets/bpost_logo.svg.png';
+import dhlLogo from '../assets/dhl-logo.png';
+import dpdLogo from '../assets/dpd.png';
+import ampereLogo from '../assets/7869025b517d2a1d53961a98afda940bc118263f-1600x900-removebg-preview.png';
 
 function LogoSection() {
-  // Placeholder logos - in production these would be actual partner logos
   const logos = [
-    { id: 1, name: 'Partner 1' },
-    { id: 2, name: 'Partner 2' },
-    { id: 3, name: 'Partner 3' },
-    { id: 4, name: 'Partner 4' },
-    { id: 5, name: 'Partner 5' },
-    { id: 6, name: 'Partner 6' },
+    { id: 1, name: 'bpost', src: bpostLogo },
+    { id: 2, name: 'DHL', src: dhlLogo },
+    { id: 3, name: 'DPD', src: dpdLogo },
+    { id: 4, name: 'Ampère', src: ampereLogo },
   ];
 
   // Duplicate logos for seamless loop
@@ -26,7 +27,11 @@ function LogoSection() {
             {duplicatedLogos.map((logo, index) => (
               <div key={`${logo.id}-${index}`} className="logo-item">
                 <div className="logo-placeholder">
-                  <span>{logo.name}</span>
+                  <img
+                    src={logo.src}
+                    alt={logo.name}
+                    className="logo-image"
+                  />
                 </div>
               </div>
             ))}
