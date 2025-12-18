@@ -12,10 +12,13 @@ const ChevronRight = () => (
 function ProcessSection() {
   const processStepsRef = useRef(null);
   const processContainerRef = useRef(null);
+  const step6Ref = useRef(null);
 
   useEffect(() => {
     if (processStepsRef.current && processContainerRef.current) {
-      initTimelineAnimations(processStepsRef.current, processContainerRef.current);
+      initTimelineAnimations(processStepsRef.current, processContainerRef.current, {
+        step6El: step6Ref.current
+      });
     }
 
     return () => {
@@ -128,7 +131,7 @@ function ProcessSection() {
           </div>
 
           {/* Step 6 */}
-          <div className="process-step-final">
+          <div className="process-step-final" ref={step6Ref}>
             <h3 className="step-final-title">
               Stap 6.<br />Repeat!
             </h3>

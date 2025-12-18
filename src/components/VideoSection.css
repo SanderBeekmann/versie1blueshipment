@@ -1,7 +1,7 @@
 /* Video Section */
 .video-section {
   width: 100%;
-  padding: var(--page-padding);
+  padding: calc(var(--page-padding) + 96px) var(--page-padding);
   background-color: var(--color-background);
 }
 
@@ -37,12 +37,13 @@
 
 .video-subtitle {
   font-family: var(--font-primary);
-  font-size: var(--text-medium);
+  font-size: var(--text-regular);
   font-weight: var(--font-regular);
-  line-height: 1.5;
+  line-height: var(--line-relaxed);
   color: var(--color-neutral-darkest);
-  margin-top: 0;
-  margin-bottom: 0;
+  max-width: 440px;
+  opacity: 0.8;
+  margin: 0;
 }
 
 .video-text .btn {
@@ -127,7 +128,7 @@
 
 @media (max-width: 768px) {
   .video-section {
-    padding: var(--section-padding-small) var(--gap-xsmall);
+    padding: calc(var(--section-padding-small) + 96px) var(--gap-xsmall);
   }
 }
 

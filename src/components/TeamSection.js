@@ -40,23 +40,27 @@ function TeamSection() {
   return (
     <section className="team-section">
       <div className="team-background"></div>
-      <div className="team-container">
-        <div className="team-header">
-          <GlassTagline>
-            <p>Mensen</p>
-          </GlassTagline>
-          <h2 className="team-title" data-animate-title>
-            Het team achter <span className="text-blue">Blue</span>Shipment
-          </h2>
-          <p className="team-subtitle">
-            Bol-verkopers die elkaar begrijpen en helpen
-          </p>
-        </div>
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="team-container">
+          <div className="team-header">
+            <GlassTagline>
+              <p>Mensen</p>
+            </GlassTagline>
+            <h2 className="team-title" data-animate-title>
+              Het team achter <span className="text-blue">Blue</span>Shipment
+            </h2>
+            <p className="team-subtitle">
+              Bol-verkopers die elkaar begrijpen en helpen
+            </p>
+          </div>
 
-        <div className="team-grid">
-          {teamMembers.map((member) => (
-            <TeamCard key={member.id} member={member} />
-          ))}
+          <div className="team-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 justify-items-center gap-6 lg:gap-8">
+            {teamMembers.map((member) => (
+              <div key={member.id} className="card-scale max-w-[352px] w-full">
+                <TeamCard member={member} />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

@@ -48,9 +48,9 @@
   gap: 8px;
 }
 
-.navbar-logo svg {
-  width: 36px;
-  height: 36px;
+.navbar-logo img {
+  flex-shrink: 0;
+  display: block;
 }
 
 .logo-text {

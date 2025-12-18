@@ -1,17 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import './Navbar.css';
+import logoImage from '../assets/brand/logo.svg';
 
 const ChevronDown = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
     <path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
-
-const Logo = () => (
-  <svg width="36" height="36" viewBox="0 0 53 53" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect width="53" height="53" rx="10" fill="#0070ff"/>
-    <path d="M15 16H38L35 26H18L15 16Z" fill="white"/>
-    <path d="M18 28H35L38 38H15L18 28Z" fill="white"/>
   </svg>
 );
 
@@ -40,7 +33,7 @@ function Navbar() {
     <nav className={`navbar ${isScrolled ? 'navbar--scrolled' : ''}`}>
       <div className="navbar-wrapper">
         <div className="navbar-logo">
-          <Logo />
+          <img src={logoImage} alt="BlueShipment" className="h-8 w-auto" loading="eager" />
           <span className="logo-text">
             <span className="logo-blue">Blue</span>Shipment
           </span>

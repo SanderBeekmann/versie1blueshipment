@@ -18,7 +18,7 @@ function Hero() {
               Jouw all-in<br />bol.com partner
             </h1>
             <p className="hero-subtitle">
-              Probeer nu: Krijg een totaalpakket t.w.v. 499 euro helemaal gratis!
+              Probeer nu: Krijg een totaalpakket t.w.v. 499 euro<br />helemaal gratis!
             </p>
           </div>
 

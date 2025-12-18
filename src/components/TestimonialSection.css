@@ -38,16 +38,26 @@
 
 .testimonial-subtitle {
   font-family: var(--font-primary);
-  font-size: var(--text-medium);
+  font-size: var(--text-regular);
   font-weight: var(--font-regular);
-  line-height: 1.5;
+  line-height: var(--line-relaxed);
   color: var(--color-neutral-darkest);
+  max-width: 440px;
+  opacity: 0.8;
+  margin: 0;
 }
 
 .testimonial-content {
   position: relative;
   display: flex;
   align-items: center;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Viewport wrapper for scroll-driven horizontal animation */
+.testimonials-viewport {
+  overflow: hidden;
   width: 100%;
 }
 
@@ -60,6 +70,7 @@
   -ms-overflow-style: none;
   padding: 8px;
   width: 100%;
+  will-change: transform;
 }
 
 .testimonial-track::-webkit-scrollbar {

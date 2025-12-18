@@ -28,8 +28,7 @@
   background-color: var(--color-background);
   border-radius: var(--radius-large);
   box-shadow: var(--shadow-medium);
-  max-width: var(--container-large);
-  margin: 0 auto;
+  overflow: hidden;
 }
 
 .team-header {
@@ -60,18 +59,36 @@
 
 .team-subtitle {
   font-family: var(--font-primary);
-  font-size: var(--text-medium);
+  font-size: var(--text-regular);
   font-weight: var(--font-regular);
-  line-height: 1.5;
+  line-height: var(--line-relaxed);
   color: var(--color-neutral-darkest);
+  max-width: 440px;
+  opacity: 0.8;
+  margin: 0;
 }
 
 .team-grid {
+  width: 100%;
+  padding: var(--section-padding-small) 0;
+}
+
+.card-scale {
+  transform-origin: center;
+  height: 100%;
   display: flex;
-  flex-wrap: nowrap;
-  justify-content: center;
-  gap: var(--page-padding);
-  padding: var(--section-padding-small) var(--small-padding-desktop, 8px);
+}
+
+@media (max-width: 1200px) {
+  .card-scale {
+    transform: scale(0.96);
+  }
+}
+
+@media (max-width: 1024px) {
+  .card-scale {
+    transform: scale(0.92);
+  }
 }
 
 .team-card {
@@ -79,7 +96,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 352px;
+  width: 100%;
+  max-width: 352px;
+  height: 100%;
   padding: var(--gap-small);
   background-color: #f2f2f2;
   border-radius: var(--radius-large);
@@ -130,6 +149,8 @@
   border-bottom: 3px solid var(--color-blue-ribbon);
   border-radius: 0 0 var(--radius-medium) var(--radius-medium);
   width: 100%;
+  flex: 1;
+  min-height: 0;
 }
 
 .card-title {
@@ -162,37 +183,8 @@
 }
 
 /* Responsive */
-@media (max-width: 1200px) {
-  .team-grid {
-    gap: var(--gap-small);
-  }
-
-  .team-card {
-    width: 300px;
-  }
-}
-
-@media (max-width: 1024px) {
-  .team-grid {
-    flex-wrap: wrap;
-  }
-
-  .team-card {
-    width: 320px;
-  }
-}
 
 @media (max-width: 768px) {
-  .team-grid {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .team-card {
-    width: 100%;
-    max-width: 400px;
-  }
-
   .team-section {
     padding: var(--section-padding-small) var(--gap-xsmall);
   }

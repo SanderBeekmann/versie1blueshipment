@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import './FeaturesSection.css';
 import GlassTagline from './GlassTagline';
+import logoImage from '../assets/brand/logo.svg';
+import { initFeaturesSectionBurst } from '../utils/scrollAnimations';
 
 const ListsIcon = () => (
   <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
@@ -31,6 +33,10 @@ const InboxIcon = () => (
 );
 
 function FeaturesSection() {
+  const sectionRef = useRef(null);
+  const logoRef = useRef(null);
+  const featuresRef = useRef([]);
+
   const features = [
     {
       id: 1,
@@ -58,8 +64,20 @@ function FeaturesSection() {
     }
   ];
 
+  useEffect(() => {
+    if (!sectionRef.current || !logoRef.current || featuresRef.current.length !== 4) return;
+
+    const cleanup = initFeaturesSectionBurst({
+      sectionEl: sectionRef.current,
+      logoEl: logoRef.current,
+      featureEls: featuresRef.current
+    });
+
+    return cleanup;
+  }, []);
+
   return (
-    <section className="features-section">
+    <section ref={sectionRef} className="features-section">
       <div className="features-container">
         <div className="features-header">
           <GlassTagline>
@@ -75,8 +93,12 @@ function FeaturesSection() {
 
         <div className="features-content">
           <div className="features-column features-column-left">
-            {features.slice(0, 2).map((feature) => (
-              <div key={feature.id} className="feature-item">
+            {features.slice(0, 2).map((feature, index) => (
+              <div 
+                key={feature.id} 
+                ref={(el) => { featuresRef.current[index] = el; }}
+                className="feature-item"
+              >
                 <div className="feature-icon">{feature.icon}</div>
                 <div className="feature-text">
                   <h5 className="feature-title">{feature.title}</h5>
@@ -86,19 +108,21 @@ function FeaturesSection() {
             ))}
           </div>
 
-          <div className="features-logo">
-            <div className="logo-placeholder">
-              <svg width="200" height="200" viewBox="0 0 53 53" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect width="53" height="53" rx="10" fill="#0070ff"/>
-                <path d="M15 16H38L35 26H18L15 16Z" fill="white"/>
-                <path d="M18 28H35L38 38H15L18 28Z" fill="white"/>
-              </svg>
+          <div className="features-logo-wrap">
+            <div className="features-logo">
+              <div ref={logoRef} className="logo-placeholder">
+                <img src={logoImage} alt="BlueShipment" />
+              </div>
             </div>
           </div>
 
           <div className="features-column features-column-right">
-            {features.slice(2, 4).map((feature) => (
-              <div key={feature.id} className="feature-item">
+            {features.slice(2, 4).map((feature, index) => (
+              <div 
+                key={feature.id} 
+                ref={(el) => { featuresRef.current[index + 2] = el; }}
+                className="feature-item"
+              >
                 <div className="feature-icon">{feature.icon}</div>
                 <div className="feature-text">
                   <h5 className="feature-title">{feature.title}</h5>

@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './TestimonialSection.css';
+import { initTestimonialsScrollExperience } from '../utils/scrollAnimations';
 
 const Stars = () => (
   <svg width="116" height="19" viewBox="0 0 116 19" fill="none">
@@ -24,7 +25,15 @@ const ArrowRight = () => (
 );
 
 function TestimonialSection() {
+  const sectionRef = useRef(null);
   const [currentSlide, setCurrentSlide] = useState(0);
+
+  useEffect(() => {
+    if (!sectionRef.current) return;
+
+    const cleanup = initTestimonialsScrollExperience(sectionRef.current);
+    return cleanup;
+  }, []);
 
   const testimonials = [
     {
@@ -56,7 +65,7 @@ function TestimonialSection() {
   };
 
   return (
-    <section className="testimonial-section">
+    <section ref={sectionRef} className="testimonial-section">
       <div className="testimonial-container">
         <div className="testimonial-header">
           <h2 className="testimonial-title" data-animate-title>

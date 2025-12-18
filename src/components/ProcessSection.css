@@ -51,10 +51,13 @@
 
 .process-subtitle {
   font-family: var(--font-primary);
-  font-size: var(--text-medium);
+  font-size: var(--text-regular);
   font-weight: var(--font-regular);
-  line-height: 1.5;
+  line-height: var(--line-relaxed);
   color: var(--color-white);
+  max-width: 440px;
+  opacity: 0.8;
+  margin: 0;
 }
 
 /* Steps */
