@@ -146,8 +146,8 @@ ul, ol {
   
   /* Gradients */
   --gradient-blue: linear-gradient(180deg, #0070ff 0%, #004399 100%);
-  --gradient-hero: linear-gradient(209.92deg, rgba(0, 112, 255, 0.24) 1.66%, rgba(242, 242, 242, 0.24) 36.93%), linear-gradient(90deg, #f2f2f2 0%, #f2f2f2 100%);
-  --gradient-team: linear-gradient(180deg, #f2f2f2 23.56%, #0070ff 100%);
+  --gradient-hero: linear-gradient(209.92deg, rgba(0, 112, 255, 0.34) 1.66%, rgba(255, 255, 255, 0.34) 36.93%), linear-gradient(90deg, #ffffff 0%, #ffffff 100%);
+  --gradient-team: linear-gradient(180deg, var(--color-background) 23.56%, #0070ff 100%);
 }
 
 /* Global Typography Styles */

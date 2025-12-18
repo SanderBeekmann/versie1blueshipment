@@ -148,7 +148,7 @@ function GallerySection() {
   };
 
   return (
-    <section ref={sectionRef} className="w-full py-16 bg-slate-100">
+    <section ref={sectionRef} className="w-full py-16" style={{ backgroundColor: 'var(--color-background)' }}>
       <div className="mx-auto max-w-6xl px-6 mb-16 md:mb-24">
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="text-3xl md:text-5xl font-bold leading-tight tracking-tight text-[#0d0600] mb-4 md:mb-6" data-animate-title>

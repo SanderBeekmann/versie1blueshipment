@@ -6,7 +6,7 @@ import InfiniteGridOverlay from './ui/the-infinite-grid/InfiniteGridOverlay';
 function Hero() {
   return (
     <section className="hero">
-      <InfiniteGridOverlay opacity={0.6} />
+      <InfiniteGridOverlay opacity={0.5} />
       <div className="hero-content">
         <div className="hero-text">
           <GlassTagline withDot>
@@ -18,7 +18,7 @@ function Hero() {
               Jouw all-in<br />bol.com partner
             </h1>
             <p className="hero-subtitle">
-              Probeer nu: Krijg een totaalpakket t.w.v. 499 euro<br />helemaal gratis!
+              Probeer nu: Krijg een totaalpakket t.w.v. 499 euro helemaal gratis!
             </p>
           </div>
 
