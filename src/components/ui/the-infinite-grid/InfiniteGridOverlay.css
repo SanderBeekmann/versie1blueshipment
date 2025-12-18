@@ -1,0 +1,36 @@
+.infinite-grid-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+  color: rgba(13, 6, 0, 0.28);
+}
+
+.grid-stroke {
+  color: rgba(13, 6, 0, 0.26);
+}
+
+.grid-glow {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(120px);
+  opacity: 0.55;
+}
+
+.grid-glow-blue {
+  width: 42%;
+  height: 42%;
+  right: -18%;
+  top: -22%;
+  background: rgba(0, 112, 255, 0.30);
+}
+
+.grid-glow-orange {
+  width: 44%;
+  height: 44%;
+  left: -12%;
+  bottom: -22%;
+  background: rgba(255, 111, 0, 0.22);
+}
+

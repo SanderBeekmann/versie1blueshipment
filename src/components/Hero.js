@@ -1,10 +1,12 @@
 import React from 'react';
 import './Hero.css';
 import GlassTagline from './GlassTagline';
+import InfiniteGridOverlay from './ui/the-infinite-grid/InfiniteGridOverlay';
 
 function Hero() {
   return (
     <section className="hero">
+      <InfiniteGridOverlay opacity={0.6} />
       <div className="hero-content">
         <div className="hero-text">
           <GlassTagline withDot>

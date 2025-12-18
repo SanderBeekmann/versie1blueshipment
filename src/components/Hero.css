@@ -1,6 +1,8 @@
 /* Hero - Mobile First Layout */
 .hero {
   --navbar-height: 93px;
+  position: relative;
+  overflow: hidden;
   width: 100%;
   min-height: 100vh;
   background: var(--gradient-hero);
@@ -10,7 +12,21 @@
   padding: calc(var(--navbar-height) + var(--gap-small)) var(--gap-xsmall) var(--gap-small);
 }
 
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: clamp(180px, 25vh, 320px);
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0), #fff 85%);
+  pointer-events: none;
+  z-index: 2;
+}
+
 .hero-content {
+  position: relative;
+  z-index: 3;
   display: flex;
   flex-direction: column;
   align-items: center;
