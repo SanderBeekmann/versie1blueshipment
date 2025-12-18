@@ -1,6 +1,6 @@
 import React, { useState, useLayoutEffect, useRef } from 'react';
 import './TestimonialSection.css';
-import { initTestimonialsScrollExperience } from '../utils/scrollAnimations';
+import { initTestimonialsScrollExperience } from '../../../utils/scrollAnimations';
 
 const Stars = () => (
   <svg width="116" height="19" viewBox="0 0 116 19" fill="none">

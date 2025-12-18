@@ -196,18 +196,44 @@ const splitHeroTitleIntoLetters = (element) => {
 };
 
 /**
- * Premium letter-by-letter animation for hero title only
+ * Premium letter-by-letter animation for hero title and subtitle
  * Plays once on page load or when hero becomes visible
+ * Supports both .hero-title (homepage) and .about-hero-title (about page)
+ * Subtitle animates with a small delay after the title
  */
 export const initHeroTitleAnimation = () => {
   // Use requestAnimationFrame to ensure DOM is ready
   requestAnimationFrame(() => {
-    const heroTitle = document.querySelector('.hero-title');
+    // Support both homepage and about page hero titles
+    const heroTitle = document.querySelector('.hero-title') || document.querySelector('.about-hero-title');
     if (!heroTitle) return;
+
+    // Find subtitle (supports both homepage and about page)
+    const heroSubtitle = document.querySelector('.hero-subtitle') || document.querySelector('.about-hero-subtitle');
+
+    // Find buttons/CTAs (supports both homepage and about page)
+    const heroCta = document.querySelector('.hero-cta');
+    const aboutHeroCtas = document.querySelector('.about-hero-ctas');
+    const heroButtons = [];
+    
+    if (heroCta) {
+      heroButtons.push(heroCta);
+    }
+    if (aboutHeroCtas) {
+      // Get all buttons and links in the CTA container
+      const buttons = aboutHeroCtas.querySelectorAll('button, a');
+      heroButtons.push(...Array.from(buttons));
+    }
 
     // Reduced motion: show text immediately
     if (prefersReducedMotion) {
       gsap.set(heroTitle, { opacity: 1 });
+      if (heroSubtitle) {
+        gsap.set(heroSubtitle, { opacity: 1, y: 0 });
+      }
+      if (heroButtons.length > 0) {
+        gsap.set(heroButtons, { opacity: 1, y: 0 });
+      }
       return;
     }
 
@@ -217,15 +243,37 @@ export const initHeroTitleAnimation = () => {
     if (letters.length === 0) {
       // Fallback: if splitting fails, show title immediately
       gsap.set(heroTitle, { opacity: 1 });
+      if (heroSubtitle) {
+        gsap.set(heroSubtitle, { opacity: 1, y: 0 });
+      }
       return;
     }
 
-    // Set initial state for all letters
+    // Set initial state for all letters - softer values
     gsap.set(letters, {
       opacity: 0,
-      y: 20,
+      y: 15, // Reduced from 20 for softer effect
       willChange: 'transform, opacity',
     });
+
+    // Set initial state for subtitle
+    if (heroSubtitle) {
+      gsap.set(heroSubtitle, {
+        opacity: 0,
+        y: 12,
+        willChange: 'transform, opacity',
+      });
+    }
+
+    // Set initial state for buttons - powerful animation from below
+    if (heroButtons.length > 0) {
+      gsap.set(heroButtons, {
+        opacity: 0,
+        y: 50, // Stronger offset from below for more impact
+        scale: 0.95,
+        willChange: 'transform, opacity',
+      });
+    }
 
     // Check if hero is already visible in viewport
     const rect = heroTitle.getBoundingClientRect();
@@ -234,17 +282,119 @@ export const initHeroTitleAnimation = () => {
     // Always animate immediately for hero title (it's at the top of the page)
     // Small delay to ensure smooth animation
     setTimeout(() => {
+      // Calculate title animation duration (base duration + stagger for all letters)
+      const titleDuration = 0.9 + (letters.length * 0.02);
+      
+      // Animate title letters
       gsap.to(letters, {
         opacity: 1,
         y: 0,
-        duration: 0.6,
-        ease: 'power2.out',
-        stagger: 0.03,
+        duration: 0.9, // Increased from 0.6 for smoother, softer animation
+        ease: 'power1.out', // Softer easing than power2.out
+        stagger: 0.02, // Reduced from 0.03 for smoother flow
         onComplete: () => {
           gsap.set(letters, { willChange: 'auto' });
         },
       });
+
+      // Animate subtitle with delay after title starts (small delay for smooth transition)
+      if (heroSubtitle) {
+        gsap.to(heroSubtitle, {
+          opacity: 1,
+          y: 0,
+          duration: 0.7,
+          ease: 'power2.out',
+          delay: 0.3, // Small delay after title animation starts
+          onComplete: () => {
+            gsap.set(heroSubtitle, { willChange: 'auto' });
+          },
+        });
+      }
+
+      // Animate buttons with powerful animation from below - after subtitle
+      if (heroButtons.length > 0) {
+        gsap.to(heroButtons, {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.8,
+          ease: 'power3.out', // Stronger easing for more impact
+          delay: 0.6, // Delay after subtitle starts
+          stagger: 0.1, // Small stagger if multiple buttons
+          onComplete: () => {
+            gsap.set(heroButtons, { willChange: 'auto' });
+          },
+        });
+      }
     }, 200);
+  });
+};
+
+/**
+ * Initialize logo reveal animation with flow effect
+ * - Opacity fade with small y-lift
+ * - Mask/clip follows logo curvature from left to right
+ * - Duration: 0.8s, ease: power2.out
+ * - 1 second delay for hero section
+ */
+export const initLogoRevealAnimation = (delay = 1000) => {
+  requestAnimationFrame(() => {
+    const logoElements = document.querySelectorAll('[data-animate-logo]');
+    if (logoElements.length === 0) return;
+
+    // Reduced motion: show logo immediately
+    if (prefersReducedMotion) {
+      logoElements.forEach(logoEl => {
+        gsap.set(logoEl, { opacity: 1, y: 0 });
+        const img = logoEl.querySelector('img');
+        if (img) gsap.set(img, { clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)' });
+      });
+      return;
+    }
+
+    logoElements.forEach(logoEl => {
+      const img = logoEl.querySelector('img');
+      if (!img) return;
+
+      // Set initial state
+      gsap.set(logoEl, {
+        opacity: 0,
+        y: 20,
+        willChange: 'opacity, transform',
+      });
+
+      // Create a mask element for smooth flow effect
+      // Use clip-path with a smooth reveal from left to right
+      gsap.set(img, {
+        clipPath: 'polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%)',
+        willChange: 'clip-path',
+      });
+
+      // Create timeline for coordinated animation
+      const tl = gsap.timeline({ delay: delay / 1000 });
+
+      // Animate logo container (opacity and y-lift)
+      tl.to(logoEl, {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        ease: 'power2.out',
+      }, 0);
+
+      // Animate clip-path mask (reveal from left to right with smooth flow)
+      // Using polygon for smoother reveal that follows logo shape
+      tl.to(img, {
+        clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)',
+        duration: 0.8,
+        ease: 'power2.out',
+      }, 0);
+
+      // Cleanup will-change after animation
+      tl.call(() => {
+        gsap.set(logoEl, { willChange: 'auto' });
+        gsap.set(img, { willChange: 'auto' });
+      });
+    });
   });
 };
 
@@ -542,26 +692,63 @@ export const initFeaturesSectionBurst = ({ sectionEl, logoEl, featureEls }) => {
 
   let resizeTimeout;
   let handleResize;
+  let onRefreshInit;
+  let scrollTriggerInstance = null;
 
   const ctx = gsap.context(() => {
-    // Helper function to calculate offsets
+    // Use consistent local array for features
+    const features = Array.from(featureEls || []);
+
+    // Validate elements exist and are non-null
+    const validateElements = () => {
+      if (!logoEl || !features || features.length !== 4) {
+        return false;
+      }
+      if (features.some(el => !el)) {
+        return false;
+      }
+      return true;
+    };
+
+    // Helper function to calculate offsets with guards
     const calculateOffsets = () => {
-      const logoRect = logoEl.getBoundingClientRect();
-      const logoCenterX = logoRect.left + logoRect.width / 2;
-      const logoCenterY = logoRect.top + logoRect.height / 2;
+      // Guard: check logoEl exists
+      if (!logoEl) {
+        return [{ x: 0, y: 0 }, { x: 0, y: 0 }, { x: 0, y: 0 }, { x: 0, y: 0 }];
+      }
 
-      const featureRects = featureEls.map((el) => {
-        const rect = el.getBoundingClientRect();
-        return {
-          centerX: rect.left + rect.width / 2,
-          centerY: rect.top + rect.height / 2,
-        };
-      });
+      // Guard: check features exist and are non-null
+      if (!features || features.length !== 4 || features.some(el => !el)) {
+        return [{ x: 0, y: 0 }, { x: 0, y: 0 }, { x: 0, y: 0 }, { x: 0, y: 0 }];
+      }
 
-      return featureRects.map((featureRect) => ({
-        x: logoCenterX - featureRect.centerX,
-        y: logoCenterY - featureRect.centerY,
-      }));
+      try {
+        const logoRect = logoEl.getBoundingClientRect();
+        const logoCenterX = logoRect.left + logoRect.width / 2;
+        const logoCenterY = logoRect.top + logoRect.height / 2;
+
+        const featureRects = features.map((el) => {
+          if (!el) {
+            return { centerX: 0, centerY: 0 };
+          }
+          try {
+            const rect = el.getBoundingClientRect();
+            return {
+              centerX: rect.left + rect.width / 2,
+              centerY: rect.top + rect.height / 2,
+            };
+          } catch (e) {
+            return { centerX: 0, centerY: 0 };
+          }
+        });
+
+        return featureRects.map((featureRect) => ({
+          x: logoCenterX - featureRect.centerX,
+          y: logoCenterY - featureRect.centerY,
+        }));
+      } catch (e) {
+        return [{ x: 0, y: 0 }, { x: 0, y: 0 }, { x: 0, y: 0 }, { x: 0, y: 0 }];
+      }
     };
 
     // Calculate initial offsets
@@ -569,7 +756,7 @@ export const initFeaturesSectionBurst = ({ sectionEl, logoEl, featureEls }) => {
 
     // Force initial state: features behind logo, invisible
     // Use immediate values instead of function to ensure they're set
-    featureEls.forEach((el, i) => {
+    features.forEach((el, i) => {
       if (el && offsets[i]) {
         gsap.set(el, {
           opacity: 0,
@@ -582,7 +769,7 @@ export const initFeaturesSectionBurst = ({ sectionEl, logoEl, featureEls }) => {
 
     // Stagger order: top-left (0), top-right (2), bottom-left (1), bottom-right (3)
     const staggerOrder = [0, 2, 1, 3];
-    const orderedFeatures = staggerOrder.map((idx) => featureEls[idx]);
+    const orderedFeatures = staggerOrder.map((idx) => features[idx]).filter(el => el);
 
     // Create scrubbed timeline
     const tl = gsap.timeline({
@@ -593,20 +780,29 @@ export const initFeaturesSectionBurst = ({ sectionEl, logoEl, featureEls }) => {
         scrub: 1.2,
         invalidateOnRefresh: true,
         onUpdate: (self) => {
+          // Guard: check elements still exist
+          if (!validateElements()) {
+            return;
+          }
+
           // Set will-change during active animation
           if (self.progress > 0 && self.progress < 1) {
-            gsap.set(featureEls, { willChange: 'transform, opacity' });
+            gsap.set(features, { willChange: 'transform, opacity' });
           } else if (self.progress >= 1) {
             // At end, remove will-change after settle completes
             setTimeout(() => {
-              gsap.set(featureEls, { willChange: 'auto' });
+              if (validateElements()) {
+                gsap.set(features, { willChange: 'auto' });
+              }
             }, 100);
           } else {
-            gsap.set(featureEls, { willChange: 'auto' });
+            gsap.set(features, { willChange: 'auto' });
           }
         },
       },
     });
+
+    scrollTriggerInstance = tl.scrollTrigger;
 
     // Main animation: burst out to positions (takes ~80% of timeline)
     tl.to(orderedFeatures, {
@@ -635,14 +831,24 @@ export const initFeaturesSectionBurst = ({ sectionEl, logoEl, featureEls }) => {
 
     // Handle resize: recalculate offsets and invalidate timeline
     handleResize = () => {
+      // Guard: check elements exist before proceeding
+      if (!validateElements()) {
+        return;
+      }
+
       clearTimeout(resizeTimeout);
       resizeTimeout = setTimeout(() => {
+        // Guard: check again after timeout
+        if (!validateElements()) {
+          return;
+        }
+
         offsets = calculateOffsets();
         
         // Update initial positions if timeline is at start
         const scrollTrigger = tl.scrollTrigger;
         if (scrollTrigger && scrollTrigger.progress === 0) {
-          featureEls.forEach((el, i) => {
+          features.forEach((el, i) => {
             if (el && offsets[i]) {
               gsap.set(el, {
                 x: offsets[i].x,
@@ -653,16 +859,23 @@ export const initFeaturesSectionBurst = ({ sectionEl, logoEl, featureEls }) => {
         }
         
         // Invalidate ScrollTrigger to recalculate positions
-        scrollTrigger?.refresh();
+        if (scrollTrigger) {
+          scrollTrigger.refresh();
+        }
       }, 100);
     };
 
-    window.addEventListener('resize', handleResize);
-    ScrollTrigger.addEventListener('refresh', () => {
+    // Refresh callback with guards
+    onRefreshInit = () => {
+      // Guard: check elements exist before proceeding
+      if (!validateElements()) {
+        return;
+      }
+
       offsets = calculateOffsets();
       const scrollTrigger = tl.scrollTrigger;
       if (scrollTrigger && scrollTrigger.progress === 0) {
-        featureEls.forEach((el, i) => {
+        features.forEach((el, i) => {
           if (el && offsets[i]) {
             gsap.set(el, {
               x: offsets[i].x,
@@ -671,15 +884,30 @@ export const initFeaturesSectionBurst = ({ sectionEl, logoEl, featureEls }) => {
           }
         });
       }
-    });
+    };
+
+    window.addEventListener('resize', handleResize);
+    ScrollTrigger.addEventListener('refresh', onRefreshInit);
   }, sectionEl);
 
   return () => {
     clearTimeout(resizeTimeout);
+    
+    // Remove resize listener
     if (handleResize) {
       window.removeEventListener('resize', handleResize);
-      ScrollTrigger.removeEventListener('refresh', handleResize);
     }
+    
+    // Remove ScrollTrigger refresh listener
+    if (onRefreshInit) {
+      ScrollTrigger.removeEventListener('refresh', onRefreshInit);
+    }
+    
+    // Kill the scrollTrigger if it exists
+    if (scrollTriggerInstance) {
+      scrollTriggerInstance.kill();
+    }
+    
     ctx.revert();
   };
 };
@@ -987,6 +1215,110 @@ export const initTestimonialsScrollExperience = (rootEl) => {
   return () => {
     ctx.revert();
   };
+};
+
+/**
+ * Initialize count-up animation for statistics in "Wat hebben we bereikt?" section
+ * Numbers count from 0 to their final values when section comes into view
+ */
+export const initStatsCountUp = () => {
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  
+  // Find the stats section
+  const statsSection = document.querySelector('.about-results');
+  if (!statsSection) return;
+  
+  // Find all stat value elements
+  const statValues = statsSection.querySelectorAll('.stat-value');
+  if (statValues.length === 0) return;
+  
+  // Reduced motion: show final values immediately
+  if (prefersReducedMotion) {
+    statValues.forEach((el) => {
+      const text = el.textContent.trim();
+      // Keep original text (already has final values)
+      el.textContent = text;
+    });
+    return;
+  }
+  
+  // Parse each stat and prepare animation data
+  const animations = [];
+  
+  statValues.forEach((el) => {
+    const originalText = el.textContent.trim();
+    
+    // Parse the value and suffix
+    let targetValue = 0;
+    let suffix = '';
+    
+    if (originalText.includes('K+')) {
+      // "50K+" -> targetValue: 50, suffix: "K+"
+      const match = originalText.match(/(\d+)/);
+      if (match) {
+        targetValue = parseInt(match[1], 10);
+        suffix = 'K+';
+      }
+    } else if (originalText.includes('m')) {
+      // "18m" -> targetValue: 18, suffix: "m"
+      const match = originalText.match(/(\d+)/);
+      if (match) {
+        targetValue = parseInt(match[1], 10);
+        suffix = 'm';
+      }
+    } else if (originalText.includes('%')) {
+      // "98%" -> targetValue: 98, suffix: "%"
+      const match = originalText.match(/(\d+)/);
+      if (match) {
+        targetValue = parseInt(match[1], 10);
+        suffix = '%';
+      }
+    }
+    
+    // If parsing failed, skip this element
+    if (targetValue === 0 && suffix === '') {
+      return;
+    }
+    
+    // Create animation object
+    const obj = { value: 0 };
+    
+    animations.push({
+      element: el,
+      obj: obj,
+      targetValue: targetValue,
+      suffix: suffix,
+    });
+  });
+  
+  if (animations.length === 0) return;
+  
+  // Create timeline with single ScrollTrigger
+  const tl = gsap.timeline({
+    scrollTrigger: {
+      trigger: statsSection,
+      start: 'top 70%',
+      once: true,
+    },
+  });
+  
+  // Add animations with stagger
+  animations.forEach((anim, index) => {
+    tl.to(anim.obj, {
+      value: anim.targetValue,
+      duration: 1.2,
+      ease: 'power2.out',
+      onUpdate: () => {
+        // Round to integer (no decimals)
+        const currentValue = Math.floor(anim.obj.value);
+        anim.element.textContent = `${currentValue}${anim.suffix}`;
+      },
+      onComplete: () => {
+        // Ensure final value is set correctly
+        anim.element.textContent = `${anim.targetValue}${anim.suffix}`;
+      },
+    }, index * 0.15); // Stagger: 0.15s between each stat
+  });
 };
 
 export const cleanupScrollAnimations = () => {

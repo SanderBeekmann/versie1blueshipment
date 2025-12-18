@@ -1,8 +1,8 @@
 import React, { useLayoutEffect, useRef } from 'react';
 import './FeaturesSection.css';
-import GlassTagline from './GlassTagline';
-import logoImage from '../assets/brand/logo.svg';
-import { initFeaturesSectionBurst } from '../utils/scrollAnimations';
+import GlassTagline from '../GlassTagline/GlassTagline';
+import logo from '../../../assets/brand/logo.png';
+import { initFeaturesSectionBurst } from '../../../utils/scrollAnimations';
 
 const ListsIcon = () => (
   <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
@@ -111,7 +111,7 @@ function FeaturesSection() {
           <div className="features-logo-wrap">
             <div className="features-logo">
               <div ref={logoRef} className="logo-placeholder">
-                <img src={logoImage} alt="BlueShipment" />
+                <img src={logo} alt="BlueShipment" />
               </div>
             </div>
           </div>

@@ -1,75 +1,17 @@
-import React, { useEffect } from 'react';
-import './styles/App.css';
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import VideoSection from './components/VideoSection';
-import LogoSection from './components/LogoSection';
-import ProcessSection from './components/ProcessSection';
-import GallerySection from './components/GallerySection/GallerySection';
-import TeamSection from './components/TeamSection';
-import FeaturesSection from './components/FeaturesSection';
-import WhatsAppSection from './components/WhatsAppSection';
-import TestimonialSection from './components/TestimonialSection';
-import CTASection from './components/CTASection';
-import FAQSection from './components/FAQSection';
-import Footer from './components/Footer';
-import { initScrollAnimations, initTitleAnimations, initHeroTitleAnimation, initTeamCardsDotAccentAnimation, cleanupScrollAnimations } from './utils/scrollAnimations';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import HomePage from './pages/Home/HomePage';
+import AboutPage from './pages/About/AboutPage';
 
 function App() {
-  useEffect(() => {
-    initScrollAnimations();
-    initTitleAnimations();
-    initHeroTitleAnimation();
-
-    // Initialize team cards animation
-    const teamGrid = document.querySelector('.team-grid');
-    if (teamGrid) {
-      initTeamCardsDotAccentAnimation(teamGrid);
-    }
-
-    return () => {
-      cleanupScrollAnimations();
-    };
-  }, []);
-
   return (
-    <div className="app">
-      <Navbar />
-      <Hero />
-      <div data-animate="fadeUp">
-        <VideoSection />
-      </div>
-      <div data-animate="fadeRight">
-        <ProcessSection />
-      </div>
-      <div data-animate="scaleIn">
-        <GallerySection />
-      </div>
-      <div data-animate="fadeUp">
-        <TeamSection />
-      </div>
-      <div data-animate="fadeLeft">
-        <FeaturesSection />
-      </div>
-      <div data-animate="fadeUpScale">
-        <WhatsAppSection />
-      </div>
-      <div data-animate="fadeRight">
-        <TestimonialSection />
-      </div>
-      <div data-animate="scaleIn">
-        <CTASection />
-      </div>
-      <div data-animate="fadeLeft">
-        <LogoSection />
-      </div>
-      <div data-animate="fadeUp">
-        <FAQSection />
-      </div>
-      <div data-animate="fadeUpScale">
-        <Footer />
-      </div>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/over-ons" element={<AboutPage />} />
+        <Route path="/about" element={<AboutPage />} />
+      </Routes>
+    </Router>
   );
 }
 

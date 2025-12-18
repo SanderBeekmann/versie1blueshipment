@@ -1,9 +1,10 @@
 import React, { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { gsap } from "gsap";
-import analytics1 from '../../assets/analytics/analytics.png';
-import analytics2 from '../../assets/analytics/analytics2.png';
-import analytics3 from '../../assets/analytics/analytics3.png';
-import analytics4 from '../../assets/analytics/analytics4.png';
+import './GallerySection.css';
+import analytics1 from '../../../assets/analytics/analytics.png';
+import analytics2 from '../../../assets/analytics/analytics2.png';
+import analytics3 from '../../../assets/analytics/analytics3.png';
+import analytics4 from '../../../assets/analytics/analytics4.png';
 
 function GallerySection() {
   const sectionRef = useRef(null);

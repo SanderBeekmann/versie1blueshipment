@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import './Navbar.css';
-import logoImage from '../assets/brand/logo.svg';
+import logo from '../../../assets/brand/logo.png';
 
 const ChevronDown = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -11,6 +12,7 @@ const ChevronDown = () => (
 function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -29,20 +31,35 @@ function Navbar() {
     };
   }, []);
 
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [location]);
+
   return (
     <nav className={`navbar ${isScrolled ? 'navbar--scrolled' : ''}`}>
       <div className="navbar-wrapper">
-        <div className="navbar-logo">
-          <img src={logoImage} alt="BlueShipment" className="h-8 w-auto" loading="eager" />
+        <Link to="/" className="navbar-logo">
+          <img src={logo} alt="BlueShipment" className="h-8 w-auto" loading="eager" />
           <span className="logo-text">
             <span className="logo-blue">Blue</span>Shipment
           </span>
-        </div>
+        </Link>
 
         <div className="navbar-content">
           <div className={`navbar-links ${isMenuOpen ? 'active' : ''}`}>
-            <a href="#" className="nav-link">Home</a>
-            <a href="#over-ons" className="nav-link">Over ons</a>
+            <Link 
+              to="/" 
+              className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}
+            >
+              Home
+            </Link>
+            <Link 
+              to="/over-ons" 
+              className={`nav-link ${location.pathname === '/over-ons' || location.pathname === '/about' ? 'active' : ''}`}
+            >
+              Over ons
+            </Link>
             <a href="#diensten" className="nav-link">Diensten</a>
             <a href="#listings" className="nav-link">listings</a>
             <div className="nav-dropdown">

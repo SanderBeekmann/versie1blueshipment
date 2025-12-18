@@ -46,6 +46,8 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  text-decoration: none;
+  color: inherit;
 }
 
 .navbar-logo img {
@@ -97,6 +99,23 @@
 
 .nav-link:active {
   transform: scale(0.98);
+}
+
+.nav-link.active {
+  color: var(--color-blue-ribbon);
+  font-weight: var(--font-semibold);
+  position: relative;
+}
+
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--color-blue-ribbon);
+  border-radius: 1px;
 }
 
 .nav-dropdown {
@@ -199,6 +218,14 @@
 
   .navbar-links .nav-link:hover {
     background-color: rgba(0, 112, 255, 0.05);
+  }
+
+  .navbar-links .nav-link.active {
+    background-color: rgba(0, 112, 255, 0.1);
+  }
+
+  .navbar-links .nav-link.active::after {
+    display: none;
   }
 
   .navbar-links.active {

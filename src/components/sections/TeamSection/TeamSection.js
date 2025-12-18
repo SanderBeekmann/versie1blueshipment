@@ -1,10 +1,10 @@
 import React, { useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import './TeamSection.css';
-import timoImg from '../assets/timo.jpg';
-import reitzeImg from '../assets/reitze.jpg';
-import colinImg from '../assets/colin.jpg';
-import GlassTagline from './GlassTagline';
+import timoImg from '../../../assets/timo.jpg';
+import reitzeImg from '../../../assets/reitze.jpg';
+import colinImg from '../../../assets/colin.jpg';
+import GlassTagline from '../GlassTagline/GlassTagline';
 
 const BlueDot = () => (
   <svg width="22" height="22" viewBox="0 0 22 22" fill="none">

@@ -1,7 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 import './ProcessSection.css';
-import GlassTagline from './GlassTagline';
-import { initTimelineAnimations, cleanupTimelineAnimations } from '../utils/scrollAnimations';
+import GlassTagline from '../GlassTagline/GlassTagline';
+import { initTimelineAnimations, cleanupTimelineAnimations } from '../../../utils/scrollAnimations';
 
 const ChevronRight = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -14,7 +14,7 @@ function ProcessSection() {
   const processContainerRef = useRef(null);
   const step6Ref = useRef(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (processStepsRef.current && processContainerRef.current) {
       initTimelineAnimations(processStepsRef.current, processContainerRef.current, {
         step6El: step6Ref.current

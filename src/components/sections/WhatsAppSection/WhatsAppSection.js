@@ -1,6 +1,6 @@
 import React from 'react';
 import './WhatsAppSection.css';
-import GlassTagline from './GlassTagline';
+import GlassTagline from '../GlassTagline/GlassTagline';
 
 const BlueDot = () => (
   <svg width="22" height="22" viewBox="0 0 22 22" fill="none">

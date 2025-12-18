@@ -1,9 +1,9 @@
 import React from 'react';
 import './LogoSection.css';
-import bpostLogo from '../assets/bpost_logo.svg.png';
-import dhlLogo from '../assets/dhl-logo.png';
-import dpdLogo from '../assets/dpd.png';
-import ampereLogo from '../assets/7869025b517d2a1d53961a98afda940bc118263f-1600x900-removebg-preview.png';
+import bpostLogo from '../../../assets/bpost_logo.svg.png';
+import dhlLogo from '../../../assets/dhl-logo.png';
+import dpdLogo from '../../../assets/dpd.png';
+import ampereLogo from '../../../assets/7869025b517d2a1d53961a98afda940bc118263f-1600x900-removebg-preview.png';
 
 function LogoSection() {
   const logos = [
