@@ -35,20 +35,6 @@ function GallerySection() {
     return () => mq.removeEventListener("change", set);
   }, []);
 
-  // Initialize all gallery cards with default state
-  useLayoutEffect(() => {
-    const cards = sectionRef.current?.querySelectorAll('.gallery-card');
-    if (cards) {
-      cards.forEach((card) => {
-        gsap.set(card, { 
-          scale: 1, 
-          boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
-          zIndex: 0
-        });
-      });
-    }
-  }, [loopItems.length]);
-
   useLayoutEffect(() => {
     if (reducedMotion) return;
 
@@ -141,7 +127,7 @@ function GallerySection() {
       ht = gsap.timeline({ paused: true });
       ht.to(el, { scale: 1.07, duration: 0.2, ease: "power2.out" }, 0).to(
         el,
-        { boxShadow: "0 12px 30px rgba(0,0,0,0.12)", duration: 0.2, ease: "power2.out" },
+        { boxShadow: "0 24px 60px rgba(0,0,0,0.16)", duration: 0.2, ease: "power2.out" },
         0
       );
       hoverTlRef.current.set(el, ht);
@@ -156,22 +142,13 @@ function GallerySection() {
     gsap.set(el, { zIndex: 0 });
 
     const ht = hoverTlRef.current.get(el);
-    if (ht) {
-      ht.reverse();
-      // Explicitly reset to initial state after reverse completes
-      ht.eventCallback("onReverseComplete", () => {
-        gsap.set(el, { scale: 1, boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)" });
-      });
-    } else {
-      // If no timeline exists, reset directly
-      gsap.set(el, { scale: 1, boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)" });
-    }
+    if (ht) ht.reverse();
 
     if (tlRef.current) tlRef.current.play();
   };
 
   return (
-    <section ref={sectionRef} className="w-full py-16" style={{ backgroundColor: 'var(--color-background)' }}>
+    <section ref={sectionRef} className="w-full py-16 bg-slate-100">
       <div className="mx-auto max-w-6xl px-6 mb-16 md:mb-24">
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="text-3xl md:text-5xl font-bold leading-tight tracking-tight text-[#0d0600] mb-4 md:mb-6" data-animate-title>

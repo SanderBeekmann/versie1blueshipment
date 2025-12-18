@@ -70,9 +70,12 @@
   font-weight: var(--font-regular);
   line-height: var(--line-relaxed);
   color: var(--color-neutral-darkest);
-  max-width: 440px;
   opacity: 0.8;
   margin: 0;
+  width: fit-content;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .hero-cta {
