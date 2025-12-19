@@ -60,7 +60,12 @@ function Navbar() {
             >
               Over ons
             </Link>
-            <a href="#diensten" className="nav-link">Diensten</a>
+            <Link 
+              to="/diensten" 
+              className={`nav-link ${location.pathname === '/diensten' ? 'active' : ''}`}
+            >
+              Diensten
+            </Link>
             <a href="#listings" className="nav-link">listings</a>
             <div className="nav-dropdown">
               <button className="nav-link dropdown-trigger">

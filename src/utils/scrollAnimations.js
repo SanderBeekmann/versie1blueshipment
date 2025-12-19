@@ -110,21 +110,86 @@ export const initTitleAnimations = () => {
   // Exclude hero title - it has its own letter-by-letter animation
   const titles = document.querySelectorAll('[data-animate-title]:not(.hero-title)');
 
-  titles.forEach((title) => {
+  // Separate diensten detail titles from other titles for stagger
+  const dienstenDetailTitles = Array.from(titles).filter(title => 
+    title.closest('.diensten-detail-block')
+  );
+  const otherTitles = Array.from(titles).filter(title => 
+    !title.closest('.diensten-detail-block')
+  );
+
+  // Animate diensten detail titles with stagger between sections
+  dienstenDetailTitles.forEach((title, index) => {
+    const tagName = title.tagName.toLowerCase();
+    const config = titleAnimationConfig[tagName] || titleAnimationConfig.h3;
+
+    // Find related elements for this specific title
+    const contentContainer = title.parentElement;
+    if (!contentContainer) return;
+
+    const detailBlock = contentContainer.closest('.diensten-detail-block');
+    const media = detailBlock?.querySelector('.diensten-detail-media');
+    const isReverse = detailBlock?.classList.contains('diensten-detail-block--reverse');
+
+    // Ensure all text elements are visible (no animation for text)
+    gsap.set(title, { opacity: 1, y: 0 });
+    const label = contentContainer.querySelector('.diensten-detail-label');
+    if (label) gsap.set(label, { opacity: 1, y: 0 });
+    const description = contentContainer.querySelector('.diensten-detail-description');
+    if (description) gsap.set(description, { opacity: 1, y: 0 });
+    const bullets = contentContainer.querySelector('.diensten-detail-bullets');
+    if (bullets) {
+      const bulletItems = bullets.querySelectorAll('.diensten-detail-bullet');
+      gsap.set(bulletItems, { opacity: 1, y: 0 });
+    }
+    const buttons = contentContainer.querySelector('.diensten-detail-ctas');
+    if (buttons) {
+      const buttonItems = buttons.querySelectorAll('.btn');
+      gsap.set(buttonItems, { opacity: 1, y: 0 });
+    }
+
+    if (prefersReducedMotion) {
+      if (media) gsap.set(media, { opacity: 1, x: 0 });
+      return;
+    }
+
+    // Set initial state only for media
+    if (media) {
+      // Animate from left for normal blocks, from right for reverse blocks
+      const xOffset = isReverse ? 60 : -60;
+      gsap.set(media, {
+        opacity: 0,
+        x: xOffset,
+      });
+
+      // Create timeline for media animation only
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: title,
+          start: 'top 85%',
+          end: 'top 50%',
+          toggleActions: 'play none none reverse',
+          markers: false,
+        },
+      });
+
+      // Animate only media from side
+      tl.to(media, {
+        opacity: 1,
+        x: 0,
+        duration: 0.8,
+        ease: 'power2.out',
+      }, 0);
+    }
+  });
+
+  // Animate other titles (non-diensten detail) without stagger
+  otherTitles.forEach((title) => {
     const tagName = title.tagName.toLowerCase();
     const config = titleAnimationConfig[tagName] || titleAnimationConfig.h3;
 
     if (prefersReducedMotion) {
-      gsap.set(title, { opacity: 0, y: 0 });
-      gsap.to(title, {
-        opacity: 1,
-        duration: 0.3,
-        scrollTrigger: {
-          trigger: title,
-          start: 'top 90%',
-          toggleActions: 'play none none none',
-        },
-      });
+      gsap.set(title, { opacity: 1, y: 0 });
       return;
     }
 
@@ -198,22 +263,30 @@ const splitHeroTitleIntoLetters = (element) => {
 /**
  * Premium letter-by-letter animation for hero title and subtitle
  * Plays once on page load or when hero becomes visible
- * Supports both .hero-title (homepage) and .about-hero-title (about page)
+ * Supports .hero-title (homepage), .about-hero-title (about page), and .diensten-hero-title (diensten page)
  * Subtitle animates with a small delay after the title
  */
 export const initHeroTitleAnimation = () => {
   // Use requestAnimationFrame to ensure DOM is ready
   requestAnimationFrame(() => {
-    // Support both homepage and about page hero titles
-    const heroTitle = document.querySelector('.hero-title') || document.querySelector('.about-hero-title');
+    // Support homepage, about page, and diensten page hero titles
+    const heroTitle = document.querySelector('.hero-title') || 
+                      document.querySelector('.about-hero-title') || 
+                      document.querySelector('.diensten-hero-title');
     if (!heroTitle) return;
 
-    // Find subtitle (supports both homepage and about page)
-    const heroSubtitle = document.querySelector('.hero-subtitle') || document.querySelector('.about-hero-subtitle');
+    // Find subtitle (supports all hero pages)
+    const heroSubtitle = document.querySelector('.hero-subtitle') || 
+                         document.querySelector('.about-hero-subtitle') || 
+                         document.querySelector('.diensten-hero-subtitle');
 
-    // Find buttons/CTAs (supports both homepage and about page)
+    // Find intro text (diensten page specific)
+    const heroIntro = document.querySelector('.diensten-hero-intro');
+
+    // Find buttons/CTAs (supports all hero pages)
     const heroCta = document.querySelector('.hero-cta');
     const aboutHeroCtas = document.querySelector('.about-hero-ctas');
+    const dienstenHeroCtas = document.querySelector('.diensten-hero-ctas');
     const heroButtons = [];
     
     if (heroCta) {
@@ -224,12 +297,20 @@ export const initHeroTitleAnimation = () => {
       const buttons = aboutHeroCtas.querySelectorAll('button, a');
       heroButtons.push(...Array.from(buttons));
     }
+    if (dienstenHeroCtas) {
+      // Get all buttons and links in the CTA container
+      const buttons = dienstenHeroCtas.querySelectorAll('button, a');
+      heroButtons.push(...Array.from(buttons));
+    }
 
     // Reduced motion: show text immediately
     if (prefersReducedMotion) {
       gsap.set(heroTitle, { opacity: 1 });
       if (heroSubtitle) {
         gsap.set(heroSubtitle, { opacity: 1, y: 0 });
+      }
+      if (heroIntro) {
+        gsap.set(heroIntro, { opacity: 1, y: 0 });
       }
       if (heroButtons.length > 0) {
         gsap.set(heroButtons, { opacity: 1, y: 0 });
@@ -246,6 +327,9 @@ export const initHeroTitleAnimation = () => {
       if (heroSubtitle) {
         gsap.set(heroSubtitle, { opacity: 1, y: 0 });
       }
+      if (heroIntro) {
+        gsap.set(heroIntro, { opacity: 1, y: 0 });
+      }
       return;
     }
 
@@ -259,6 +343,15 @@ export const initHeroTitleAnimation = () => {
     // Set initial state for subtitle
     if (heroSubtitle) {
       gsap.set(heroSubtitle, {
+        opacity: 0,
+        y: 12,
+        willChange: 'transform, opacity',
+      });
+    }
+
+    // Set initial state for intro text (diensten page)
+    if (heroIntro) {
+      gsap.set(heroIntro, {
         opacity: 0,
         y: 12,
         willChange: 'transform, opacity',
@@ -307,6 +400,20 @@ export const initHeroTitleAnimation = () => {
           delay: 0.3, // Small delay after title animation starts
           onComplete: () => {
             gsap.set(heroSubtitle, { willChange: 'auto' });
+          },
+        });
+      }
+
+      // Animate intro text (diensten page) with delay after subtitle
+      if (heroIntro) {
+        gsap.to(heroIntro, {
+          opacity: 1,
+          y: 0,
+          duration: 0.7,
+          ease: 'power2.out',
+          delay: 0.5, // Delay after subtitle animation starts
+          onComplete: () => {
+            gsap.set(heroIntro, { willChange: 'auto' });
           },
         });
       }
@@ -1108,7 +1215,8 @@ export const initTestimonialsScrollExperience = (rootEl) => {
     const stars = newCard.querySelector('svg');
     if (stars) {
       const starPaths = stars.querySelectorAll('path');
-      gsap.fromTo(
+      const tl = gsap.timeline();
+      tl.fromTo(
         starPaths,
         { scale: 1 },
         {

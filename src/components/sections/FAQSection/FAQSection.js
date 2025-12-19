@@ -13,10 +13,10 @@ const PlusIcon = () => (
   </svg>
 );
 
-function FAQSection() {
+function FAQSection({ faqs: customFaqs }) {
   const [openIndex, setOpenIndex] = useState(0);
 
-  const faqs = [
+  const defaultFaqs = [
     {
       question: 'Hoe snel verzenden jullie?',
       answer: 'Orders die binnenkomen worden dezelfde dag ingepakt en verzonden. Geen wachten, geen gedoe. Je klanten krijgen hun pakket snel en jij krijgt goede reviews.'
@@ -42,6 +42,8 @@ function FAQSection() {
       answer: 'Via WhatsApp. We reageren binnen dertig minuten op je bericht. Geen wachtrijen, geen e-mails die verdwijnen. Je spreekt ons rechtstreeks en krijgt antwoord als je ons nodig hebt.'
     }
   ];
+
+  const faqs = customFaqs || defaultFaqs;
 
   const toggleFAQ = (index) => {
     setOpenIndex(openIndex === index ? -1 : index);

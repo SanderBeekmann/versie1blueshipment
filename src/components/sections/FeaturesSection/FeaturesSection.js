@@ -36,6 +36,7 @@ function FeaturesSection() {
   const sectionRef = useRef(null);
   const logoRef = useRef(null);
   const featuresRef = useRef([]);
+  const cleanupRef = useRef(null);
 
   const features = [
     {
@@ -65,15 +66,43 @@ function FeaturesSection() {
   ];
 
   useLayoutEffect(() => {
-    if (!sectionRef.current || !logoRef.current || featuresRef.current.length !== 4) return;
+    // Helper to check and initialize animation
+    const initAnimation = () => {
+      // Prevent double initialization
+      if (cleanupRef.current) return;
 
-    const cleanup = initFeaturesSectionBurst({
-      sectionEl: sectionRef.current,
-      logoEl: logoRef.current,
-      featureEls: featuresRef.current
+      if (!sectionRef.current || !logoRef.current) return;
+      
+      const feature1 = featuresRef.current[0];
+      const feature2 = featuresRef.current[1];
+      const feature3 = featuresRef.current[2];
+      const feature4 = featuresRef.current[3];
+      
+      if (!feature1 || !feature2 || !feature3 || !feature4) return;
+
+      // All refs ready, initialize animation
+      cleanupRef.current = initFeaturesSectionBurst({
+        sectionEl: sectionRef.current,
+        logoEl: logoRef.current,
+        featureEls: [feature1, feature2, feature3, feature4]
+      });
+    };
+
+    // Try immediately
+    initAnimation();
+
+    // If not ready, try again after DOM updates
+    const rafId = requestAnimationFrame(() => {
+      initAnimation();
     });
 
-    return cleanup;
+    return () => {
+      cancelAnimationFrame(rafId);
+      if (cleanupRef.current) {
+        cleanupRef.current();
+        cleanupRef.current = null;
+      }
+    };
   }, []);
 
   return (
@@ -96,7 +125,11 @@ function FeaturesSection() {
             {features.slice(0, 2).map((feature, index) => (
               <div 
                 key={feature.id} 
-                ref={(el) => { featuresRef.current[index] = el; }}
+                ref={(el) => { 
+                  if (el) {
+                    featuresRef.current[index] = el;
+                  }
+                }}
                 className="feature-item"
               >
                 <div className="feature-icon">{feature.icon}</div>
@@ -120,7 +153,11 @@ function FeaturesSection() {
             {features.slice(2, 4).map((feature, index) => (
               <div 
                 key={feature.id} 
-                ref={(el) => { featuresRef.current[index + 2] = el; }}
+                ref={(el) => { 
+                  if (el) {
+                    featuresRef.current[index + 2] = el;
+                  }
+                }}
                 className="feature-item"
               >
                 <div className="feature-icon">{feature.icon}</div>

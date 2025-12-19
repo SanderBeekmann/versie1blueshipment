@@ -135,11 +135,9 @@
   font-weight: var(--font-regular);
   line-height: var(--line-relaxed);
   color: var(--color-neutral-darkest);
-  width: fit-content;
-  max-width: 100%;
+  max-width: 440px;
   opacity: 0.8;
-  margin: 0 auto;
-  text-align: center;
+  margin: 0;
 }
 
 .hero-cta {
