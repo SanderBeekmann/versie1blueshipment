@@ -3,6 +3,7 @@ import './DienstenPage.css';
 import Navbar from '../../components/layout/Navbar/Navbar';
 import GlassTagline from '../../components/sections/GlassTagline/GlassTagline';
 import FAQSection from '../../components/sections/FAQSection/FAQSection';
+import DienstenSteps from '../../components/sections/Diensten/DienstenSteps';
 import Footer from '../../components/layout/Footer/Footer';
 import InfiniteGridOverlay from '../../components/ui/the-infinite-grid/InfiniteGridOverlay';
 import { initScrollAnimations, initTitleAnimations, initHeroTitleAnimation, initLogoRevealAnimation, cleanupScrollAnimations } from '../../utils/scrollAnimations';
@@ -123,7 +124,6 @@ function DienstenPage() {
             x: initialX,
             y: -18,
             rotate: initialRotate,
-            scale: 0.98,
             willChange: 'transform, opacity'
           });
         });
@@ -136,7 +136,6 @@ function DienstenPage() {
               x: 0,
               y: 0,
               rotate: 0,
-              scale: 1,
               willChange: 'auto'
             });
           });
@@ -144,7 +143,7 @@ function DienstenPage() {
         }
 
         // Create timeline with ScrollTrigger scrub
-        // Note: bento is the trigger wrapper (diensten-bento-trigger), not the scaled element
+        // Note: bento is the trigger wrapper (diensten-bento-trigger)
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: bento,
@@ -167,13 +166,12 @@ function DienstenPage() {
             x: 0,
             y: 0,
             rotate: 0,
-            scale: 1,
             duration: 1,
             ease: 'power3.out'
           }, position);
         });
 
-        // Refresh ScrollTrigger after scale transform to ensure correct start/end positions
+        // Refresh ScrollTrigger to ensure correct start/end positions
         // Using setTimeout for better reliability with images/async content
         setTimeout(() => {
           ScrollTrigger.refresh();
@@ -267,6 +265,7 @@ function DienstenPage() {
       ]
     },
     {
+      id: 'va-team',
       label: 'VA Team',
       title: 'Virtual assistants verwerken alles voor je',
       titleHighlight: 'Virtual assistants',
@@ -353,7 +352,7 @@ function DienstenPage() {
       cta: 'Meer',
       href: '/diensten/va-team',
       area: 'e',
-      sectionId: 'whatsapp'
+      sectionId: 'va-team'
     },
     {
       kicker: 'Voorraad',
@@ -363,38 +362,6 @@ function DienstenPage() {
       href: '/diensten/voorraad',
       area: 'f',
       sectionId: 'voorraad'
-    }
-  ];
-
-  // How it works together items
-  const howItWorks = [
-    'Geen verborgen kosten, alleen verzendtarieven',
-    'Voorraad opslaan zonder extra uitgaven',
-    'Retouren afhandelen voor €1,50 per stuk',
-    'Antwoord binnen 30 minuten via WhatsApp'
-  ];
-
-  // Steps data
-  const steps = [
-    {
-      number: '1',
-      title: 'Aanmelden en account instellen',
-      description: 'Je gegevens in, we richten alles in. Klaar in minder dan een uur.'
-    },
-    {
-      number: '2',
-      title: 'Voorraad aanleveren bij ons',
-      description: 'Je producten komen aan, we scannen en registreren alles. Geen gedoe, geen wachten.'
-    },
-    {
-      number: '3',
-      title: 'Koppel je bol-account',
-      description: 'Je listings synchroniseren automatisch. Voorraad, prijzen, alles loopt gelijk.'
-    },
-    {
-      number: '4',
-      title: 'Orders lopen automatisch',
-      description: 'Klanten bestellen, wij verzenden. Jij hoeft niets te doen. Retourverwerking ook automatisch.'
     }
   ];
 
@@ -468,8 +435,7 @@ function DienstenPage() {
               Alle fulfilment diensten die nodig zijn voor jouw succes
             </p>
             <div className="diensten-bento-trigger" ref={bentoRef}>
-              <div className="diensten-bento-scale">
-                <div className="diensten-bento">
+              <div className="diensten-bento">
                   {services.map((service, index) => {
                     const isFeatured = index < 2;
                     const cardClass = isFeatured 
@@ -508,11 +474,18 @@ function DienstenPage() {
                       </article>
                     );
                   })}
+                  <div className="diensten-services-cta" data-area="cta">
+            <button className="btn btn-primary">Starten</button>
+          </div>
                 </div>
-              </div>
             </div>
           </div>
         </section>
+      </div>
+
+      {/* New Steps Section - Grid layout with icons */}
+      <div data-animate="fadeUp">
+        <DienstenSteps />
       </div>
 
       {/* Section A.5: Service Details - Alternating layout blocks */}
@@ -580,114 +553,6 @@ function DienstenPage() {
                 </div>
               );
             })}
-          </div>
-        </section>
-      </div>
-
-      {/* Section B: How it works together - Original visual with horizontal flow */}
-      <div data-animate="fadeUp">
-        <section className="diensten-how-it-works">
-          <div className="diensten-how-it-works-container">
-            <h2 className="diensten-how-it-works-title" data-animate-title>
-              Hoe het samenwerkt
-            </h2>
-            <p className="diensten-how-it-works-subtitle">
-              De zes diensten vormen samen één naadloos proces
-            </p>
-            
-            <div className="diensten-how-it-works-flow">
-              {howItWorks.map((item, index) => (
-                <div key={index} className="diensten-how-it-works-item">
-                  <div className="diensten-how-it-works-icon">
-                    <CheckIcon />
-                  </div>
-                  <p className="diensten-how-it-works-text">{item}</p>
-                  {index < howItWorks.length - 1 && (
-                    <div className="diensten-how-it-works-connector">
-                      <ArrowRightIcon />
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      </div>
-
-      {/* Section C: Featured Service - Split layout with media placeholder and bullets */}
-      <div data-animate="fadeUp">
-        <section className="diensten-featured">
-          <div className="diensten-featured-container">
-            <div className="diensten-featured-content">
-              <div className="diensten-featured-text">
-                <h2 className="diensten-featured-title" data-animate-title>
-                  Productlistings geautomatiseerd, zonder kosten
-                </h2>
-                <p className="diensten-featured-description">
-                  Gebruik onze software om je producten direct op bol te zetten. Geen instellingskosten, geen maandelijkse vergoeding.
-                </p>
-                
-                <ul className="diensten-featured-bullets">
-                  <li className="diensten-featured-bullet">
-                    <CheckIcon />
-                    <span>Automatische synchronisatie met je bronnen</span>
-                  </li>
-                  <li className="diensten-featured-bullet">
-                    <CheckIcon />
-                    <span>Prijzen en voorraad altijd up-to-date</span>
-                  </li>
-                  <li className="diensten-featured-bullet">
-                    <CheckIcon />
-                    <span>Bulk uploaden in minuten, niet uren</span>
-                  </li>
-                </ul>
-
-                <div className="diensten-featured-ctas">
-                  <button className="btn btn-whatsapp">
-                    Contact via WhatsApp
-                  </button>
-                  <button className="btn btn-secondary">
-                    Lees meer
-                  </button>
-                </div>
-              </div>
-              
-              <div className="diensten-featured-media">
-                <div className="diensten-featured-image-placeholder"></div>
-              </div>
-            </div>
-          </div>
-        </section>
-      </div>
-
-      {/* Section D: Step by step - Newly designed timeline with cards */}
-      <div data-animate="fadeUp">
-        <section className="diensten-steps">
-          <div className="diensten-steps-container">
-            <h2 className="diensten-steps-title" data-animate-title>
-              Stap voor stap
-            </h2>
-            <p className="diensten-steps-subtitle">
-              Van aanmelden tot automatische orderverwerking
-            </p>
-            
-            <div className="diensten-steps-timeline">
-              {steps.map((step, index) => (
-                <div key={index} className="diensten-step-card">
-                  <div className="diensten-step-number">{step.number}</div>
-                  <div className="diensten-step-content">
-                    <h3 className="diensten-step-title">{step.title}</h3>
-                    <p className="diensten-step-description">{step.description}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="diensten-steps-cta">
-              <button className="btn btn-primary">
-                Starten
-              </button>
-            </div>
           </div>
         </section>
       </div>

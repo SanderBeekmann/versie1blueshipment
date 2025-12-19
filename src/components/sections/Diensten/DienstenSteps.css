@@ -1,0 +1,206 @@
+/* Diensten Steps Section */
+.diensten-steps-section {
+  width: 100%;
+  padding: var(--gap-small) var(--page-padding) var(--section-padding-medium) var(--page-padding);
+  background-color: var(--color-blue-ribbon);
+}
+
+.diensten-steps-section-container {
+  max-width: var(--container-large);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gap-small);
+}
+
+/* Header */
+.diensten-steps-section-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--gap-xxsmall);
+  margin-top: var(--gap-small);
+  margin-bottom: calc(var(--gap-xsmall) / 2);
+}
+
+.diensten-steps-section-label {
+  font-family: var(--font-primary);
+  font-size: var(--text-regular);
+  font-weight: var(--font-semibold);
+  line-height: var(--line-relaxed);
+  color: var(--color-white);
+  margin: 0;
+}
+
+.diensten-steps-section-title {
+  font-family: var(--font-primary);
+  font-size: var(--heading-2);
+  font-weight: var(--font-bold);
+  line-height: var(--line-tight);
+  letter-spacing: var(--tracking-h2);
+  color: var(--color-white);
+  text-align: center;
+  margin: 0;
+}
+
+/* Timeline Wrapper */
+.diensten-steps-section-timeline {
+  position: relative;
+  width: 100%;
+  margin: var(--gap-xxsmall) 0;
+}
+
+/* Line Segments Container - positioned at bottom of grid, between description and CTA */
+.diensten-steps-section-lines {
+  position: absolute;
+  bottom: calc(var(--gap-xxsmall) * -1); /* Position just below grid, accounting for timeline margin */
+  left: 0;
+  width: 100%;
+  height: 2px;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Line Segments - positioned dynamically via JS */
+.diensten-steps-section-line-segment {
+  position: absolute;
+  top: 0;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.25);
+  transform-origin: left center;
+  transform: scaleX(0);
+}
+
+/* Steps Grid */
+.diensten-steps-section-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--gap-small);
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.diensten-steps-section-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--gap-xsmall);
+  padding: var(--gap-small);
+  position: relative;
+}
+
+/* Dot wrapper - positioned at bottom of step, at line height */
+.diensten-steps-section-step-dot-wrapper {
+  position: absolute;
+  bottom: calc(var(--gap-xxsmall) * -1 - 6px); /* Match line position, 6px lower to align with line */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Dot - positioned at line height, visible from start but inactive */
+.diensten-steps-section-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-50%); /* Only vertical centering, wrapper handles horizontal */
+}
+
+.diensten-steps-section-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--gap-xxsmall);
+}
+
+.diensten-steps-section-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.diensten-steps-section-icon svg path,
+.diensten-steps-section-icon svg circle,
+.diensten-steps-section-icon svg rect {
+  stroke: var(--color-white);
+}
+
+.diensten-steps-section-step-title {
+  font-family: var(--font-primary);
+  font-size: var(--heading-5);
+  font-weight: var(--font-bold);
+  line-height: var(--line-normal);
+  letter-spacing: var(--tracking-h5);
+  color: var(--color-white);
+  margin: 0;
+}
+
+.diensten-steps-section-step-description {
+  font-family: var(--font-primary);
+  font-size: var(--text-regular);
+  font-weight: var(--font-regular);
+  line-height: var(--line-relaxed);
+  color: var(--color-white);
+  margin: 0;
+  opacity: 0.9;
+}
+
+/* CTAs */
+.diensten-steps-section-ctas {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gap-xsmall);
+  margin-top: calc(var(--gap-xxsmall) / 2);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .diensten-steps-section-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--gap-medium);
+  }
+  
+  .diensten-steps-section-lines,
+  .diensten-steps-section-step-dot-wrapper {
+    display: none; /* Hide line segments and dots on tablet/mobile as grid changes */
+  }
+}
+
+@media (max-width: 768px) {
+  .diensten-steps-section {
+    padding: var(--section-padding-small) var(--page-padding);
+  }
+
+  .diensten-steps-section-grid {
+    grid-template-columns: 1fr;
+    gap: var(--gap-medium);
+  }
+
+  .diensten-steps-section-ctas {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .diensten-steps-section-ctas .btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .diensten-steps-section-container {
+    gap: var(--gap-small);
+  }
+
+  .diensten-steps-section-header {
+    margin-bottom: var(--gap-xsmall);
+  }
+}
+

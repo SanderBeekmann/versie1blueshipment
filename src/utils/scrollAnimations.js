@@ -131,29 +131,51 @@ export const initTitleAnimations = () => {
     const media = detailBlock?.querySelector('.diensten-detail-media');
     const isReverse = detailBlock?.classList.contains('diensten-detail-block--reverse');
 
-    // Ensure all text elements are visible (no animation for text)
-    gsap.set(title, { opacity: 1, y: 0 });
+    // Set initial state for title (same animation as homepage titles)
+    gsap.set(title, {
+      opacity: 0,
+      y: config.y,
+      willChange: 'transform, opacity'
+    });
+    
     const label = contentContainer.querySelector('.diensten-detail-label');
-    if (label) gsap.set(label, { opacity: 1, y: 0 });
     const description = contentContainer.querySelector('.diensten-detail-description');
-    if (description) gsap.set(description, { opacity: 1, y: 0 });
     const bullets = contentContainer.querySelector('.diensten-detail-bullets');
+    const buttons = contentContainer.querySelector('.diensten-detail-ctas');
+    
+    // Set initial state for animated text elements
+    if (label) {
+      gsap.set(label, { opacity: 0, y: 12, willChange: 'transform, opacity' });
+    }
+    if (description) {
+      gsap.set(description, { opacity: 0, y: 15, willChange: 'transform, opacity' });
+    }
     if (bullets) {
       const bulletItems = bullets.querySelectorAll('.diensten-detail-bullet');
-      gsap.set(bulletItems, { opacity: 1, y: 0 });
+      gsap.set(bulletItems, { opacity: 0, y: 12, willChange: 'transform, opacity' });
     }
-    const buttons = contentContainer.querySelector('.diensten-detail-ctas');
     if (buttons) {
-      const buttonItems = buttons.querySelectorAll('.btn');
-      gsap.set(buttonItems, { opacity: 1, y: 0 });
+      const buttonItems = buttons.querySelectorAll('.btn, .diensten-detail-link');
+      gsap.set(buttonItems, { opacity: 0, y: 15, willChange: 'transform, opacity' });
     }
 
     if (prefersReducedMotion) {
+      gsap.set(title, { opacity: 1, y: 0 });
       if (media) gsap.set(media, { opacity: 1, x: 0 });
+      if (label) gsap.set(label, { opacity: 1, y: 0 });
+      if (description) gsap.set(description, { opacity: 1, y: 0 });
+      if (bullets) {
+        const bulletItems = bullets.querySelectorAll('.diensten-detail-bullet');
+        gsap.set(bulletItems, { opacity: 1, y: 0 });
+      }
+      if (buttons) {
+        const buttonItems = buttons.querySelectorAll('.btn, .diensten-detail-link');
+        gsap.set(buttonItems, { opacity: 1, y: 0 });
+      }
       return;
     }
 
-    // Set initial state only for media
+    // Set initial state for media (if present)
     if (media) {
       // Animate from left for normal blocks, from right for reverse blocks
       const xOffset = isReverse ? 60 : -60;
@@ -161,25 +183,101 @@ export const initTitleAnimations = () => {
         opacity: 0,
         x: xOffset,
       });
+    }
 
-      // Create timeline for media animation only
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: title,
-          start: 'top 85%',
-          end: 'top 50%',
-          toggleActions: 'play none none reverse',
-          markers: false,
-        },
-      });
+    // Create timeline for title, media and text animations
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: title,
+        start: 'top 85%',
+        end: 'top 50%',
+        toggleActions: 'play none none reverse',
+        markers: false,
+      },
+    });
 
-      // Animate only media from side
+    // Animate title (same as homepage titles)
+    tl.to(title, {
+      opacity: 1,
+      y: 0,
+      duration: config.duration,
+      ease: 'power2.out',
+      onComplete: () => {
+        gsap.set(title, { willChange: 'auto' });
+      },
+    }, 0);
+
+    // Animate media from side (if present)
+    if (media) {
       tl.to(media, {
         opacity: 1,
         x: 0,
         duration: 0.8,
         ease: 'power2.out',
       }, 0);
+    }
+
+      // Animate text elements with stagger
+      if (label) {
+        tl.to(label, {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          ease: 'power2.out',
+        }, 0.1);
+      }
+
+      if (description) {
+        tl.to(description, {
+          opacity: 1,
+          y: 0,
+          duration: 0.7,
+          ease: 'power2.out',
+        }, 0.2);
+      }
+
+      if (bullets) {
+        const bulletItems = bullets.querySelectorAll('.diensten-detail-bullet');
+        if (bulletItems.length > 0) {
+          tl.to(bulletItems, {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            ease: 'power2.out',
+            stagger: 0.08,
+            onComplete: () => {
+              gsap.set(bulletItems, { willChange: 'auto' });
+            },
+          }, 0.3);
+        }
+      }
+
+      if (buttons) {
+        const buttonItems = buttons.querySelectorAll('.btn, .diensten-detail-link');
+        if (buttonItems.length > 0) {
+          tl.to(buttonItems, {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            ease: 'power2.out',
+            stagger: 0.1,
+            onComplete: () => {
+              gsap.set(buttonItems, { willChange: 'auto' });
+            },
+          }, 0.4);
+        }
+      }
+
+    // Cleanup will-change for label and description
+    if (label) {
+      tl.call(() => {
+        gsap.set(label, { willChange: 'auto' });
+      }, null, '+=0.3');
+    }
+    if (description) {
+      tl.call(() => {
+        gsap.set(description, { willChange: 'auto' });
+      }, null, '+=0.3');
     }
   });
 

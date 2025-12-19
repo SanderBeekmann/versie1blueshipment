@@ -173,7 +173,7 @@
 /* Section A: Services Overview - Premium Bento Grid */
 .diensten-services {
   width: 100%;
-  padding: var(--section-padding-medium) var(--page-padding);
+  padding: var(--section-padding-medium) var(--page-padding) var(--gap-medium) var(--page-padding);
   background-color: var(--color-background);
 }
 
@@ -210,40 +210,38 @@
   margin-bottom: var(--gap-medium);
 }
 
-/* Trigger wrapper - NOT scaled, used for ScrollTrigger positioning */
+/* CTA Button */
+.diensten-services-cta {
+  grid-area: cta;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+/* Trigger wrapper - used for ScrollTrigger positioning */
 .diensten-bento-trigger {
   position: relative;
   width: 100%;
   display: flex;
-  justify-content: center; /* centres the scaled content */
+  justify-content: center;
 }
 
-/* Scale wrapper for 0.7x scaling */
-.diensten-bento-scale {
-  transform: scale(0.7);
-  transform-origin: top center;
-  width: calc(100% / 0.7);
-  margin: 0 auto; /* keeps it centered */
-}
-
-/* Optional: slight text compensation for body text */
-.diensten-bento-scale .diensten-card__text {
-  font-size: calc(clamp(0.9375rem, 0.9rem + 0.2vw, 1.125rem) * 1.1);
-}
 
 .diensten-bento {
   width: 100%;
   max-width: var(--container-large);
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  grid-auto-rows: minmax(160px, auto);
-  gap: var(--gap-small);
+  grid-auto-rows: minmax(clamp(110px, 9vw, 150px), auto);
+  gap: clamp(12px, 1.4vw, 18px);
   align-items: stretch;
   grid-template-areas:
     "a a a a a a b b b b b b"
     "a a a a a a b b b b b b"
     "c c c c d d d d e e e e"
-    "c c c c d d d d f f f f";
+    "c c c c d d d d f f f f"
+    ". . . . cta cta cta cta . . . .";
 }
 
 .diensten-card {
@@ -259,6 +257,26 @@
   transition: box-shadow 180ms ease, border-color 180ms ease;
 }
 
+.diensten-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.7) 30%,
+    rgba(255, 255, 255, 0.9) 50%,
+    rgba(255, 255, 255, 0.7) 70%,
+    transparent 100%
+  );
+  transition: left 0.5s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
 .diensten-card__button {
   width: 100%;
   height: 100%;
@@ -272,6 +290,8 @@
   flex-direction: column;
   font-family: inherit;
   color: inherit;
+  position: relative;
+  z-index: 2;
 }
 
 /* Remove transform transition from cards within bento to avoid double easing with GSAP */
@@ -283,12 +303,20 @@
   .diensten-card {
     transition: none;
   }
+  
+  .diensten-card::before {
+    display: none;
+  }
 }
 
 .diensten-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
   border-color: var(--color-blue-ribbon-light);
+}
+
+.diensten-card:hover::before {
+  left: 100%;
 }
 
 .diensten-card__button:hover {
@@ -333,14 +361,14 @@
 
 /* Featured: beeld breder en rustiger */
 .diensten-card--featured .diensten-card__media {
-  height: 180px;
-  margin-bottom: 20px;
+  height: clamp(110px, 9vw, 150px);
+  margin-bottom: clamp(12px, 1.2vw, 16px);
 }
 
 /* Compact: beeld kleiner, meer UI-achtig */
 .diensten-card--compact .diensten-card__media {
-  height: 120px;
-  margin-bottom: 16px;
+  height: clamp(80px, 7vw, 110px);
+  margin-bottom: clamp(10px, 1vw, 14px);
   opacity: 0.9;
 }
 
@@ -348,8 +376,8 @@
 .diensten-card__body {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: clamp(20px, 2.5vw, 36px);
+  gap: clamp(8px, 1vw, 10px);
+  padding: clamp(16px, 1.8vw, 20px) clamp(20px, 2.2vw, 26px);
   flex: 1;
   min-width: 0;
   min-height: 0;
@@ -381,18 +409,24 @@
 }
 
 .diensten-card--featured .diensten-card__title {
-  font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.6rem);
+  font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.7rem);
   max-width: 100%;
 }
 
 .diensten-card--compact .diensten-card__title {
-  font-size: clamp(1.125rem, 1rem + 0.5vw, 1.75rem);
+  font-size: clamp(1rem, 0.9rem + 0.4vw, 1.5rem);
   max-width: 100%;
+}
+
+/* Verzending en Software cards - grotere titels */
+.diensten-card--compact[data-area="c"] .diensten-card__title,
+.diensten-card--compact[data-area="d"] .diensten-card__title {
+  font-size: clamp(1.2rem, 1.08rem + 0.48vw, 1.8rem);
 }
 
 .diensten-card__text {
   font-family: var(--font-primary);
-  font-size: clamp(0.9375rem, 0.9rem + 0.2vw, 1.125rem);
+  font-size: clamp(0.875rem, 0.85rem + 0.15vw, 1rem);
   color: rgba(13, 6, 0, 0.72);
   line-height: var(--line-relaxed);
   margin: 0;
@@ -406,7 +440,7 @@
 
 .diensten-card__footer {
   margin-top: auto;
-  padding-top: clamp(12px, 1vw, 16px);
+  padding-top: clamp(10px, 0.8vw, 14px);
   border-top: 1px solid rgba(0, 112, 255, 0.15);
 }
 
@@ -870,7 +904,7 @@
   font-family: var(--font-primary);
   font-size: var(--text-regular);
   font-weight: var(--font-medium);
-  color: var(--color-blue-ribbon);
+  color: var(--color-neutral-darkest);
   text-decoration: none;
   transition: opacity 0.2s ease;
   display: inline-flex;
@@ -879,7 +913,7 @@
 }
 
 .diensten-detail-link:hover {
-  opacity: 0.8;
+  opacity: 0.7;
   text-decoration: underline;
 }
 
