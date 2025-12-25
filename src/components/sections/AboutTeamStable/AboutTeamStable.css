@@ -100,7 +100,7 @@
 /* Hover: alleen subtiele shadow en transform, geen layout shift */
 @media (hover: hover) and (pointer: fine) {
   .about-team-stable-card:hover {
-    box-shadow: var(--shadow-medium);
+    box-shadow: var(--shadow-soft-hover);
     transform: translateY(-2px) !important;
     /* Alle layout properties blijven hetzelfde */
     border: 2px solid transparent;

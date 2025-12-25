@@ -128,6 +128,8 @@ function FeaturesSection() {
                 ref={(el) => { 
                   if (el) {
                     featuresRef.current[index] = el;
+                  } else {
+                    featuresRef.current[index] = null;
                   }
                 }}
                 className="feature-item"
@@ -156,6 +158,8 @@ function FeaturesSection() {
                 ref={(el) => { 
                   if (el) {
                     featuresRef.current[index + 2] = el;
+                  } else {
+                    featuresRef.current[index + 2] = null;
                   }
                 }}
                 className="feature-item"

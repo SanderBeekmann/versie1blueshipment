@@ -23,6 +23,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
   word-break: normal;
   overflow-wrap: break-word;
+  overflow-x: hidden;
+}
+
+#root {
+  width: 100%;
 }
 
 img {
@@ -140,6 +145,7 @@ ul, ol {
   --shadow-medium: 0px 6px 4px rgba(0, 0, 0, 0.25);
   --shadow-large: 5px 8px 4px rgba(0, 0, 0, 0.25);
   --shadow-inset: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
+  --shadow-soft-hover: 0 4px 16px rgba(0, 0, 0, 0.08);
   
   /* Containers */
   --container-large: 1280px;
@@ -241,14 +247,14 @@ p {
 }
 
 .btn-whatsapp {
-  background-color: var(--color-green-haze);
+  background-color: var(--color-whatsapp-green);
   color: var(--color-white);
   box-shadow: var(--shadow-small);
 }
 
 .btn-whatsapp:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(4, 171, 56, 0.4);
+  box-shadow: 0 6px 16px rgba(37, 211, 102, 0.4);
 }
 
 .btn-outline {

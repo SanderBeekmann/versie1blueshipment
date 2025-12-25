@@ -9,7 +9,6 @@ import GallerySection from '../../components/sections/GallerySection/GallerySect
 import TeamSection from '../../components/sections/TeamSection/TeamSection';
 import FeaturesSection from '../../components/sections/FeaturesSection/FeaturesSection';
 import WhatsAppSection from '../../components/sections/WhatsAppSection/WhatsAppSection';
-import TestimonialSection from '../../components/sections/TestimonialSection/TestimonialSection';
 import CTASection from '../../components/sections/CTASection/CTASection';
 import FAQSection from '../../components/sections/FAQSection/FAQSection';
 import Footer from '../../components/layout/Footer/Footer';
@@ -54,9 +53,6 @@ function HomePage() {
       </div>
       <div data-animate="fadeUpScale">
         <WhatsAppSection />
-      </div>
-      <div data-animate="fadeRight">
-        <TestimonialSection />
       </div>
       <div data-animate="scaleIn">
         <CTASection />

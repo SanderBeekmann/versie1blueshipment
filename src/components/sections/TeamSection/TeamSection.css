@@ -109,7 +109,7 @@
 }
 
 .team-card:hover {
-  box-shadow: var(--shadow-medium);
+  box-shadow: var(--shadow-soft-hover);
 }
 
 .card-dot {

@@ -40,6 +40,15 @@
   color: var(--color-neutral-darkest);
 }
 
+.faq-cta-text {
+  font-family: var(--font-primary);
+  font-size: var(--text-medium);
+  font-weight: var(--font-medium);
+  line-height: 1.5;
+  color: var(--color-neutral-darkest);
+  margin: 0;
+}
+
 .faq-list {
   flex: 1;
   display: flex;
@@ -50,8 +59,16 @@
 .faq-item {
   background-color: var(--color-white);
   border-radius: var(--radius-large);
-  box-shadow: var(--shadow-small);
+  box-shadow: var(--shadow-xsmall);
   overflow: hidden;
+  border-left: 3px solid transparent;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.faq-item.open {
+  border-left-color: var(--color-blue-ribbon);
+  background-color: rgba(0, 112, 255, 0.04);
+  box-shadow: var(--shadow-xsmall);
 }
 
 .faq-question {
@@ -65,6 +82,17 @@
   border: none;
   cursor: pointer;
   text-align: left;
+  transition: color 0.2s ease;
+}
+
+.faq-item.open .faq-question {
+  color: var(--color-blue-ribbon);
+}
+
+.faq-question:focus-visible {
+  outline: 2px solid var(--color-blue-ribbon);
+  outline-offset: -2px;
+  border-radius: var(--radius-large);
 }
 
 .faq-question span {
@@ -72,24 +100,53 @@
   font-size: var(--text-medium);
   font-weight: var(--font-bold);
   line-height: 1.5;
-  color: var(--color-neutral-darkest);
+  color: inherit;
+  transition: color 0.2s ease;
 }
 
-.faq-question svg {
+.faq-icon {
   flex-shrink: 0;
-  color: var(--color-neutral-darkest);
+  color: inherit;
+  transition: transform 0.2s ease-out;
+  transform-origin: center;
+  will-change: transform;
+}
+
+.faq-item.open .faq-icon {
+  transform: rotate(45deg);
 }
 
 .faq-answer {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out, opacity 0.25s ease-out 0.05s, padding 0.3s ease-out;
+  padding: 0 24px;
+}
+
+.faq-item.open .faq-answer {
+  max-height: 800px;
+  opacity: 1;
   padding: 0 24px 24px;
+  transition: max-height 0.3s ease-out, opacity 0.25s ease-out, padding 0.3s ease-out;
 }
 
 .faq-answer p {
   font-family: var(--font-primary);
   font-size: var(--text-regular);
   font-weight: var(--font-regular);
-  line-height: 1.5;
+  line-height: 1.65;
   color: var(--color-neutral-darkest);
+  margin: 0;
+  max-width: 65ch;
+}
+
+.faq-answer-lead {
+  font-weight: var(--font-semibold);
+}
+
+.faq-answer-rest {
+  font-weight: var(--font-regular);
 }
 
 /* Responsive */
@@ -119,6 +176,10 @@
   }
 
   .faq-answer {
+    padding: 0 20px;
+  }
+
+  .faq-item.open .faq-answer {
     padding: 0 20px 20px;
   }
 }

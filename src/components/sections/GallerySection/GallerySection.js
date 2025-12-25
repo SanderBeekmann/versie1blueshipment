@@ -18,10 +18,30 @@ function GallerySection() {
 
   const items = useMemo(
     () => [
-      { id: 1, image: analytics1, alt: "Analytics dashboard met bestellingen en omzet" },
-      { id: 2, image: analytics2, alt: "Analytics dashboard met verkoopcijfers" },
-      { id: 3, image: analytics3, alt: "Analytics dashboard met conversie data" },
-      { id: 4, image: analytics4, alt: "Analytics dashboard met voorraad statistieken" },
+      { 
+        id: 1, 
+        image: analytics1, 
+        alt: "Analytics dashboard met bestellingen en omzet",
+        description: "Na implementatie van onze oplossing zagen onze klanten een stijging van 45% in online bestellingen en een verbetering van 30% in orderverwerkingsefficiëntie."
+      },
+      { 
+        id: 2, 
+        image: analytics2, 
+        alt: "Analytics dashboard met verkoopcijfers",
+        description: "Met onze geïntegreerde verzendsystemen realiseerden klanten een kostenbesparing van 25% op logistiek en een reductie van 40% in leveringsfouten."
+      },
+      { 
+        id: 3, 
+        image: analytics3, 
+        alt: "Analytics dashboard met conversie data",
+        description: "Onze analytics tools helpen klanten om hun conversiepercentage te verhogen met gemiddeld 35% door real-time inzichten in klantgedrag en verzendprestaties."
+      },
+      { 
+        id: 4, 
+        image: analytics4, 
+        alt: "Analytics dashboard met voorraad statistieken",
+        description: "Door geautomatiseerde voorraadsynchronisatie reduceren klanten voorraadkosten met 20% en verbeteren ze beschikbaarheid met 15%."
+      },
     ],
     []
   );
@@ -115,8 +135,27 @@ function GallerySection() {
     };
   }, [reducedMotion, loopItems.length]);
 
+  // Initialize overlay and text states, and set initial card scale
+  useLayoutEffect(() => {
+    const cards = sectionRef.current?.querySelectorAll('.gallery-card');
+    if (!cards) return;
+
+    cards.forEach((card) => {
+      const overlay = card.querySelector('.gallery-card-overlay');
+      const text = card.querySelector('.gallery-card-text');
+      if (overlay && text) {
+        gsap.set(overlay, { opacity: 0 });
+        gsap.set(text, { opacity: 0, y: 20 });
+      }
+      // Set initial scale to 0.95 for smaller initial state
+      gsap.set(card, { scale: 0.95 });
+    });
+  }, [loopItems]);
+
   const onEnter = (e) => {
     const el = e.currentTarget;
+    const overlay = el.querySelector('.gallery-card-overlay');
+    const text = el.querySelector('.gallery-card-text');
 
     if (tlRef.current) tlRef.current.pause();
 
@@ -125,12 +164,15 @@ function GallerySection() {
 
     let ht = hoverTlRef.current.get(el);
     if (!ht) {
+      // Ensure initial scale is 0.95 before creating timeline
+      gsap.set(el, { scale: 0.95 });
+      
       ht = gsap.timeline({ paused: true });
-      ht.to(el, { scale: 1.07, duration: 0.2, ease: "power2.out" }, 0).to(
-        el,
-        { boxShadow: "0 24px 60px rgba(0,0,0,0.16)", duration: 0.2, ease: "power2.out" },
-        0
-      );
+      // Scale from 0.95 to 1.0 (grows from smaller initial state)
+      ht.to(el, { scale: 1.0, duration: 0.2, ease: "power2.out" }, 0)
+        .to(el, { boxShadow: "0 12px 30px rgba(0,0,0,0.12)", duration: 0.2, ease: "power2.out" }, 0)
+        .to(overlay, { opacity: 1, duration: 0.2, ease: "power2.out" }, 0)
+        .to(text, { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }, 0.1);
       hoverTlRef.current.set(el, ht);
     }
     ht.play(0);
@@ -143,7 +185,9 @@ function GallerySection() {
     gsap.set(el, { zIndex: 0 });
 
     const ht = hoverTlRef.current.get(el);
-    if (ht) ht.reverse();
+    if (ht) {
+      ht.reverse();
+    }
 
     if (tlRef.current) tlRef.current.play();
   };
@@ -189,6 +233,7 @@ function GallerySection() {
                   flex: "0 0 auto",
                   width: 560,
                   maxWidth: "90vw",
+                  height: 320,
                   transformOrigin: "center",
                   zIndex: 0,
                 }}
@@ -198,13 +243,13 @@ function GallerySection() {
                 <img
                   src={item.image}
                   alt={item.alt}
-                  className="w-full h-full object-cover"
-                  style={{
-                    display: 'block',
-                    width: '100%',
-                    height: 'auto'
-                  }}
+                  className="gallery-card-image"
                 />
+                <div className="gallery-card-overlay">
+                  <div className="gallery-card-text">
+                    {item.description}
+                  </div>
+                </div>
               </article>
             );
           })}
@@ -212,16 +257,10 @@ function GallerySection() {
         </div>
       </div>
 
-      <div className="flex justify-center items-center gap-2 mt-10 md:mt-14">
-        {items.map((_, i) => (
-          <span
-            key={i}
-            className={`h-2 rounded-full transition-all ${
-              i === 1 ? "w-8 bg-blue-500" : "w-2 bg-slate-300"
-            }`}
-            aria-hidden="true"
-          />
-        ))}
+      <div className="flex justify-center items-center mt-10 md:mt-14">
+        <button className="btn btn-primary">
+          Bekijk meer resultaten
+        </button>
       </div>
     </section>
   );

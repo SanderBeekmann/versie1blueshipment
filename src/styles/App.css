@@ -2,6 +2,7 @@
 .app {
   min-height: 100vh;
   background-color: var(--color-background);
+  width: 100%;
 }
 
 /* Animation wrapper styling */
