@@ -13,8 +13,8 @@ function LogoSection() {
     { id: 4, name: 'Ampère', src: ampereLogo },
   ];
 
-  // Duplicate logos for seamless loop
-  const duplicatedLogos = [...logos, ...logos];
+  // Duplicate logos for seamless infinite loop
+  const duplicatedLogos = [...logos, ...logos, ...logos];
 
   return (
     <section className="logo-section">
@@ -22,17 +22,15 @@ function LogoSection() {
         <p className="logo-title" data-animate-title>
           In samenwerking met de juiste partners
         </p>
-        <div className="logo-marquee-wrapper">
-          <div className="logo-marquee-track">
+        <div className="logo-carousel-wrapper">
+          <div className="logo-carousel-track">
             {duplicatedLogos.map((logo, index) => (
               <div key={`${logo.id}-${index}`} className="logo-item">
-                <div className="logo-placeholder">
-                  <img
-                    src={logo.src}
-                    alt={logo.name}
-                    className="logo-image"
-                  />
-                </div>
+                <img
+                  src={logo.src}
+                  alt={logo.name}
+                  className="logo-image"
+                />
               </div>
             ))}
           </div>

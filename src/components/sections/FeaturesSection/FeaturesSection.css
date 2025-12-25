@@ -138,7 +138,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: var(--shadow-small);
+  box-shadow: none;
 }
 
 .logo-placeholder svg {
