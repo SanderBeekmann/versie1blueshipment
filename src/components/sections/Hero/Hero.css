@@ -4,12 +4,41 @@
   position: relative;
   overflow: hidden;
   width: 100%;
+  max-width: 100vw;
   min-height: 100vh;
   background: var(--gradient-hero);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: calc(var(--navbar-height) + var(--gap-small)) var(--gap-xsmall) var(--gap-small);
+  /* Prevent horizontal scroll from child elements (InfiniteGridOverlay) */
+  overflow-x: clip;
+}
+
+/* Mobile: Exact vertical centering met 100dvh en safe-area support */
+@media (max-width: 1023px) {
+  .hero {
+    /* Gebruik 100dvh voor stabiele viewport hoogte (rekent met dynamische browser UI) */
+    min-height: 100dvh;
+    /* Grid voor exacte centering */
+    display: grid;
+    place-items: center;
+    /* Padding-top voor navbar + safe-area, padding-bottom voor safe-area */
+    padding-top: calc(var(--navbar-height) + env(safe-area-inset-top, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    padding-left: var(--gap-xsmall);
+    padding-right: var(--gap-xsmall);
+    /* Zorg dat hero niet het navbar gebied bedekt */
+    position: relative;
+    z-index: 0; /* Lager dan navbar z-index: 100 */
+  }
+  
+  .hero-content {
+    /* Content wrapper is nu exact gecentreerd in beschikbare ruimte (100dvh - navbar - safe-areas) */
+    width: 100%;
+    max-width: var(--container-large);
+    padding: 0 var(--gap-xxsmall);
+  }
 }
 
 .hero::before {
@@ -116,6 +145,34 @@
   margin-bottom: var(--space-2xs);
 }
 
+/* Pulserende blauwe cirkel in hero tagline */
+.hero-text .glass-tagline .glass-tagline-dot {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--color-blue-ribbon, #0070ff);
+  flex-shrink: 0;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.4);
+    opacity: 0.8;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-text .glass-tagline .glass-tagline-dot {
+    animation: none;
+  }
+}
+
 .hero-title-section {
   display: flex;
   flex-direction: column;
@@ -130,6 +187,26 @@
   letter-spacing: clamp(-1.8px, -0.36vw, -3.6px);
   color: var(--color-neutral-darkest);
   margin: 0;
+}
+
+/* Desktop title: visible on desktop, hidden on mobile */
+.hero-title-desktop {
+  display: block;
+}
+
+.hero-title-mobile {
+  display: none;
+}
+
+/* Mobile title: visible on mobile, hidden on desktop */
+@media (max-width: 1023px) {
+  .hero-title-desktop {
+    display: none;
+  }
+
+  .hero-title-mobile {
+    display: block;
+  }
 }
 
 /* Hero title letter-by-letter animation styling */
@@ -163,10 +240,17 @@
   margin-top: var(--space-md);
 }
 
-/* Tablet: 768px+ */
-@media (min-width: 768px) {
+/* Tablet: 768px - 1023px - behoud verticale centering */
+@media (min-width: 768px) and (max-width: 1023px) {
   .hero {
-    padding: calc(var(--navbar-height) + var(--gap-medium)) var(--gap-small) var(--gap-medium);
+    /* Behoud grid centering op tablet */
+    display: grid;
+    place-items: center;
+    min-height: 100dvh;
+    padding-top: calc(var(--navbar-height) + env(safe-area-inset-top, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    padding-left: var(--gap-small);
+    padding-right: var(--gap-small);
   }
 
   .hero-content {
@@ -183,9 +267,14 @@
   }
 }
 
-/* Desktop: 1024px+ */
+/* Desktop: 1024px+ - behoud originele flex layout */
 @media (min-width: 1024px) {
   .hero {
+    /* Desktop gebruikt flex i.p.v. grid (ongewijzigd) */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh; /* Desktop blijft 100vh gebruiken */
     padding: calc(var(--navbar-height) + var(--page-padding)) var(--page-padding) var(--page-padding);
   }
 
@@ -229,11 +318,15 @@
   }
 }
 
-/* Small Mobile: < 600px */
+/* Small Mobile: < 600px - behoud verticale centering */
 @media (max-width: 599px) {
   .hero {
-    min-height: auto;
-    padding-bottom: var(--gap-medium);
+    /* Behoud 100dvh en grid centering op small mobile */
+    min-height: 100dvh;
+    display: grid;
+    place-items: center;
+    padding-top: calc(var(--navbar-height) + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(var(--gap-medium) + env(safe-area-inset-bottom, 0px));
   }
 
   .hero-text .glass-tagline {

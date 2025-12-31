@@ -16,11 +16,6 @@ function CTASection() {
             </button>
           </div>
         </div>
-        <div className="cta-decoration">
-          <svg width="163" height="162" viewBox="0 0 163 162" fill="none">
-            <circle cx="81.5" cy="81" r="78" fill="white" stroke="#0070ff" strokeWidth="6"/>
-          </svg>
-        </div>
       </div>
     </section>
   );

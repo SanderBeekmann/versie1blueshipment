@@ -27,13 +27,133 @@ function DienstenPage() {
   const bentoRef = useRef(null);
   const cardRefs = useRef([]);
 
+  // Comprehensive scroll monitoring for Diensten section
   useLayoutEffect(() => {
+    const isMobile = window.innerWidth < 768;
+    if (!isMobile) return; // Only monitor on mobile
+    
+    let lastScrollY = window.scrollY;
+    let scrollChangeCount = 0;
+    
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      const diff = currentScrollY - lastScrollY;
+      
+      // Log significant scroll changes (especially scroll-to-top)
+      if (Math.abs(diff) > 50 || currentScrollY < 100) {
+        scrollChangeCount++;
+        console.warn('[DienstenPage] Significant scroll detected', {
+          from: lastScrollY,
+          to: currentScrollY,
+          diff,
+          count: scrollChangeCount,
+          timestamp: Date.now(),
+          location: window.location.href,
+          hash: window.location.hash
+        });
+      }
+      
+      lastScrollY = currentScrollY;
+    };
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  useLayoutEffect(() => {
+    // Initialize all animations
     initScrollAnimations();
     initTitleAnimations();
     initHeroTitleAnimation();
     initLogoRevealAnimation(1000);
 
+    // Ensure ScrollTrigger refreshes after layout is stable
+    // On mobile, preserve scroll position more carefully
+    const refreshTimeout = setTimeout(() => {
+      const scrollY = window.scrollY;
+      const isMobile = window.innerWidth < 768;
+      
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          console.log('[DienstenPage] Initial ScrollTrigger.refresh()', {
+            scrollY,
+            isMobile,
+            timestamp: Date.now()
+          });
+          
+          ScrollTrigger.refresh();
+          
+          // On mobile, restore scroll position if it changed
+          if (isMobile && Math.abs(window.scrollY - scrollY) > 5) {
+            console.log('[DienstenPage] Restoring scroll position after initial refresh', {
+              before: scrollY,
+              after: window.scrollY
+            });
+            window.scrollTo({ top: scrollY, behavior: 'instant' });
+          }
+        });
+      });
+    }, 100);
+
+    // Scroll to hash anchor if present in URL (only on initial load, not on scroll)
+    // This should only run once when the page loads, not during scrolling
+    let hashTimeout = null;
+    const hash = window.location.hash;
+    if (hash) {
+      const sectionId = hash.substring(1); // Remove #
+      console.log('[DienstenPage] Hash detected on mount, will scroll to section', {
+        hash,
+        sectionId,
+        currentScrollY: window.scrollY,
+        timestamp: Date.now()
+      });
+      
+      // Use a longer delay to ensure page is fully rendered
+      // Only scroll if we're at the top (initial load), not if user has already scrolled
+      const initialScrollY = window.scrollY;
+      hashTimeout = setTimeout(() => {
+        // Only scroll if user hasn't scrolled away from top
+        // This prevents scroll-to-section when user is already scrolling
+        if (Math.abs(window.scrollY - initialScrollY) < 50) {
+          scrollToSection(sectionId);
+        } else {
+          console.log('[DienstenPage] Skipping hash scroll - user has scrolled', {
+            initialScrollY,
+            currentScrollY: window.scrollY
+          });
+        }
+      }, 800); // Longer delay to ensure layout is stable
+    }
+    
+    // Monitor hash changes to prevent unwanted scrolls
+    const handleHashChange = (e) => {
+      console.warn('[DienstenPage] Hash change detected', {
+        oldURL: e.oldURL,
+        newURL: e.newURL,
+        hash: window.location.hash,
+        scrollY: window.scrollY,
+        timestamp: Date.now()
+      });
+      
+      // Prevent default browser scroll-to-hash behavior on mobile during active scrolling
+      const isMobile = window.innerWidth < 768;
+      if (isMobile && window.scrollY > 200) {
+        console.warn('[DienstenPage] Preventing hash scroll on mobile - user is scrolling', {
+          scrollY: window.scrollY
+        });
+        // Note: hashchange event doesn't have preventDefault, but we log it for debugging
+      }
+    };
+    
+    window.addEventListener('hashchange', handleHashChange);
+    
     return () => {
+      if (hashTimeout) clearTimeout(hashTimeout);
+      clearTimeout(refreshTimeout);
+      window.removeEventListener('hashchange', handleHashChange);
       cleanupScrollAnimations();
     };
   }, []);
@@ -147,9 +267,9 @@ function DienstenPage() {
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: bento,
-            start: 'top 80%',
-            end: 'top 30%',
-            scrub: 0.6,
+            start: 'top 85%',
+            end: 'top 20%',
+            scrub: 1.5,
             invalidateOnRefresh: true
           }
         });
@@ -166,15 +286,39 @@ function DienstenPage() {
             x: 0,
             y: 0,
             rotate: 0,
-            duration: 1,
-            ease: 'power3.out'
+            duration: 1.5,
+            ease: 'power2.out'
           }, position);
         });
 
         // Refresh ScrollTrigger to ensure correct start/end positions
         // Using setTimeout for better reliability with images/async content
+        // Preserve scroll position during refresh to prevent viewport jumps on mobile
         setTimeout(() => {
+          const scrollY = window.scrollY;
+          const isMobile = window.innerWidth < 768;
+          
+          console.log('[DienstenPage] ScrollTrigger.refresh() called', {
+            scrollY,
+            isMobile,
+            timestamp: Date.now()
+          });
+          
           ScrollTrigger.refresh();
+          
+          // Restore scroll position if it changed (prevents viewport jumps)
+          // On mobile, be more aggressive about preserving scroll position
+          const scrollDiff = Math.abs(window.scrollY - scrollY);
+          const threshold = isMobile ? 5 : 10; // Lower threshold on mobile
+          
+          if (scrollDiff > threshold) {
+            console.log('[DienstenPage] Scroll position changed after refresh, restoring', {
+              before: scrollY,
+              after: window.scrollY,
+              diff: scrollDiff
+            });
+            window.scrollTo({ top: scrollY, behavior: 'instant' });
+          }
         }, 50);
       }, bentoRef);
     }, 0);
@@ -205,46 +349,16 @@ function DienstenPage() {
       ]
     },
     {
-      id: 'kosten',
-      label: 'Eerlijk',
-      title: 'Geen verborgen kosten, alleen verzendtarieven',
-      titleHighlight: 'alleen verzendtarieven',
-      intro: 'Je betaalt precies wat je ziet. Geen onbekende kosten achteraf. Alleen per zending.',
-      description: 'Bij Blueshipment geloven we in transparantie. Je ziet direct wat elke service kost, zonder verrassingen. We werken met duidelijke tarieven per zending, zodat je altijd weet waar je aan toe bent. Geen maandelijkse abonnementskosten, geen verborgen toeslagen - alleen wat je daadwerkelijk gebruikt.',
+      id: 'automatiseren',
+      label: 'Efficiënt',
+      title: 'Automatiseer je processen en bespaar tijd',
+      titleHighlight: 'Automatiseren',
+      intro: 'Laat technologie het werk voor je doen. Automatiseer repetitieve taken en focus op wat echt belangrijk is.',
+      description: 'Met onze automatiseringstools kun je je dagelijkse processen stroomlijnen. Van orderverwerking tot voorraadbeheer, alles draait automatisch op de achtergrond. Dit geeft je de tijd en ruimte om te groeien en te focussen op strategische beslissingen.',
       bullets: [
-        'Transparante prijzen voor elke service',
-        'Geen instellingskosten of maandelijkse verplichtingen',
-        'Schaal mee zonder extra uitgaven'
-      ],
-      buttons: [
-        { text: 'Ontdekken', type: 'primary' },
-        { text: 'Meer', type: 'link' }
-      ]
-    },
-    {
-      id: 'voorraad',
-      label: 'Gratis',
-      title: 'Voorraad opslaan zonder extra uitgaven',
-      titleHighlight: 'zonder',
-      intro: 'Je producten liggen veilig bij ons. Je betaalt alleen wanneer we verzenden. Geen opslagkosten, geen gedoe.',
-      description: 'Je voorraad staat veilig opgeslagen in ons magazijn zonder dat je daarvoor extra betaalt. We rekenen alleen voor de verzendingen die we daadwerkelijk uitvoeren. Dit betekent dat je kunt opschalen zonder zorgen over stijgende opslagkosten. Perfect voor groeiende bedrijven die flexibiliteit nodig hebben.',
-      bullets: [],
-      buttons: [
-        { text: 'Meer', type: 'primary' },
-        { text: 'Lees meer', type: 'link' }
-      ]
-    },
-    {
-      id: 'retouren',
-      label: 'Snel',
-      title: 'Retouren afhandelen voor €1,50 per stuk',
-      titleHighlight: '€1,50',
-      intro: 'Klanten sturen terug, wij regelen het. Zo ervaar jij rust en houdt je tijd over voor zaken die winst opleveren.',
-      description: 'Retouren zijn een onvermijdelijk onderdeel van e-commerce, maar ze hoeven niet jouw tijd te kosten. Ons team inspecteert elke retour, verwerkt deze en zorgt ervoor dat je voorraad automatisch wordt bijgewerkt. Alles voor een vaste prijs van €1,50 per retour, zonder verborgen kosten.',
-      bullets: [
-        'Inspectie en verwerking in één dag',
-        'Automatische terugboeking naar je voorraad',
-        'Klantcommunicatie volledig verzorgd'
+        'Automatische orderverwerking',
+        'Geïntegreerde workflows',
+        'Tijd besparen op repetitieve taken'
       ],
       buttons: [
         { text: 'Meer', type: 'primary' },
@@ -252,28 +366,67 @@ function DienstenPage() {
       ]
     },
     {
-      id: 'whatsapp',
-      label: 'Snel',
-      title: 'Antwoord binnen 30 minuten via WhatsApp',
-      titleHighlight: 'binnen 30 minuten',
-      intro: 'Geen wachtrijen, geen automatische antwoorden. Je krijgt echt iemand aan de lijn die je helpt. Altijd bereikbaar.',
-      description: 'We weten hoe frustrerend het kan zijn om te wachten op antwoorden. Daarom garanderen we een reactie binnen 30 minuten via WhatsApp. Ons team kent jouw account en kan direct helpen met vragen over orders, voorraad of technische zaken. Persoonlijk contact, geen chatbots.',
-      bullets: [],
+      id: 'fulfilment',
+      label: 'Volledig',
+      title: 'Volledige fulfilment service voor je orders',
+      titleHighlight: 'Fulfilment',
+      intro: 'Van opslag tot verzending, wij regelen alles. Je producten liggen veilig en orders worden snel verwerkt.',
+      description: 'Onze fulfilment service omvat alles wat je nodig hebt: opslag, picking, verpakking en verzending. Je voorraad staat veilig bij ons en we verzenden snel en zorgvuldig. Geen gedoe, geen zorgen - wij zorgen ervoor dat je klanten tevreden zijn.',
+      bullets: [
+        'Opslag zonder extra kosten',
+        'Snelle orderverwerking',
+        'Zorgvuldige verpakking en verzending'
+      ],
       buttons: [
         { text: 'Meer', type: 'primary' },
         { text: 'Lees meer', type: 'link' }
       ]
     },
     {
-      id: 'va-team',
-      label: 'VA Team',
-      title: 'Virtual assistants verwerken alles voor je',
-      titleHighlight: 'Virtual assistants',
-      description: 'Ons VA team neemt alle administratieve taken uit je handen. Van orderverwerking tot klantcommunicatie, alles wordt professioneel en efficiënt afgehandeld. Je kunt je volledig focussen op groei en strategie, terwijl wij zorgen voor een vlekkeloze dagelijkse operatie.',
+      id: 'software',
+      label: 'Krachtig',
+      title: 'Krachtige software tools voor je bol.com business',
+      titleHighlight: 'Software',
+      intro: 'Gebruik onze software om je business te optimaliseren. Alles wat je nodig hebt in één platform.',
+      description: 'Onze software suite biedt alle tools die je nodig hebt om je bol.com business succesvol te runnen. Van voorraadbeheer tot analytics, alles is geïntegreerd en werkt naadloos samen. Geen losse systemen meer, alles op één plek.',
       bullets: [
-        'Orderverwerking en administratie',
-        'Klantcommunicatie en support',
-        'Voorraadbeheer en rapportage'
+        'Geïntegreerd platform',
+        'Real-time synchronisatie',
+        'Uitgebreide analytics en rapportage'
+      ],
+      buttons: [
+        { text: 'Meer', type: 'primary' },
+        { text: 'Lees meer', type: 'link' }
+      ]
+    },
+    {
+      id: 'coaching',
+      label: 'Persoonlijk',
+      title: 'Persoonlijke begeleiding om je business te laten groeien',
+      titleHighlight: 'Coaching',
+      intro: 'Krijg persoonlijke begeleiding van experts die weten hoe je een succesvolle bol.com business opbouwt.',
+      description: 'Onze coaching service helpt je om je business naar het volgende niveau te tillen. We delen onze kennis en ervaring en begeleiden je stap voor stap. Van strategie tot uitvoering, we staan naast je om je te helpen groeien.',
+      bullets: [
+        'Persoonlijke begeleiding',
+        'Strategisch advies',
+        'Praktische tips en best practices'
+      ],
+      buttons: [
+        { text: 'Meer', type: 'primary' },
+        { text: 'Lees meer', type: 'link' }
+      ]
+    },
+    {
+      id: 'scaling',
+      label: 'Groeien',
+      title: 'Schaal je business naar het volgende niveau',
+      titleHighlight: 'Scaling',
+      intro: 'Klaar om te groeien? Wij helpen je om je business te schalen zonder de controle te verliezen.',
+      description: 'Scaling betekent niet alleen meer verkopen - het betekent ook je processen optimaliseren en je infrastructuur voorbereiden op groei. We helpen je om systematisch te groeien, met behoud van kwaliteit en controle. Van 10 naar 100 naar 1000 orders per dag.',
+      bullets: [
+        'Systematische groei',
+        'Procesoptimalisatie',
+        'Infrastructuur die meeschaalt'
       ],
       buttons: [
         { text: 'Meer', type: 'primary' },
@@ -285,7 +438,16 @@ function DienstenPage() {
   // Helper function to scroll to section with navbar offset
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
-    if (!element) return;
+    if (!element) {
+      console.log('[DienstenPage] scrollToSection: element not found', sectionId);
+      return;
+    }
+
+    console.log('[DienstenPage] scrollToSection called', {
+      sectionId,
+      currentScrollY: window.scrollY,
+      timestamp: Date.now()
+    });
 
     // Get navbar height or use fallback
     const navbar = document.querySelector('.navbar');
@@ -300,68 +462,68 @@ function DienstenPage() {
       behavior: 'smooth'
     });
 
-    // Focus for accessibility
-    element.setAttribute('tabIndex', '-1');
-    setTimeout(() => {
-      element.focus({ preventScroll: true });
-    }, 500);
+    // Remove focus to prevent outline
+    // element.setAttribute('tabIndex', '-1');
+    // setTimeout(() => {
+    //   element.focus({ preventScroll: true });
+    // }, 500);
   };
 
   // Service cards data
   const services = [
     {
-      kicker: 'Opslag',
-      title: 'Opslag zonder extra kosten',
-      description: 'Maatwerk tarieven voor jouw situatie.',
+      kicker: 'Productlistings',
+      title: 'Productlistings',
+      description: 'Professionele productlistings voor je bol.com shop.',
       cta: 'Meer',
-      href: '/diensten/opslag',
+      href: '/diensten/productlistings',
       area: 'a',
-      sectionId: 'voorraad'
-    },
-    {
-      kicker: 'Retouren',
-      title: 'Retouren afhandelen voor slechts €1,50 per stuk.',
-      description: '',
-      cta: 'Meer',
-      href: '/diensten/retouren',
-      area: 'b',
-      sectionId: 'retouren'
-    },
-    {
-      kicker: 'Verzending',
-      title: 'Verzending en picking',
-      description: 'Orders worden snel en zorgvuldig verwerkt.',
-      cta: 'Meer',
-      href: '/diensten/verzending',
-      area: 'c',
-      sectionId: 'kosten'
-    },
-    {
-      kicker: 'Software',
-      title: 'Gratis productlistings gebaseerd op je bronnen.',
-      description: 'Onze eigen software gratis door jou te gebruiken',
-      cta: 'Meer',
-      href: '/diensten/listings',
-      area: 'd',
       sectionId: 'productlistings'
     },
     {
-      kicker: 'VA Team',
-      title: 'Ons VA team staat voor je klaar',
-      description: 'Virtual assistants regelen orders en klantvragen.',
+      kicker: 'Automatiseren',
+      title: 'Automatiseren',
+      description: 'Automatiseer je processen en bespaar tijd.',
       cta: 'Meer',
-      href: '/diensten/va-team',
-      area: 'e',
-      sectionId: 'va-team'
+      href: '/diensten/automatiseren',
+      area: 'b',
+      sectionId: 'automatiseren'
     },
     {
-      kicker: 'Voorraad',
-      title: 'Voorraadbeheer',
-      description: 'Je ziet precies wat je hebt liggen. De software synchroniseert real-time met je bol-account.',
+      kicker: 'Fulfilment',
+      title: 'Fulfilment',
+      description: 'Volledige fulfilment service voor je orders.',
       cta: 'Meer',
-      href: '/diensten/voorraad',
+      href: '/diensten/fulfilment',
+      area: 'c',
+      sectionId: 'fulfilment'
+    },
+    {
+      kicker: 'Software',
+      title: 'Software',
+      description: 'Krachtige software tools voor je bol.com business.',
+      cta: 'Meer',
+      href: '/diensten/software',
+      area: 'd',
+      sectionId: 'software'
+    },
+    {
+      kicker: 'Coaching',
+      title: 'Coaching',
+      description: 'Persoonlijke begeleiding om je business te laten groeien.',
+      cta: 'Meer',
+      href: '/diensten/coaching',
+      area: 'e',
+      sectionId: 'coaching'
+    },
+    {
+      kicker: 'Scaling',
+      title: 'Scaling',
+      description: 'Schaal je business naar het volgende niveau.',
+      cta: 'Meer',
+      href: '/diensten/scaling',
       area: 'f',
-      sectionId: 'voorraad'
+      sectionId: 'scaling'
     }
   ];
 
@@ -532,13 +694,23 @@ function DienstenPage() {
                         ))}
                       </ul>
                     )}
+                    <div className="diensten-detail-media-mobile"></div>
                     <div className="diensten-detail-ctas">
                       {detail.buttons.map((button, buttonIndex) => {
                         if (button.type === 'link') {
                           return (
-                            <a key={buttonIndex} href="#" className="diensten-detail-link">
+                            <button
+                              key={buttonIndex}
+                              type="button"
+                              className="diensten-detail-link"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                // Prevent default scroll-to-top behavior
+                                console.log('[DienstenPage] Link clicked, preventing default', button.text);
+                              }}
+                            >
                               {button.text}
-                            </a>
+                            </button>
                           );
                         }
                         const buttonClass = `btn btn-${button.type}`;

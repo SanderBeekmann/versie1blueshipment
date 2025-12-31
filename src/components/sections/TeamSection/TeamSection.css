@@ -1,7 +1,7 @@
 /* Team Section */
 .team-section {
   width: 100%;
-  padding: var(--page-padding) var(--section-padding-small);
+  padding: var(--page-padding) calc(var(--section-padding-small) / 2);
   background-color: var(--color-background);
   position: relative;
   overflow: hidden;
@@ -24,7 +24,7 @@
   flex-direction: column;
   align-items: center;
   gap: var(--page-padding);
-  padding: var(--section-padding-small) var(--page-padding);
+  padding: var(--section-padding-small) calc(var(--page-padding) / 2);
   background-color: var(--color-background);
   border-radius: var(--radius-large);
   box-shadow: var(--shadow-medium);
@@ -71,6 +71,24 @@
 .team-grid {
   width: 100%;
   padding: var(--section-padding-small) 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--gap-small);
+  justify-items: center;
+}
+
+@media (max-width: 1200px) {
+  .team-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--gap-small);
+  }
+}
+
+@media (max-width: 768px) {
+  .team-grid {
+    grid-template-columns: 1fr;
+    gap: var(--gap-small);
+  }
 }
 
 .card-scale {
@@ -99,7 +117,7 @@
   width: 100%;
   max-width: 352px;
   height: 100%;
-  padding: var(--gap-small);
+  padding: calc(var(--gap-small) / 2);
   background-color: #f2f2f2;
   border-radius: var(--radius-large);
   box-shadow: var(--shadow-xsmall);
@@ -124,6 +142,7 @@
   border-radius: 144px 0 0 0;
   border-top: 1px solid var(--color-blue-ribbon);
   overflow: hidden;
+  position: relative;
 }
 
 .card-image .image-placeholder {
@@ -132,12 +151,26 @@
   background-color: var(--color-white);
 }
 
+.card-image::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 1;
+  pointer-events: none;
+}
+
 .card-image .member-photo {
   width: 100%;
   height: 100%;
   aspect-ratio: 1;
   object-fit: cover;
   display: block;
+  position: relative;
+  z-index: 0;
 }
 
 .card-content {
@@ -186,12 +219,16 @@
 
 @media (max-width: 768px) {
   .team-section {
-    padding: var(--section-padding-small) var(--gap-xsmall);
+    padding: var(--section-padding-small) calc(var(--gap-xsmall) / 2);
   }
 
   .team-container {
-    padding: var(--gap-small);
+    padding: var(--gap-small) calc(var(--gap-small) / 2);
     border-radius: var(--radius-medium);
+  }
+  
+  .team-card {
+    max-width: 100%;
   }
 }
 

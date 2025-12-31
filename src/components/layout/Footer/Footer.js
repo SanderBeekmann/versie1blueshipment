@@ -1,13 +1,6 @@
 import React from 'react';
 import './Footer.css';
-
-const Logo = () => (
-  <svg width="66" height="66" viewBox="0 0 53 53" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect width="53" height="53" rx="10" fill="#0070ff"/>
-    <path d="M15 16H38L35 26H18L15 16Z" fill="white"/>
-    <path d="M18 28H35L38 38H15L18 28Z" fill="white"/>
-  </svg>
-);
+import logo from '../../../assets/brand/logo.png';
 
 function Footer() {
   const column1Links = [
@@ -33,7 +26,7 @@ function Footer() {
           <div className="footer-info">
             <div className="footer-brand">
               <div className="footer-logo">
-                <Logo />
+                <img src={logo} alt="BlueShipment" />
               </div>
               <p className="footer-brand-name">BlueShipment</p>
             </div>

@@ -48,7 +48,7 @@ export default function InfiniteGridOverlay({ opacity = 0.5, className = "" }) {
       ref={containerRef}
       onMouseMove={handleMouseMove}
       className={`infinite-grid-overlay ${className}`}
-      style={{ opacity }}
+      style={{ opacity, pointerEvents: 'none' }}
       aria-hidden="true"
     >
       <div className="absolute inset-0 z-0 opacity-[0.18]">

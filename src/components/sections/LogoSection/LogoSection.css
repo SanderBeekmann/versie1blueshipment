@@ -27,8 +27,11 @@
 .logo-carousel-wrapper {
   position: relative;
   width: 100%;
+  max-width: 100%;
   overflow: hidden;
   padding: 0;
+  /* Prevent horizontal scroll from animated carousel */
+  overflow-x: clip;
 }
 
 .logo-carousel-wrapper::before,

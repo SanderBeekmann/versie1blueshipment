@@ -65,6 +65,7 @@
   display: flex;
   flex-direction: column;
   width: 100%;
+  position: relative; /* For mobile rail container */
 }
 
 .process-step {
@@ -96,6 +97,11 @@
   text-align: left;
 }
 
+/* Mobile-only content - hidden on desktop */
+.step-content-mobile {
+  display: none;
+}
+
 .step-title-container {
   color: var(--color-white);
 }
@@ -122,6 +128,15 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
+  align-items: center;
+}
+
+.step-image-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 0;
 }
 
 .step-description {
@@ -132,15 +147,56 @@
   color: var(--color-white);
 }
 
-.step-image-placeholder {
+.step-image-container {
   width: 320px;
   height: 320px;
   border-radius: 141px 0 40px 0;
-  background-color: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
 }
 
-.timeline-media {
+.step-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  opacity: 0;
   will-change: transform, opacity;
+}
+
+/* Mobile: Ensure images and text are always visible */
+@media (max-width: 1023px) {
+  .step-image {
+    opacity: 1 !important; /* Override GSAP initial state on mobile */
+    transform: none !important; /* Reset any GSAP transforms */
+    will-change: auto;
+  }
+  
+  .timeline-text,
+  .timeline-media {
+    opacity: 1 !important; /* Override GSAP initial state on mobile */
+    transform: none !important; /* Reset any GSAP transforms */
+    will-change: auto;
+  }
+  
+  .step-content-mobile {
+    position: relative;
+    z-index: 10; /* Above the timeline line */
+  }
+  
+  .process-step {
+    position: relative;
+    z-index: 1; /* Ensure steps are above the line */
+  }
+  
+  .process-step-final {
+    position: relative;
+    z-index: 1; /* Ensure step 6 is above the line */
+  }
 }
 
 /* Timeline */
@@ -243,35 +299,204 @@
 }
 
 /* Responsive */
-@media (max-width: 1024px) {
-  .process-step {
-    grid-template-columns: 1fr;
-    min-height: auto;
-    gap: var(--gap-small);
-  }
-
+@media (max-width: 1023px) {
+  /* Hide desktop content on mobile */
   .step-content-left,
   .step-content-right {
-    align-items: center;
-    text-align: center;
-  }
-
-  .step-timeline {
     display: none;
   }
 
-  .step-image-placeholder {
+  /* Show mobile content */
+  .step-content-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-small);
+    align-items: flex-start;
+    text-align: left;
     width: 100%;
-    max-width: 280px;
+    grid-column: 2;
+    padding: 0;
+    position: relative;
+    z-index: 10; /* Above the timeline line */
+  }
+  
+  /* Mobile: Ensure images and text are always visible */
+  /* Override GSAP initial states that might hide content */
+  .step-image {
+    opacity: 1 !important; /* Override GSAP initial state on mobile */
+    transform: none !important; /* Reset any GSAP transforms */
+    will-change: auto;
+  }
+  
+  .timeline-text,
+  .timeline-media {
+    opacity: 1 !important; /* Override GSAP initial state on mobile */
+    transform: none !important; /* Reset any GSAP transforms */
+    will-change: auto;
+  }
+
+  .process-step {
+    grid-template-columns: 24px 1fr;
+    min-height: auto;
+    gap: var(--gap-small);
+    align-items: start;
+    padding: var(--gap-xxsmall) 0;
+    margin-bottom: var(--gap-xxsmall);
+    position: relative;
+    z-index: 1; /* Ensure steps are above the line */
+  }
+
+  .process-step:last-of-type {
+    margin-bottom: 0;
+  }
+
+  /* Mobile: Hide old process-steps::before line */
+  .process-steps::before {
+    display: none;
+  }
+  
+  /* Mobile: Rail container for timeline line and dots */
+  /* Define shared x-position for line and circles */
+  .process-container {
+    position: relative; /* For absolute positioned rail */
+    /* Ensure content is not clipped - only clip horizontal overflow if needed */
+    overflow-x: clip;
+    overflow-y: visible; /* Allow content to be fully visible */
+    --rail-x: calc(var(--section-padding-medium) + 12px - 1.5px - 48px); /* Container padding + center of 24px column (12px) - half line width (1.5px) - 48px offset (32px + 16px) */
+  }
+  
+  /* Mobile: Rail wrapper for timeline line */
+  .process-timeline-rail {
+    position: absolute;
+    left: var(--rail-x);
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    z-index: 0; /* Behind all content */
+    pointer-events: none;
+  }
+  
+  /* Mobile: Static base line track (full height) */
+  .process-timeline-track {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 3px;
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+  
+  /* Mobile: Progressive fill that grows from top to bottom */
+  .process-timeline-progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 0; /* Will be animated by GSAP to grow from 0 to max */
+    background-color: var(--color-white);
+    transform-origin: top;
+  }
+
+  .step-timeline {
+    display: flex;
+    flex-direction: column;
+    width: 24px;
+    align-items: center;
+    padding-top: 0;
+    grid-column: 1;
+    position: relative;
+    justify-content: flex-start;
+    z-index: 1; /* Above the continuous line */
+  }
+
+  /* Hide individual timeline lines on mobile - we use the continuous line */
+  .step-timeline .timeline-line {
+    display: none;
+  }
+
+  .step-timeline .timeline-line-base {
+    display: none;
+  }
+
+  /* Hide progress lines on mobile - no GSAP animation on mobile */
+  .step-timeline .timeline-line-progress {
+    display: none;
+  }
+
+  .step-timeline .timeline-dot {
+    width: 11px;
+    height: 11px;
+    margin: 0;
+    flex-shrink: 0;
+    position: absolute;
+    top: 0;
+    /* Use same x-position as rail line for perfect centering */
+    /* rail-x is relative to container, dot is relative to step-timeline (24px wide, centered at 12px) */
+    left: calc(12px - 5.5px); /* Center of 24px column minus half dot width */
+    z-index: 2;
+  }
+
+  .step-content-mobile .step-title-container {
+    width: 100%;
+    margin-bottom: 0;
+  }
+
+  .step-content-mobile .step-number {
+    margin-bottom: var(--gap-xxsmall);
+  }
+
+  .step-content-mobile .step-description {
+    text-align: left;
+    width: 100%;
+    margin: 0;
+  }
+
+  .step-content-mobile .step-image-container {
+    width: 100%;
+    max-width: 100%;
     height: 280px;
+    margin: 0;
+    border-radius: var(--radius-medium);
+  }
+
+  .step-content-mobile .step-image-wrapper {
+    width: 100%;
+  }
+
+  .step-content-mobile .btn {
+    align-self: flex-start;
   }
 
   .process-step-final {
     padding: 0;
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    gap: var(--gap-small);
+    align-items: start;
+    position: relative;
+    z-index: 1; /* Ensure step 6 is above the line */
+    margin-left: -136px; /* Move step 6 136px to the left on mobile */
+  }
+
+  /* Dot for step 6 in mobile */
+  .process-step-final::before {
+    content: '';
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background-color: var(--color-white);
+    position: absolute;
+    top: 0;
+    /* Use same x-position as rail line for perfect centering */
+    /* rail-x is relative to container, step-final is in grid column 1 (24px wide) */
+    left: calc(12px - 5.5px); /* Center of 24px column minus half dot width */
+    z-index: 2;
+    grid-column: 1;
   }
 
   .step-final-title {
-    text-align: center;
+    text-align: left;
+    grid-column: 2;
   }
 }
 

@@ -4,6 +4,7 @@ import './TeamSection.css';
 import timoImg from '../../../assets/timo.jpg';
 import reitzeImg from '../../../assets/reitze.jpg';
 import colinImg from '../../../assets/colin.jpg';
+import davidImg from '../../../assets/david.jpeg';
 import GlassTagline from '../GlassTagline/GlassTagline';
 
 const BlueDot = () => (
@@ -34,6 +35,13 @@ function TeamSection() {
       role: 'Verkoop & klantcontact',
       description: 'Eerste aanspreekpunt voor klanten en zorgt voor een perfecte verkoopervaring.',
       image: colinImg
+    },
+    {
+      id: 4,
+      name: 'David Karani',
+      role: 'Social Media',
+      description: 'Verzorgt social media voor Blueshipment.',
+      image: davidImg
     }
   ];
 
@@ -54,7 +62,7 @@ function TeamSection() {
             </p>
           </div>
 
-          <div className="team-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 justify-items-center gap-6 lg:gap-8">
+          <div className="team-grid">
             {teamMembers.map((member) => (
               <div key={member.id} className="card-scale max-w-[352px] w-full">
                 <TeamCard member={member} />

@@ -254,7 +254,7 @@
   position: relative;
   overflow: hidden;
   height: 100%;
-  transition: box-shadow 180ms ease, border-color 180ms ease;
+  transition: box-shadow 180ms ease, border-color 180ms ease, background-color 180ms ease;
 }
 
 .diensten-card::before {
@@ -296,7 +296,7 @@
 
 /* Remove transform transition from cards within bento to avoid double easing with GSAP */
 .diensten-bento .diensten-card {
-  transition: box-shadow 180ms ease, border-color 180ms ease;
+  transition: box-shadow 180ms ease, border-color 180ms ease, background-color 180ms ease;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -313,6 +313,7 @@
   transform: translateY(-4px);
   box-shadow: var(--shadow-soft-hover);
   border-color: var(--color-blue-ribbon-light);
+  background-color: var(--color-blue-ribbon-lightest);
 }
 
 .diensten-card:hover::before {
@@ -799,6 +800,15 @@
   grid-template-columns: 1.1fr 0.9fr;
   gap: clamp(64px, 6vw, 96px);
   align-items: center;
+  outline: none;
+}
+
+.diensten-detail-block:focus {
+  outline: none;
+}
+
+.diensten-detail-block:focus-visible {
+  outline: none;
 }
 
 .diensten-detail-block--reverse {
@@ -891,6 +901,10 @@
   margin-top: 2px;
 }
 
+.diensten-detail-media-mobile {
+  display: none;
+}
+
 .diensten-detail-ctas {
   display: flex;
   flex-direction: row;
@@ -950,6 +964,18 @@
 
   .diensten-card[data-area] {
     grid-area: unset;
+  }
+
+  .diensten-card--featured,
+  .diensten-card--compact {
+    min-height: auto;
+  }
+
+  .diensten-services-cta {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    margin-top: var(--gap-small);
   }
 
   .diensten-card__body {
@@ -1014,6 +1040,28 @@
   .diensten-hero-text {
     max-width: 600px;
   }
+
+  /* Desktop bento grid - behoud originele layout */
+  .diensten-bento {
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-areas:
+      "a a a a a a b b b b b b"
+      "a a a a a a b b b b b b"
+      "c c c c d d d d e e e e"
+      "c c c c d d d d f f f f"
+      ". . . . cta cta cta cta . . . .";
+    grid-auto-rows: minmax(clamp(110px, 9vw, 150px), auto);
+    gap: clamp(12px, 1.4vw, 18px);
+  }
+
+  /* Grid areas worden automatisch toegepast via data-area attributen op desktop */
+  .diensten-card[data-area="a"] { grid-area: a; }
+  .diensten-card[data-area="b"] { grid-area: b; }
+  .diensten-card[data-area="c"] { grid-area: c; }
+  .diensten-card[data-area="d"] { grid-area: d; }
+  .diensten-card[data-area="e"] { grid-area: e; }
+  .diensten-card[data-area="f"] { grid-area: f; }
+  .diensten-services-cta[data-area="cta"] { grid-area: cta; }
 
   .diensten-how-it-works-flow {
     flex-direction: row;
@@ -1101,14 +1149,23 @@
 
   .diensten-detail-block .diensten-detail-media,
   .diensten-detail-block--reverse .diensten-detail-media {
-    max-width: 100%;
-    aspect-ratio: 1;
-    order: -1;
+    display: none;
   }
 
   .diensten-detail-block .diensten-detail-content,
   .diensten-detail-block--reverse .diensten-detail-content {
     order: 1;
+  }
+
+  .diensten-detail-media-mobile {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1;
+    margin: var(--gap-medium) 0;
+    background-color: var(--color-card-white);
+    border-radius: var(--radius-large);
+    box-shadow: var(--shadow-xsmall);
+    border: 1px solid rgba(13, 6, 0, 0.08);
   }
 
   .diensten-detail-ctas {
@@ -1121,11 +1178,35 @@
 
   .diensten-bento {
     grid-template-columns: 1fr;
-    gap: var(--gap-small);
+    grid-template-areas: none;
+    grid-auto-rows: auto;
+    gap: var(--gap-medium);
+  }
+
+  .diensten-card[data-area] {
+    grid-area: unset;
+  }
+
+  .diensten-card--featured,
+  .diensten-card--compact {
+    min-height: auto;
   }
 
   .diensten-card__body {
     padding: clamp(18px, 4vw, 24px);
+  }
+
+  .diensten-services-cta {
+    grid-column: 1;
+    display: flex;
+    justify-content: center;
+    margin-top: var(--gap-large);
+    width: 100%;
+  }
+  
+  /* Zorg ervoor dat CTA altijd na alle cards komt in de grid */
+  .diensten-bento > .diensten-services-cta {
+    grid-row: auto;
   }
 
   .diensten-card__kicker {

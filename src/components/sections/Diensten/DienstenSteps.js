@@ -24,12 +24,10 @@ const InventoryIcon = () => (
   </svg>
 );
 
-const SyncIcon = () => (
+const CheckIcon = () => (
   <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-    <path d="M24 8C16.27 8 10 14.27 10 22C10 29.73 16.27 36 24 36C31.73 36 38 29.73 38 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-    <path d="M32 14L38 8L32 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M16 34C23.73 34 30 27.73 30 20C30 12.27 23.73 6 16 6C8.27 6 2 12.27 2 20" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-    <path d="M10 40L4 46L10 52" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <circle cx="24" cy="24" r="18" stroke="currentColor" strokeWidth="2"/>
+    <path d="M16 24L22 30L32 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 );
 
@@ -166,7 +164,8 @@ function DienstenSteps() {
       scrollTrigger: {
         trigger: sectionRef.current,
         start: 'top 80%',
-        once: true
+        once: true,
+        invalidateOnRefresh: true
       }
     });
 
@@ -187,13 +186,13 @@ function DienstenSteps() {
         y: 0,
         duration: 0.6,
         ease: 'power2.out'
-      }, '-=0.3');
+        }, '-=0.2');
     }
 
     // Animation timeline: reveal step 1, then line grows to dot 2, dot activates, reveal step 2, etc.
-    const segmentDuration = 0.6; // Duration for each line segment
-    const stepAppearDuration = 0.4;
-    const dotActivateDuration = 0.18;
+    const segmentDuration = 0.35; // Duration for each line segment (versneld van 0.6)
+    const stepAppearDuration = 0.25; // Versneld van 0.4
+    const dotActivateDuration = 0.12; // Versneld van 0.18
     
     // Reveal step 1 first
     if (steps[0]) {
@@ -223,7 +222,7 @@ function DienstenSteps() {
           scaleX: 1,
           duration: segmentDuration,
           ease: 'none' // Linear/constant speed
-        }, '+=0.2'); // Pause before line grows
+        }, '+=0.1'); // Pause before line grows (versneld van 0.2)
       }
       
       // Dot activates when line reaches it
@@ -254,13 +253,30 @@ function DienstenSteps() {
         y: 0,
         duration: 0.5,
         ease: 'power2.out'
-      }, '+=0.2');
+      }, '+=0.1');
     }
 
-    // Handle resize to reposition segments
+    // Handle resize to reposition segments with debouncing and scroll position preservation
+    let resizeTimeout;
     const handleResize = () => {
-      positionLineSegments();
-      ScrollTrigger.refresh();
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        // Preserve scroll position during refresh to prevent viewport jumps on mobile
+        const scrollY = window.scrollY;
+        const isMobile = window.innerWidth < 768;
+        
+        positionLineSegments();
+        ScrollTrigger.refresh();
+        
+        // Restore scroll position if it changed (prevents viewport jumps)
+        // On mobile, be more aggressive about preserving scroll position
+        const scrollDiff = Math.abs(window.scrollY - scrollY);
+        const threshold = isMobile ? 5 : 10;
+        
+        if (scrollDiff > threshold) {
+          window.scrollTo({ top: scrollY, behavior: 'instant' });
+        }
+      }, 150);
     };
     
     const resizeObserver = new ResizeObserver(() => {
@@ -275,6 +291,7 @@ function DienstenSteps() {
 
     return () => {
       clearTimeout(timeoutId);
+      clearTimeout(resizeTimeout);
       resizeObserver.disconnect();
       window.removeEventListener('resize', handleResize);
       ScrollTrigger.getAll().forEach(trigger => {
@@ -297,7 +314,7 @@ function DienstenSteps() {
       description: 'Je producten komen aan, we scannen en registreren alles. Geen gedoe, geen wachten.'
     },
     {
-      icon: <SyncIcon />,
+      icon: <CheckIcon />,
       title: <>Stap 3:<br />Koppel je bol-account</>,
       description: 'Je listings synchroniseren automatisch. Voorraad, prijzen, alles loopt gelijk.'
     },

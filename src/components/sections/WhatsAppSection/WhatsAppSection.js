@@ -3,6 +3,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import './WhatsAppSection.css';
 import GlassTagline from '../GlassTagline/GlassTagline';
+import colinImg from '../../../assets/colin.jpg';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -17,41 +18,229 @@ const WhatsAppIcon = () => (
 
 function WhatsAppSection() {
   const sectionRef = useRef(null);
+  const contentGridRef = useRef(null);
+  const imageRef = useRef(null);
   const cardRef = useRef(null);
+  const iconRef = useRef(null);
+  const timeRef = useRef(null);
+  const titleRef = useRef(null);
+  const descriptionRef = useRef(null);
+  const buttonRef = useRef(null);
+  const hoverTweenRef = useRef(null);
 
   useLayoutEffect(() => {
     const section = sectionRef.current;
+    const contentGrid = contentGridRef.current;
+    const image = imageRef.current;
     const card = cardRef.current;
+    const icon = iconRef.current;
+    const time = timeRef.current;
+    const title = titleRef.current;
+    const description = descriptionRef.current;
+    const button = buttonRef.current;
+
+    if (!section || !contentGrid || !image || !card) return;
+
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    
-    if (!section || !card || prefersReducedMotion) return;
 
-    const ctx = gsap.context(() => {
-      // Set initial state for the card - starts below and invisible
-      gsap.set(card, {
-        y: 60,
-        opacity: 0,
-        willChange: 'transform, opacity',
-      });
-
-      // Animate the entire card up and fade in
-      gsap.to(card, {
-        y: 0,
+    // If reduced motion, show everything immediately
+    if (prefersReducedMotion) {
+      gsap.set([contentGrid, image, card, icon, time, title, description, button], {
         opacity: 1,
-        duration: 0.8,
-        ease: 'power3.out',
+        x: 0,
+        y: 0,
+        willChange: 'auto',
+      });
+      return;
+    }
+
+    // Set initial states
+    gsap.set(contentGrid, {
+      opacity: 0,
+      y: 40,
+      willChange: 'transform, opacity',
+    });
+
+    gsap.set(image, {
+      opacity: 0,
+      x: -30,
+      willChange: 'transform, opacity',
+    });
+
+    gsap.set([icon, time, title, description, button], {
+      opacity: 0,
+      y: 20,
+      willChange: 'transform, opacity',
+    });
+
+    // Create GSAP timeline with ScrollTrigger
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
         scrollTrigger: {
           trigger: section,
           start: 'top 80%',
           once: true,
-          onComplete: () => {
-            gsap.set(card, { willChange: 'auto' });
-          },
+          invalidateOnRefresh: true,
         },
       });
+
+      // Animate entire content grid (card + image) - fade in with y movement
+      tl.to(contentGrid, {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        ease: 'power2.out',
+        onComplete: () => {
+          gsap.set(contentGrid, { willChange: 'auto' });
+        },
+      }, 0);
+
+      // Animate image from left to right with opacity
+      tl.to(image, {
+        opacity: 1,
+        x: 0,
+        duration: 0.9,
+        ease: 'power2.out',
+        onComplete: () => {
+          gsap.set(image, { willChange: 'auto' });
+        },
+      }, 0.1);
+
+      // Animate text content sequentially
+      if (icon) {
+        tl.to(icon, {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          ease: 'power2.out',
+          onComplete: () => {
+            gsap.set(icon, { willChange: 'auto' });
+          },
+        }, 0.3);
+      }
+
+      if (time) {
+        tl.to(time, {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          ease: 'power2.out',
+          onComplete: () => {
+            gsap.set(time, { willChange: 'auto' });
+          },
+        }, 0.4);
+      }
+
+      if (title) {
+        tl.to(title, {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          ease: 'power2.out',
+          onComplete: () => {
+            gsap.set(title, { willChange: 'auto' });
+          },
+        }, 0.5);
+      }
+
+      if (description) {
+        tl.to(description, {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          ease: 'power2.out',
+          onComplete: () => {
+            gsap.set(description, { willChange: 'auto' });
+          },
+        }, 0.6);
+      }
+
+      if (button) {
+        tl.to(button, {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          ease: 'power2.out',
+          onComplete: () => {
+            gsap.set(button, { willChange: 'auto' });
+          },
+        }, 0.7);
+      }
     }, sectionRef);
 
-    return () => ctx.revert();
+    // Content grid hover animation (whole section - image + card)
+    let hoverTween = null;
+    const handleGridMouseEnter = () => {
+      if (hoverTween) hoverTween.kill();
+      hoverTween = gsap.to(contentGrid, {
+        y: -4,
+        scale: 1.01,
+        duration: 0.4,
+        ease: 'power2.out',
+      });
+      gsap.to([image, card], {
+        boxShadow: '0 12px 32px rgba(0, 0, 0, 0.15)',
+        duration: 0.4,
+        ease: 'power2.out',
+      });
+    };
+
+    const handleGridMouseLeave = () => {
+      if (hoverTween) hoverTween.kill();
+      hoverTween = gsap.to(contentGrid, {
+        y: 0,
+        scale: 1,
+        duration: 0.4,
+        ease: 'power2.out',
+      });
+      gsap.to([image, card], {
+        boxShadow: 'var(--shadow-xsmall)',
+        duration: 0.4,
+        ease: 'power2.out',
+      });
+    };
+
+    if (contentGrid) {
+      contentGrid.addEventListener('mouseenter', handleGridMouseEnter);
+      contentGrid.addEventListener('mouseleave', handleGridMouseLeave);
+    }
+
+    // Button hover animation
+    const handleButtonMouseEnter = () => {
+      gsap.to(button, {
+        scale: 1.05,
+        boxShadow: '0 8px 24px rgba(4, 171, 56, 0.3)',
+        duration: 0.3,
+        ease: 'power2.out',
+      });
+    };
+
+    const handleButtonMouseLeave = () => {
+      gsap.to(button, {
+        scale: 1,
+        boxShadow: '0 4px 12px rgba(37, 211, 102, 0.4)',
+        duration: 0.3,
+        ease: 'power2.out',
+      });
+    };
+
+    if (button) {
+      button.addEventListener('mouseenter', handleButtonMouseEnter);
+      button.addEventListener('mouseleave', handleButtonMouseLeave);
+    }
+
+    return () => {
+      ctx.revert();
+      if (contentGrid) {
+        contentGrid.removeEventListener('mouseenter', handleGridMouseEnter);
+        contentGrid.removeEventListener('mouseleave', handleGridMouseLeave);
+      }
+      if (button) {
+        button.removeEventListener('mouseenter', handleButtonMouseEnter);
+        button.removeEventListener('mouseleave', handleButtonMouseLeave);
+      }
+      if (hoverTween) hoverTween.kill();
+    };
   }, []);
 
   return (
@@ -69,25 +258,30 @@ function WhatsAppSection() {
           </p>
         </div>
 
-        <div ref={cardRef} className="whatsapp-card">
-          <div className="whatsapp-card-content">
-            <div className="whatsapp-icon-wrapper">
-              <WhatsAppIcon />
-            </div>
-            <div className="whatsapp-info">
-              <div className="whatsapp-time">
-                <span>Reactie binnen 30 minuten</span>
+        <div ref={contentGridRef} className="whatsapp-content-grid">
+          <div className="whatsapp-image-frame">
+            <img ref={imageRef} src={colinImg} alt="Colin Frederiks" />
+          </div>
+          <div ref={cardRef} className="whatsapp-card">
+            <div className="whatsapp-card-content">
+              <div ref={iconRef} className="whatsapp-icon-wrapper">
+                <WhatsAppIcon />
               </div>
-              <h3 className="whatsapp-card-title">
-                Neem contact op met Colin
-              </h3>
-              <p className="whatsapp-card-description">
-                Ben je klaar om te starten? Colin staat klaar om met je in gesprek te gaan via WhatsApp en je dé perfecte begeleiding te geven die je nodig hebt om het beste uit BlueShipment te halen.
-              </p>
+              <div className="whatsapp-info">
+                <div ref={timeRef} className="whatsapp-time">
+                  <span>Reactie binnen 30 minuten</span>
+                </div>
+                <h3 ref={titleRef} className="whatsapp-card-title">
+                  Neem contact op met Colin
+                </h3>
+                <p ref={descriptionRef} className="whatsapp-card-description">
+                  Ben je klaar om te starten? Colin staat klaar om met je in gesprek te gaan via WhatsApp en je dé perfecte begeleiding te geven die je nodig hebt om het beste uit BlueShipment te halen.
+                </p>
+              </div>
+              <button ref={buttonRef} className="btn btn-whatsapp whatsapp-cta-button">
+                Neem contact op via WhatsApp
+              </button>
             </div>
-            <button className="btn btn-whatsapp whatsapp-cta-button">
-              Neem contact op via WhatsApp
-            </button>
           </div>
         </div>
       </div>

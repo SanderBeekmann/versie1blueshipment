@@ -60,8 +60,11 @@ function Hero() {
           </GlassTagline>
           
           <div className="hero-title-section">
-            <h1 className="hero-title" data-animate-title>
+            <h1 className="hero-title hero-title-desktop" data-animate-title>
               Jouw all-in<br />bol.com partner
+            </h1>
+            <h1 className="hero-title hero-title-mobile" data-animate-title>
+              Jouw all-in<br />bol.com<br />partner
             </h1>
             <p className="hero-subtitle">
               Probeer nu: Krijg een totaalpakket t.w.v. 499 euro<br />helemaal gratis!

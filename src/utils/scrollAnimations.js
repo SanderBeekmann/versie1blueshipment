@@ -3,6 +3,13 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
+// Configure ScrollTrigger to prevent viewport jumps on mobile
+// Limit auto-refresh events to prevent excessive refreshes that cause scroll jumps
+ScrollTrigger.config({
+  autoRefreshEvents: "visibilitychange,DOMContentLoaded,load",
+  ignoreMobileResize: true, // Prevent refresh on mobile resize events
+});
+
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const animationVariants = {
@@ -57,11 +64,13 @@ export const initScrollAnimations = () => {
           trigger: section,
           start: 'top 90%',
           once: true,
+          invalidateOnRefresh: true,
         },
       });
       return;
     }
 
+    // Set initial state - layout-neutral (only opacity/transform, no display/height changes)
     gsap.set(section, variant);
 
     const duration = 0.8 + (index % 3) * 0.1;
@@ -78,31 +87,41 @@ export const initScrollAnimations = () => {
         trigger: section,
         start: 'top 85%',
         once: true,
+        invalidateOnRefresh: true, // Recalculate positions on refresh
       },
+    });
+  });
+
+  // Refresh ScrollTrigger after all animations are set up to ensure correct measurements
+  // Use requestAnimationFrame to ensure layout is stable
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      ScrollTrigger.refresh();
     });
   });
 };
 
+// Unified animation config for all titles - same animation for all heading levels
 const titleAnimationConfig = {
   h1: {
-    y: 24,
-    duration: 0.9,
+    y: 18,
+    duration: 0.8,
   },
   h2: {
     y: 18,
     duration: 0.8,
   },
   h3: {
-    y: 16,
-    duration: 0.75,
+    y: 18,
+    duration: 0.8,
   },
   h4: {
-    y: 14,
-    duration: 0.7,
+    y: 18,
+    duration: 0.8,
   },
   h5: {
-    y: 12,
-    duration: 0.65,
+    y: 18,
+    duration: 0.8,
   },
 };
 
@@ -119,9 +138,9 @@ export const initTitleAnimations = () => {
   );
 
   // Animate diensten detail titles with stagger between sections
+  // All titles use the same animation config (h2 settings)
   dienstenDetailTitles.forEach((title, index) => {
-    const tagName = title.tagName.toLowerCase();
-    const config = titleAnimationConfig[tagName] || titleAnimationConfig.h3;
+    const config = titleAnimationConfig.h2; // Use same config for all titles
 
     // Find related elements for this specific title
     const contentContainer = title.parentElement;
@@ -193,6 +212,7 @@ export const initTitleAnimations = () => {
         end: 'top 50%',
         toggleActions: 'play none none reverse',
         markers: false,
+        invalidateOnRefresh: true, // Recalculate positions on refresh
       },
     });
 
@@ -282,12 +302,30 @@ export const initTitleAnimations = () => {
   });
 
   // Animate other titles (non-diensten detail) without stagger
+  // All titles use the same animation config (h2 settings)
   otherTitles.forEach((title) => {
-    const tagName = title.tagName.toLowerCase();
-    const config = titleAnimationConfig[tagName] || titleAnimationConfig.h3;
+    const config = titleAnimationConfig.h2; // Use same config for all titles
+
+    // Find subtitle that comes after this title
+    // Look for common subtitle class names in the same parent, or the next sibling p element
+    const titleParent = title.parentElement;
+    let subtitle = null;
+    
+    // First try to find by class name in the same parent
+    if (titleParent) {
+      subtitle = titleParent.querySelector('.subtitle, [class*="subtitle"], [class*="sub-title"], [class*="-subtitle"]');
+    }
+    
+    // If not found, check if next sibling is a paragraph (common pattern)
+    if (!subtitle && title.nextElementSibling && title.nextElementSibling.tagName === 'P') {
+      subtitle = title.nextElementSibling;
+    }
 
     if (prefersReducedMotion) {
       gsap.set(title, { opacity: 1, y: 0 });
+      if (subtitle) {
+        gsap.set(subtitle, { opacity: 1, y: 0 });
+      }
       return;
     }
 
@@ -296,19 +334,50 @@ export const initTitleAnimations = () => {
       y: config.y,
     });
 
-    gsap.to(title, {
-      opacity: 1,
-      y: 0,
-      duration: config.duration,
-      ease: 'power2.out',
+    // Set initial state for subtitle if it exists
+    if (subtitle) {
+      gsap.set(subtitle, {
+        opacity: 0,
+        y: 15,
+        willChange: 'transform, opacity'
+      });
+    }
+
+    // Create timeline for title and subtitle
+    const tl = gsap.timeline({
       scrollTrigger: {
         trigger: title,
         start: 'top 85%',
         end: 'top 50%',
         toggleActions: 'play none none reverse',
         markers: false,
+        invalidateOnRefresh: true,
       },
     });
+
+    // Animate title first
+    tl.to(title, {
+      opacity: 1,
+      y: 0,
+      duration: config.duration,
+      ease: 'power2.out',
+      onComplete: () => {
+        gsap.set(title, { willChange: 'auto' });
+      },
+    }, 0);
+
+    // Animate subtitle after title completes
+    if (subtitle) {
+      tl.to(subtitle, {
+        opacity: 1,
+        y: 0,
+        duration: 0.7,
+        ease: 'power2.out',
+        onComplete: () => {
+          gsap.set(subtitle, { willChange: 'auto' });
+        },
+      }, config.duration * 0.5); // Start subtitle animation halfway through title animation
+    }
   });
 };
 
@@ -609,7 +678,7 @@ export const initLogoRevealAnimation = (delay = 1000) => {
  * - Progress line fills from top to bottom based on scroll position
  */
 export const initTimelineAnimations = (stepsContainer, processContainer, options = {}) => {
-  if (!stepsContainer || !processContainer) return;
+  if (!stepsContainer || !processContainer) return () => {};
 
   // Check for reduced motion preference
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -619,19 +688,133 @@ export const initTimelineAnimations = (stepsContainer, processContainer, options
 
   // Get all step items once for reuse
   const stepItems = stepsContainer.querySelectorAll('.process-step');
-
-  // Get all timeline text elements (titles, descriptions, step numbers)
-  // Animate per step to allow for stagger within each step
   
-  stepItems.forEach((stepItem) => {
+  // Use gsap.context for proper cleanup
+  const ctx = gsap.context(() => {
+    // Mobile timeline progress animation (max-width: 1023px)
+    const mmMobile = gsap.matchMedia();
+    
+    mmMobile.add('(max-width: 1023px)', () => {
+      // Reset all GSAP states on mobile to ensure content is visible
+      stepItems.forEach((stepItem) => {
+        const textElements = stepItem.querySelectorAll('.timeline-text');
+        const media = stepItem.querySelector('.timeline-media');
+        const img = media ? media.querySelector('img') : null;
+        
+        // Reset opacity and transforms to ensure visibility
+        if (textElements.length > 0) {
+          gsap.set(textElements, { 
+            opacity: 1, 
+            x: 0, 
+            y: 0, 
+            scale: 1,
+            willChange: 'auto',
+            clearProps: 'all'
+          });
+        }
+        
+        if (media && img) {
+          gsap.set([media, img], { 
+            opacity: 1, 
+            x: 0, 
+            y: 0, 
+            scale: 1,
+            willChange: 'auto',
+            clearProps: 'all'
+          });
+        }
+      });
+      
+      // Mobile: Progressive fill animation that grows to viewport center
+      const railTrackEl = processContainer.querySelector('.process-timeline-track');
+      const railFillEl = processContainer.querySelector('.process-timeline-progress');
+      
+      if (railTrackEl && railFillEl && !reduced) {
+        // Set initial state
+        gsap.set(railFillEl, {
+          height: 0,
+          transformOrigin: 'top',
+        });
+        
+        // Helper function to calculate fill height based on viewport center and rail bounds
+        const calculateFillHeight = () => {
+          // Get section (processContainer) rect
+          const sectionRect = processContainer.getBoundingClientRect();
+          
+          // Get rail track rect
+          const railRect = railTrackEl.getBoundingClientRect();
+          
+          // Calculate viewport center position relative to section
+          const viewportCenter = window.innerHeight * 0.5;
+          const viewportCenterInSection = viewportCenter - sectionRect.top;
+          
+          // Calculate rail position relative to section
+          const railTopInSection = railRect.top - sectionRect.top;
+          const railBottomInSection = railRect.bottom - sectionRect.top;
+          const railHeightPx = railBottomInSection - railTopInSection;
+          
+          // Calculate raw fill: viewport center relative to rail top
+          const rawFill = viewportCenterInSection - railTopInSection;
+          
+          // Clamp fill height: 0 to railHeightPx (exact stop at rail bottom)
+          const fillHeightPx = Math.max(0, Math.min(rawFill, railHeightPx));
+          
+          return fillHeightPx;
+        };
+        
+        // Create ScrollTrigger for progressive fill animation
+        ScrollTrigger.create({
+          trigger: processContainer,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: true,
+          onUpdate: () => {
+            // Calculate and set fill height
+            const fillHeightPx = calculateFillHeight();
+            gsap.set(railFillEl, {
+              height: fillHeightPx,
+            });
+          },
+          onRefresh: () => {
+            // Recalculate on refresh (resize/orientation change)
+            const fillHeightPx = calculateFillHeight();
+            gsap.set(railFillEl, {
+              height: fillHeightPx,
+            });
+          },
+        });
+      } else if (railFillEl && reduced) {
+        // For reduced motion, show full line up to rail height
+        if (railTrackEl) {
+          const railRect = railTrackEl.getBoundingClientRect();
+          const railHeightPx = railRect.height;
+          gsap.set(railFillEl, { height: railHeightPx });
+        } else {
+          gsap.set(railFillEl, { height: '100%' });
+        }
+      }
+    });
+    
+    // Desktop timeline animations (min-width: 1024px)
+    const mmDesktop = gsap.matchMedia();
+    
+    mmDesktop.add('(min-width: 1024px)', () => {
+      // Desktop code - unchanged from original
+      // Get all timeline text elements (titles, descriptions, step numbers)
+      // Animate per step to allow for stagger within each step
+      
+      stepItems.forEach((stepItem) => {
     const isLeft = stepItem.classList.contains('is-left');
     const isRight = stepItem.classList.contains('is-right');
     const textElements = stepItem.querySelectorAll('.timeline-text');
+    const media = stepItem.querySelector('.timeline-media');
+    const img = media ? media.querySelector('img') : null;
     
     if (textElements.length === 0) return;
 
     if (reduced) {
       gsap.set(textElements, { opacity: 0 });
+      if (media) gsap.set([media, img], { opacity: 0 });
       gsap.to(textElements, {
         opacity: 1,
         duration: 0.3,
@@ -639,92 +822,79 @@ export const initTimelineAnimations = (stepsContainer, processContainer, options
           trigger: stepItem,
           start: 'top 80%',
           toggleActions: 'play none none reverse',
+          invalidateOnRefresh: true,
         },
       });
+      if (media) {
+        gsap.to([media, img], {
+          opacity: 1,
+          duration: 0.3,
+          scrollTrigger: {
+            trigger: stepItem,
+            start: 'top 80%',
+            toggleActions: 'play none none reverse',
+            invalidateOnRefresh: true,
+          },
+        });
+      }
       return;
     }
 
     // Set initial state based on alignment
     // Left-aligned steps: text comes from left (negative x)
     // Right-aligned steps: text comes from right (positive x)
-    const xOffset = isLeft ? -60 : isRight ? 60 : 0;
+    const textXOffset = isLeft ? -60 : isRight ? 60 : 0;
+    // Media animates from the same direction as text
+    const mediaXOffset = isLeft ? -60 : isRight ? 60 : 0;
+    
     gsap.set(textElements, {
       opacity: 0,
-      x: xOffset,
+      x: textXOffset,
       willChange: 'transform, opacity',
     });
+    
+    if (media && img) {
+      gsap.set([media, img], {
+        opacity: 0,
+        x: mediaXOffset,
+        willChange: 'transform, opacity',
+      });
+    }
 
-    // Animate in with small stagger
-    gsap.to(textElements, {
+    // Create a single timeline for this step to synchronize text and media
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: stepItem,
+        start: 'top 80%',
+        end: 'top 55%',
+        toggleActions: 'play none none reverse',
+        invalidateOnRefresh: true,
+        onComplete: () => {
+          gsap.set(textElements, { willChange: 'auto' });
+          if (media && img) gsap.set([media, img], { willChange: 'auto' });
+        },
+      },
+    });
+
+    // Animate text and media together
+    tl.to(textElements, {
       opacity: 1,
       x: 0,
       duration: 0.8,
       ease: 'power2.out',
       stagger: 0.1,
-      scrollTrigger: {
-        trigger: stepItem,
-        start: 'top 80%',
-        end: 'top 55%',
-        toggleActions: 'play none none reverse',
-        onComplete: () => {
-          gsap.set(textElements, { willChange: 'auto' });
-        },
-      },
-    });
-  });
-
-  // Get all timeline media elements (images)
-  const timelineMedia = stepsContainer.querySelectorAll('.timeline-media');
-  
-  // Animate each image based on its parent's alignment
-  timelineMedia.forEach((media) => {
-    const stepItem = media.closest('.process-step');
-    if (!stepItem) return;
-
-    const isLeft = stepItem.classList.contains('is-left');
-    const isRight = stepItem.classList.contains('is-right');
-
-    if (reduced) {
-      gsap.set(media, { opacity: 0 });
-      gsap.to(media, {
+    }, 0);
+    
+    if (media && img) {
+      tl.to([media, img], {
         opacity: 1,
-        duration: 0.3,
-        scrollTrigger: {
-          trigger: stepItem,
-          start: 'top 80%',
-          toggleActions: 'play none none reverse',
-        },
-      });
-      return;
+        x: 0,
+        duration: 0.8,
+        ease: 'power2.out',
+      }, 0);
     }
-
-    // Set initial state based on alignment
-    // When align is 'left', image is on the right, so it comes from right (positive x)
-    // When align is 'right', image is on the left, so it comes from left (negative x)
-    const xOffset = isLeft ? 60 : isRight ? -60 : 0;
-    gsap.set(media, {
-      opacity: 0,
-      x: xOffset,
-      willChange: 'transform, opacity',
-    });
-
-    // Animate in
-    gsap.to(media, {
-      opacity: 1,
-      x: 0,
-      duration: 0.8,
-      ease: 'power2.out',
-      scrollTrigger: {
-        trigger: stepItem,
-        start: 'top 80%',
-        end: 'top 55%',
-        toggleActions: 'play none none reverse',
-        onComplete: () => {
-          gsap.set(media, { willChange: 'auto' });
-        },
-      },
-    });
   });
+
 
   // Helper function to play Step 6 celebration animation
   const playStep6Celebration = (titleEl) => {
@@ -861,22 +1031,32 @@ export const initTimelineAnimations = (stepsContainer, processContainer, options
       }
     };
 
-    // Create scroll trigger that updates on scroll
-    ScrollTrigger.create({
-      trigger: processContainer,
-      start: 'top center',
-      end: 'bottom center',
-      scrub: true,
-      onUpdate: updateProgressLines,
-      onEnter: updateProgressLines,
-      onLeave: updateProgressLines,
-      onEnterBack: updateProgressLines,
-      onLeaveBack: updateProgressLines,
+      // Create scroll trigger that updates on scroll
+      ScrollTrigger.create({
+        trigger: processContainer,
+        start: 'top center',
+        end: 'bottom center',
+        scrub: true,
+        onUpdate: updateProgressLines,
+        onEnter: updateProgressLines,
+        onLeave: updateProgressLines,
+        onEnterBack: updateProgressLines,
+        onLeaveBack: updateProgressLines,
+      });
+    } else if (reduced && progressLines.length > 0) {
+      // For reduced motion, just show the lines
+      gsap.set(progressLines, { scaleY: 1 });
+    }
     });
-  } else if (reduced && progressLines.length > 0) {
-    // For reduced motion, just show the lines
-    gsap.set(progressLines, { scaleY: 1 });
-  }
+  });
+  
+  // Refresh ScrollTrigger once after initialization
+  ScrollTrigger.refresh();
+  
+  // Return cleanup function
+  return () => {
+    ctx.revert();
+  };
 };
 
 /**
@@ -1165,6 +1345,7 @@ export const initTeamCardsDotAccentAnimation = (containerEl) => {
       trigger: containerEl,
       start: 'top 85%',
       toggleActions: 'play none none reverse',
+      invalidateOnRefresh: true,
     },
   });
 
@@ -1391,15 +1572,38 @@ export const initTestimonialsScrollExperience = (rootEl) => {
 
     scrollTriggerInstance = tl.scrollTrigger;
 
-    // Handle resize
+    // Handle resize with better debouncing and scroll position preservation
+    let isScrolling = false;
+    let scrollTimeout;
+    const handleScroll = () => {
+      isScrolling = true;
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        isScrolling = false;
+      }, 150);
+    };
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
     const handleResize = () => {
       clearTimeout(resizeTimeout);
       resizeTimeout = setTimeout(() => {
+        // Don't refresh if user is actively scrolling (prevents viewport jumps)
+        if (isScrolling) {
+          return;
+        }
+        
         measurements = getMeasurements();
         if (scrollTriggerInstance) {
+          // Preserve scroll position during refresh on mobile
+          const scrollY = window.scrollY;
           scrollTriggerInstance.refresh();
+          // Restore scroll position if it changed
+          if (Math.abs(window.scrollY - scrollY) > 10) {
+            window.scrollTo({ top: scrollY, behavior: 'instant' });
+          }
         }
-      }, 100);
+      }, 250); // Increased debounce for mobile stability
     };
 
     window.addEventListener('resize', handleResize);
@@ -1413,7 +1617,9 @@ export const initTestimonialsScrollExperience = (rootEl) => {
     // Cleanup function
     return () => {
       clearTimeout(resizeTimeout);
+      clearTimeout(scrollTimeout);
       window.removeEventListener('resize', handleResize);
+      window.removeEventListener('scroll', handleScroll);
       ScrollTrigger.removeEventListener('refresh', handleResize);
     };
   }, rootEl);
@@ -1452,21 +1658,28 @@ export const initStatsCountUp = () => {
   const animations = [];
   
   statValues.forEach((el) => {
-    const originalText = el.textContent.trim();
+    // Get original text - use data attribute if it exists (from previous run), otherwise use current text
+    let originalText = el.getAttribute('data-original-value');
+    if (!originalText) {
+      originalText = el.textContent.trim();
+      // Store original value in data attribute for future reference
+      el.setAttribute('data-original-value', originalText);
+    }
     
     // Parse the value and suffix
     let targetValue = 0;
     let suffix = '';
     
-    if (originalText.includes('K+')) {
-      // "50K+" -> targetValue: 50, suffix: "K+"
+    // More robust parsing: check for K+ first (case-insensitive)
+    if (originalText.toUpperCase().includes('K+')) {
+      // "10K+" or "10k+" -> targetValue: 10, suffix: "K+"
       const match = originalText.match(/(\d+)/);
       if (match) {
         targetValue = parseInt(match[1], 10);
         suffix = 'K+';
       }
-    } else if (originalText.includes('m')) {
-      // "18m" -> targetValue: 18, suffix: "m"
+    } else if (originalText.toLowerCase().includes('m')) {
+      // "30m" -> targetValue: 30, suffix: "m"
       const match = originalText.match(/(\d+)/);
       if (match) {
         targetValue = parseInt(match[1], 10);
@@ -1505,6 +1718,7 @@ export const initStatsCountUp = () => {
       trigger: statsSection,
       start: 'top 70%',
       once: true,
+      invalidateOnRefresh: true,
     },
   });
   

@@ -52,26 +52,7 @@
   color: var(--color-neutral-darkest);
 }
 
-.cta-decoration {
-  position: absolute;
-  top: 108px;
-  right: 100px;
-  pointer-events: none;
-}
-
 /* Responsive */
-@media (max-width: 1200px) {
-  .cta-decoration {
-    right: 20px;
-  }
-}
-
-@media (max-width: 1024px) {
-  .cta-decoration {
-    display: none;
-  }
-}
-
 @media (max-width: 768px) {
   .cta-section {
     padding: var(--section-padding-small) var(--gap-xsmall);

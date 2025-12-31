@@ -20,7 +20,7 @@ function LogoSection() {
     <section className="logo-section">
       <div className="logo-container w-full">
         <p className="logo-title" data-animate-title>
-          In samenwerking met de juiste partners
+          Onze partners
         </p>
         <div className="logo-carousel-wrapper">
           <div className="logo-carousel-track">

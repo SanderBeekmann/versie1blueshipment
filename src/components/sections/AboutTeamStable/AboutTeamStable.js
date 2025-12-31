@@ -5,6 +5,7 @@ import GlassTagline from '../GlassTagline/GlassTagline';
 import timoImg from '../../../assets/timo.jpg';
 import colinImg from '../../../assets/colin.jpg';
 import reitzeImg from '../../../assets/reitze.jpg';
+import davidImg from '../../../assets/david.jpeg';
 
 const teamData = [
   {
@@ -33,6 +34,15 @@ const teamData = [
     fullDescription: 'Logistiek is mijn specialiteit. Ik zorg ervoor dat elke order op tijd en correct wordt verzonden. Mijn ervaring met bol.com fulfillment heeft me geleerd wat echt belangrijk is: snelheid, nauwkeurigheid en transparantie. Ik werk dagelijks aan het optimaliseren van onze processen zodat jij je geen zorgen hoeft te maken over je verzendingen. Elke order die we verwerken, behandel ik alsof het mijn eigen bedrijf is.',
     badge: null,
     image: reitzeImg
+  },
+  {
+    id: 'david',
+    name: 'David Karani',
+    role: 'Social Media',
+    shortDescription: 'Verzorgt social media voor Blueshipment.',
+    fullDescription: 'Als social media specialist zorg ik ervoor dat Blueshipment zichtbaar is op de juiste kanalen. Ik creëer content die bol.com verkopers helpt en inspireert, en zorg ervoor dat onze boodschap duidelijk overkomt. Mijn doel is om de community te verbinden en te laten zien wat Blueshipment voor jullie kan betekenen.',
+    badge: null,
+    image: davidImg
   }
 ];
 

@@ -2,7 +2,7 @@
 .whatsapp-section {
   width: 100%;
   padding: var(--page-padding) 0;
-  background: var(--gradient-blue);
+  background: var(--color-blue-ribbon);
 }
 
 .whatsapp-container {
@@ -46,28 +46,55 @@
   max-width: 600px;
 }
 
-.whatsapp-card {
+.whatsapp-content-grid {
+  display: grid;
+  grid-template-columns: 0.5fr 1fr;
+  gap: 0;
   width: 100%;
-  max-width: 900px;
-  background-color: var(--color-white);
-  border: 2px solid var(--color-blue-ribbon);
-  border-radius: var(--radius-large);
-  box-shadow: var(--shadow-xsmall);
-  padding: var(--gap-medium);
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-.whatsapp-card:hover {
-  box-shadow: var(--shadow-soft-hover);
-  transform: translateY(-2px);
+.whatsapp-image-frame {
+  background-color: var(--color-white);
+  border: 2px solid var(--color-blue-ribbon);
+  border-right: none;
+  border-radius: 32px 0 0 32px;
+  overflow: hidden;
+  box-shadow: var(--shadow-xsmall);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+}
+
+.whatsapp-image-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.whatsapp-card {
+  position: relative;
+  width: 100%;
+  background-color: var(--color-white);
+  border: 2px solid var(--color-blue-ribbon);
+  border-left: none;
+  border-radius: 0 var(--radius-large) var(--radius-large) 0;
+  box-shadow: var(--shadow-xsmall);
+  padding: var(--gap-medium);
+  overflow: visible;
 }
 
 .whatsapp-card-content {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--gap-small);
 }
+
 
 .whatsapp-icon-wrapper {
   width: 64px;
@@ -84,9 +111,9 @@
 .whatsapp-info {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--gap-xxsmall);
-  text-align: center;
+  text-align: left;
   width: 100%;
 }
 
@@ -128,6 +155,8 @@
   margin-top: var(--gap-xxsmall);
   font-size: var(--text-regular);
   padding: 12px 32px;
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+  transition: none; /* GSAP handles animations */
 }
 
 .whatsapp-title-blue {
@@ -138,6 +167,15 @@
 @media (max-width: 1024px) {
   .whatsapp-container {
     padding: 0 var(--gap-small);
+  }
+
+  .whatsapp-content-grid {
+    grid-template-columns: 1fr;
+    gap: var(--gap-medium);
+  }
+
+  .whatsapp-image-frame {
+    min-height: 300px;
   }
 }
 
