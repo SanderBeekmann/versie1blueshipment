@@ -11,6 +11,7 @@ import ProcessSection from '../../components/sections/ProcessSection/ProcessSect
 import GallerySection from '../../components/sections/GallerySection/GallerySection';
 import TeamSection from '../../components/sections/TeamSection/TeamSection';
 import FeaturesSection from '../../components/sections/FeaturesSection/FeaturesSection';
+import Testimonials from '../../components/sections/TestimonialSection/Testimonials';
 import WhatsAppSection from '../../components/sections/WhatsAppSection/WhatsAppSection';
 import CTASection from '../../components/sections/CTASection/CTASection';
 import FAQSection from '../../components/sections/FAQSection/FAQSection';
@@ -117,12 +118,14 @@ function HomePage() {
     };
   }, []);
 
-  // GSAP Bento Grid Animation (same as DienstenPage)
+  // GSAP Bento Grid Animation
+  // FIX: Use gsap.matchMedia to disable animation on mobile (max-width: 767px)
   useLayoutEffect(() => {
     if (!bentoRef.current) return;
     
     let ctx = null;
     let timeoutId = null;
+    let mm = null;
     
     timeoutId = setTimeout(() => {
       const bento = bentoRef.current;
@@ -134,72 +137,14 @@ function HomePage() {
       const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       
       ctx = gsap.context(() => {
-        const bentoRect = bento.getBoundingClientRect();
-        const containerWidth = bentoRect.width;
-        const columnWidth = containerWidth / 3;
-
-        const cardsWithData = cards.map((card) => {
-          const cardRect = card.getBoundingClientRect();
-          const relativeLeft = cardRect.left - bentoRect.left;
-          const cardCenterX = relativeLeft + cardRect.width / 2;
-          const relativeTop = cardRect.top - bentoRect.top;
-          
-          let columnIndex = 0;
-          if (cardCenterX < columnWidth) {
-            columnIndex = 0;
-          } else if (cardCenterX < columnWidth * 2) {
-            columnIndex = 1;
-          } else {
-            columnIndex = 2;
-          }
-
-          return {
-            element: card,
-            columnIndex,
-            top: relativeTop,
-            left: relativeLeft
-          };
-        });
-
-        cardsWithData.sort((a, b) => {
-          if (a.columnIndex !== b.columnIndex) {
-            return a.columnIndex - b.columnIndex;
-          }
-          return b.top - a.top;
-        });
-
-        const columnCounts = [0, 0, 0];
-        cardsWithData.forEach((cardData) => {
-          cardData.indexInColumn = columnCounts[cardData.columnIndex];
-          columnCounts[cardData.columnIndex]++;
-        });
-
-        cardsWithData.forEach((cardData) => {
-          const { element, columnIndex } = cardData;
-          
-          let initialX = -80;
-          let initialRotate = -2;
-          
-          if (columnIndex === 1) {
-            initialX = 55;
-            initialRotate = 1;
-          } else if (columnIndex === 2) {
-            initialX = 90;
-            initialRotate = 2;
-          }
-
-          gsap.set(element, {
-            opacity: 0,
-            x: initialX,
-            y: -18,
-            rotate: initialRotate,
-            willChange: 'transform, opacity'
-          });
-        });
-
-        if (prefersReducedMotion) {
-          cardsWithData.forEach((cardData) => {
-            gsap.set(cardData.element, {
+        // Use gsap.matchMedia to separate mobile and desktop behavior
+        mm = gsap.matchMedia();
+        
+        // MOBILE: Disable animation, show cards immediately
+        mm.add('(max-width: 767px)', () => {
+          // Reset all cards to visible state immediately
+          cards.forEach((card) => {
+            gsap.set(card, {
               opacity: 1,
               x: 0,
               y: 0,
@@ -207,53 +152,123 @@ function HomePage() {
               willChange: 'auto'
             });
           });
-          return;
-        }
-
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: bento,
-            start: 'top 85%',
-            end: 'top 20%',
-            scrub: 1.5,
-            invalidateOnRefresh: true
-          }
         });
+        
+        // DESKTOP: Full animation with ScrollTrigger
+        mm.add('(min-width: 768px)', () => {
+          const bentoRect = bento.getBoundingClientRect();
+          const containerWidth = bentoRect.width;
+          const columnWidth = containerWidth / 3;
 
-        cardsWithData.forEach((cardData) => {
-          const { element, columnIndex, indexInColumn } = cardData;
-          const position = columnIndex * 0.40 + indexInColumn * 0.8;
+          const cardsWithData = cards.map((card) => {
+            const cardRect = card.getBoundingClientRect();
+            const relativeLeft = cardRect.left - bentoRect.left;
+            const cardCenterX = relativeLeft + cardRect.width / 2;
+            const relativeTop = cardRect.top - bentoRect.top;
+            
+            let columnIndex = 0;
+            if (cardCenterX < columnWidth) {
+              columnIndex = 0;
+            } else if (cardCenterX < columnWidth * 2) {
+              columnIndex = 1;
+            } else {
+              columnIndex = 2;
+            }
 
-          tl.to(element, {
-            opacity: 1,
-            x: 0,
-            y: 0,
-            rotate: 0,
-            duration: 1.5,
-            ease: 'power2.out'
-          }, position);
-        });
+            return {
+              element: card,
+              columnIndex,
+              top: relativeTop,
+              left: relativeLeft
+            };
+          });
 
-        setTimeout(() => {
-          const scrollY = window.scrollY;
-          const isMobile = window.innerWidth < 768;
-          
-          ScrollTrigger.refresh();
-          
-          // Restore scroll position if it changed (prevents viewport jumps)
-          // On mobile, be more aggressive about preserving scroll position
-          const scrollDiff = Math.abs(window.scrollY - scrollY);
-          const threshold = isMobile ? 5 : 10;
-          
-          if (scrollDiff > threshold) {
-            window.scrollTo({ top: scrollY, behavior: 'instant' });
+          cardsWithData.sort((a, b) => {
+            if (a.columnIndex !== b.columnIndex) {
+              return a.columnIndex - b.columnIndex;
+            }
+            return b.top - a.top;
+          });
+
+          const columnCounts = [0, 0, 0];
+          cardsWithData.forEach((cardData) => {
+            cardData.indexInColumn = columnCounts[cardData.columnIndex];
+            columnCounts[cardData.columnIndex]++;
+          });
+
+          cardsWithData.forEach((cardData) => {
+            const { element, columnIndex } = cardData;
+            
+            let initialX = -80;
+            let initialRotate = -2;
+            
+            if (columnIndex === 1) {
+              initialX = 55;
+              initialRotate = 1;
+            } else if (columnIndex === 2) {
+              initialX = 90;
+              initialRotate = 2;
+            }
+
+            gsap.set(element, {
+              opacity: 0,
+              x: initialX,
+              y: -18,
+              rotate: initialRotate,
+              willChange: 'transform, opacity'
+            });
+          });
+
+          if (prefersReducedMotion) {
+            cardsWithData.forEach((cardData) => {
+              gsap.set(cardData.element, {
+                opacity: 1,
+                x: 0,
+                y: 0,
+                rotate: 0,
+                willChange: 'auto'
+              });
+            });
+            return;
           }
-        }, 50);
+
+          const tl = gsap.timeline({
+            scrollTrigger: {
+              trigger: bento,
+              start: 'top 75%',
+              end: 'top 20%',
+              scrub: 1.5,
+              invalidateOnRefresh: true
+            }
+          });
+
+          cardsWithData.forEach((cardData) => {
+            const { element, columnIndex, indexInColumn } = cardData;
+            const position = columnIndex * 0.40 + indexInColumn * 0.8;
+
+            tl.to(element, {
+              opacity: 1,
+              x: 0,
+              y: 0,
+              rotate: 0,
+              duration: 1.5,
+              ease: 'power2.out'
+            }, position);
+          });
+
+          // Refresh ScrollTrigger after layout is calculated
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              ScrollTrigger.refresh();
+            });
+          });
+        });
       }, bentoRef);
     }, 0);
 
     return () => {
       if (timeoutId) clearTimeout(timeoutId);
+      if (mm) mm.revert(); // Revert matchMedia (kills all ScrollTriggers and tweens)
       if (ctx) ctx.revert();
     };
   }, []);
@@ -261,7 +276,8 @@ function HomePage() {
   return (
     <div className="app">
       <Navbar />
-      <Hero />
+      <div className="page-content">
+        <Hero />
       <div data-animate="fadeUp">
         <VideoSection />
       </div>
@@ -333,6 +349,9 @@ function HomePage() {
       <div data-animate="fadeUpScale">
         <WhatsAppSection />
       </div>
+      <div data-animate="fadeUp">
+        <Testimonials />
+      </div>
       <div data-animate="scaleIn">
         <CTASection />
       </div>
@@ -342,9 +361,8 @@ function HomePage() {
       <div data-animate="fadeLeft">
         <LogoSection />
       </div>
-      <div data-animate="fadeUpScale">
-        <Footer />
       </div>
+      <Footer />
     </div>
   );
 }

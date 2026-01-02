@@ -42,11 +42,14 @@ const WalletIcon = () => (
 
 function FeaturesSection() {
   const sectionRef = useRef(null);
+  const headerRef = useRef(null);
   const titleRef = useRef(null);
   const titleHighlightRef = useRef(null);
   const subtitleRef = useRef(null);
   const cardsRef = useRef([]);
+  const cardsGridRef = useRef(null);
   const watermarkRef = useRef(null);
+  const ctaRef = useRef(null);
 
   const features = [
     {
@@ -82,6 +85,7 @@ function FeaturesSection() {
     const subtitle = subtitleRef.current;
     const cards = cardsRef.current.filter(Boolean);
     const watermark = watermarkRef.current;
+    const cta = ctaRef.current;
 
     if (!section || !title || !titleHighlight || !subtitle || cards.length === 0) return;
 
@@ -90,7 +94,7 @@ function FeaturesSection() {
     // If reduced motion, show everything immediately
     // Title is handled by initTitleAnimations() - don't set here
     if (prefersReducedMotion) {
-      gsap.set([titleHighlight, subtitle, ...cards], {
+      gsap.set([titleHighlight, subtitle, ...cards, cta].filter(Boolean), {
         opacity: 1,
         y: 0,
         willChange: 'auto'
@@ -124,6 +128,15 @@ function FeaturesSection() {
       y: 40,
       willChange: 'transform, opacity'
     });
+
+    // Set initial state for CTA
+    if (cta) {
+      gsap.set(cta, {
+        opacity: 0,
+        y: 40,
+        willChange: 'transform, opacity'
+      });
+    }
 
     // Set initial state for watermark logo - start from right
     if (watermark) {
@@ -182,6 +195,19 @@ function FeaturesSection() {
         }, 0.3 + index * 0.1);
       });
 
+      // CTA animation - after cards
+      if (cta) {
+        tl.to(cta, {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: 'power2.out',
+          onComplete: () => {
+            gsap.set(cta, { willChange: 'auto' });
+          }
+        }, 0.3 + cards.length * 0.1 + 0.2);
+      }
+
       // Watermark logo animation - fly in from right
       if (watermark) {
         tl.to(watermark, {
@@ -200,11 +226,93 @@ function FeaturesSection() {
     return () => {
       ctx.revert();
       // Title cleanup is handled by initTitleAnimations()
-      gsap.set([titleHighlight, subtitle, ...cards], { willChange: 'auto' });
+      gsap.set([titleHighlight, subtitle, ...cards, cta].filter(Boolean), { willChange: 'auto' });
       if (watermark) {
         gsap.set(watermark, { willChange: 'auto' });
       }
     };
+  }, []);
+
+  // Parallax scroll effect (desktop only, no reduced motion)
+  useLayoutEffect(() => {
+    const section = sectionRef.current;
+    const header = headerRef.current;
+    const cards = cardsRef.current.filter(Boolean);
+    
+    if (!section || !header || cards.length === 0) return;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const mm = gsap.matchMedia();
+    mm.add(
+      { 
+        desktop: '(min-width: 768px)', 
+        motion: '(prefers-reduced-motion: no-preference)' 
+      },
+      (ctx) => {
+        // Stop als reduced motion
+        if (prefersReducedMotion) return;
+
+        // 1) Header parallax - subtiel trager dan scroll
+        gsap.fromTo(
+          header,
+          { y: 0 },
+          {
+            y: 24,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: section,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: 0.6,
+              invalidateOnRefresh: true
+            }
+          }
+        );
+
+        // 2) Cards parallax - subtiele depth met afwisseling
+        cards.forEach((card, i) => {
+          const depth = (i % 2 === 0) ? 18 : 30; // afwisseling voor diepte
+          gsap.fromTo(
+            card,
+            { y: 0 },
+            {
+              y: -depth,
+              ease: 'none',
+              scrollTrigger: {
+                trigger: section,
+                start: 'top bottom',
+                end: 'bottom top',
+                scrub: 0.8,
+                invalidateOnRefresh: true
+              }
+            }
+          );
+        });
+
+        // 3) Subtiele watermark parallax (optioneel)
+        const watermark = watermarkRef.current;
+        if (watermark) {
+          gsap.fromTo(
+            watermark,
+            { y: -10 },
+            {
+              y: 40,
+              ease: 'none',
+              scrollTrigger: {
+                trigger: section,
+                start: 'top bottom',
+                end: 'bottom top',
+                scrub: 0.6,
+                invalidateOnRefresh: true
+              }
+            }
+          );
+        }
+      }
+    );
+
+    return () => mm.revert();
   }, []);
 
   return (
@@ -217,7 +325,7 @@ function FeaturesSection() {
       {/* Content Container with z-index */}
       <div className="features-section__content">
         <div className="features-section__container">
-          <div className="features-section__header">
+          <div ref={headerRef} className="features-section__header">
             <GlassTagline>
               <p>Voordelen</p>
             </GlassTagline>
@@ -229,7 +337,7 @@ function FeaturesSection() {
             </p>
           </div>
 
-          <div className="features-section__grid">
+          <div ref={cardsGridRef} className="features-section__grid">
             {features.map((feature, index) => (
               <div 
                 key={feature.id} 
@@ -247,6 +355,19 @@ function FeaturesSection() {
                 <p className="features-section__card-description">{feature.description}</p>
               </div>
             ))}
+          </div>
+
+          {/* CTA Section */}
+          <div ref={ctaRef} className="features-section__cta">
+            <p className="features-section__cta-text">Ontdek het zelf.</p>
+            <a 
+              href="https://calendly.com/mouseclick2017/30min" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="btn btn-primary features-section__cta-button"
+            >
+              Boek een kennismakingsgesprek
+            </a>
           </div>
         </div>
       </div>

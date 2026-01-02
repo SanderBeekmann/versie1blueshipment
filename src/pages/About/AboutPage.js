@@ -7,6 +7,7 @@ import LogoSection from '../../components/sections/LogoSection/LogoSection';
 import Footer from '../../components/layout/Footer/Footer';
 import InfiniteGridOverlay from '../../components/ui/the-infinite-grid/InfiniteGridOverlay';
 import { initScrollAnimations, initTitleAnimations, initHeroTitleAnimation, initLogoRevealAnimation, initStatsCountUp, cleanupScrollAnimations } from '../../utils/scrollAnimations';
+import { openWhatsApp } from '../../utils/whatsapp';
 import logo from '../../assets/brand/logo.png';
 import timoImg from '../../assets/timo.jpg';
 import colinImg from '../../assets/colin.jpg';
@@ -46,9 +47,9 @@ function AboutPage() {
   return (
     <div className="app">
       <Navbar />
-      
-      {/* Hero Section */}
-      <section className="about-hero">
+      <div className="page-content">
+        {/* Hero Section */}
+        <section className="about-hero">
         <InfiniteGridOverlay opacity={0.5} />
         <div className="about-hero-content">
           <div className="about-hero-wrapper">
@@ -66,7 +67,7 @@ function AboutPage() {
                 <button className="btn btn-primary">
                   Ga voor succes
                 </button>
-                <a href="#diensten" className="text-link">
+                <a href="/diensten" className="btn btn-outline-blue">
                   Bekijk diensten
                 </a>
               </div>
@@ -186,6 +187,7 @@ function AboutPage() {
         <section className="about-values">
           <div className="about-values-container">
             <div className="about-values-header">
+              <div className="about-values-kicker">Waarden</div>
               <h2 className="about-values-title" data-animate-title>
                 Onze waarden
               </h2>
@@ -196,30 +198,30 @@ function AboutPage() {
             <div className="about-values-grid">
               <div className="about-value-card">
                 <div className="value-icon">
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                   </svg>
                 </div>
                 <h3 className="value-title">Transparantie</h3>
-                <p className="value-description">
+                <p className="value-text">
                   Geen verborgen kosten, geen verrassingen. Je ziet precies wat je betaalt en waarom. Eerlijkheid staat voorop in alles wat we doen.
                 </p>
               </div>
               <div className="about-value-card">
                 <div className="value-icon">
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <circle cx="12" cy="12" r="10"></circle>
                     <polyline points="12 6 12 12 16 14"></polyline>
                   </svg>
                 </div>
                 <h3 className="value-title">Snelheid</h3>
-                <p className="value-description">
+                <p className="value-text">
                   Reactie binnen 30 minuten, orders dezelfde dag verzonden. We begrijpen dat tijd geld is en handelen daar naar.
                 </p>
               </div>
               <div className="about-value-card">
                 <div className="value-icon">
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                     <circle cx="9" cy="7" r="4"></circle>
                     <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -227,30 +229,25 @@ function AboutPage() {
                   </svg>
                 </div>
                 <h3 className="value-title">Persoonlijk</h3>
-                <p className="value-description">
+                <p className="value-text">
                   Geen chatbots of automatische antwoorden. Je spreekt altijd met een echt persoon die je kent en begrijpt.
                 </p>
               </div>
               <div className="about-value-card">
                 <div className="value-icon">
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                     <polyline points="22 4 12 14.01 9 11.01"></polyline>
                   </svg>
                 </div>
                 <h3 className="value-title">Betrouwbaarheid</h3>
-                <p className="value-description">
+                <p className="value-text">
                   We doen wat we beloven. Elke dag opnieuw. Je kunt op ons rekenen voor consistente service en kwaliteit.
                 </p>
               </div>
             </div>
           </div>
         </section>
-      </div>
-
-      {/* Partners Section */}
-      <div data-animate="fadeLeft">
-        <LogoSection />
       </div>
 
       {/* Final CTA Section */}
@@ -263,17 +260,24 @@ function AboutPage() {
             <p className="about-final-cta-subtitle">
               Klaar om te starten? Stuur ons een bericht op WhatsApp en laten we zien wat we voor je kunnen doen.
             </p>
-            <button className="btn btn-whatsapp">
+            <button 
+              className="btn btn-whatsapp"
+              onClick={() => openWhatsApp()}
+            >
               Neem contact op via WhatsApp
             </button>
           </div>
         </section>
       </div>
 
-      {/* Footer */}
-      <div data-animate="fadeUpScale">
-        <Footer />
+      {/* Partners Section */}
+      <div data-animate="fadeLeft">
+        <LogoSection />
       </div>
+
+      </div>
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }

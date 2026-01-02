@@ -2,8 +2,8 @@ import React from 'react';
 import './StickyWhatsAppButton.css';
 
 function StickyWhatsAppButton() {
-  // Vervang dit met je eigen WhatsApp nummer in het formaat: 31612345678 (zonder + of spaties)
-  const whatsappNumber = '31612345678';
+  // WhatsApp nummer: +31 6 17818246 (formaat zonder + en spaties: 31617818246)
+  const whatsappNumber = '31617818246';
   const whatsappMessage = encodeURIComponent('Hallo! Ik heb een vraag over BlueShipment.');
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`;
 

@@ -11,9 +11,14 @@ function CTASection() {
             <p className="cta-description">
               Ga met ons in gesprek en ontdek wat we voor je kunnen betekenen. Geen verplichtingen.
             </p>
-            <button className="btn btn-primary">
+            <a 
+              href="https://calendly.com/mouseclick2017/30min" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="btn btn-primary"
+            >
               Boek een kennismakingsgesprek
-            </button>
+            </a>
           </div>
         </div>
       </div>

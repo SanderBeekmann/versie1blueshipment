@@ -1,0 +1,225 @@
+/* Case Study Modal - Portal naar body voor full-page overlay */
+.case-study-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  padding: var(--gap-medium);
+}
+
+.case-study-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  cursor: pointer;
+}
+
+.case-study-modal-content {
+  position: relative;
+  z-index: 1;
+  background-color: var(--color-white);
+  border-radius: var(--radius-large);
+  width: min(900px, calc(100vw - 48px));
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  /* Custom scrollbar styling */
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-blue-ribbon) transparent;
+}
+
+/* Webkit scrollbar (Chrome, Safari, Edge) - Minimalistisch blauw pilvormig balkje */
+.case-study-modal-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.case-study-modal-content::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 4px 0;
+}
+
+.case-study-modal-content::-webkit-scrollbar-thumb {
+  background-color: var(--color-blue-ribbon);
+  border-radius: 10px;
+  min-height: 40px;
+}
+
+.case-study-modal-content::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-blue-ribbon-light);
+}
+
+.case-study-modal-close {
+  position: absolute;
+  top: var(--gap-small);
+  right: var(--gap-small);
+  z-index: 10;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--color-white);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--color-neutral-darkest);
+}
+
+.case-study-modal-close:hover {
+  background-color: var(--color-blue-ribbon);
+  color: var(--color-white);
+  border-color: var(--color-blue-ribbon);
+  transform: rotate(90deg);
+}
+
+.case-study-modal-header {
+  width: 100%;
+  border-radius: var(--radius-large) var(--radius-large) 0 0;
+  overflow: hidden;
+  background-color: var(--color-background);
+  flex-shrink: 0;
+  position: relative;
+}
+
+.case-study-modal-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  max-height: 400px;
+  object-position: center;
+}
+
+.case-study-modal-body {
+  padding: var(--gap-large);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-medium);
+}
+
+.case-study-modal-title {
+  font-family: var(--font-primary);
+  font-size: var(--heading-2);
+  font-weight: var(--font-bold);
+  line-height: var(--line-tight);
+  color: var(--color-neutral-darkest);
+  margin: 0;
+}
+
+.case-study-modal-client {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-xxsmall);
+  padding: var(--gap-small);
+  background-color: var(--color-blue-ribbon-lightest);
+  border-radius: var(--radius-medium);
+  border-left: 3px solid var(--color-blue-ribbon);
+}
+
+.case-study-client-label {
+  font-family: var(--font-primary);
+  font-size: var(--text-regular);
+  font-weight: var(--font-semibold);
+  color: var(--color-neutral-darkest);
+}
+
+.case-study-client-name {
+  font-family: var(--font-primary);
+  font-size: var(--text-regular);
+  font-weight: var(--font-bold);
+  color: var(--color-blue-ribbon);
+}
+
+.case-study-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-xxsmall);
+}
+
+.case-study-section-title {
+  font-family: var(--font-primary);
+  font-size: var(--heading-4);
+  font-weight: var(--font-bold);
+  line-height: var(--line-tight);
+  color: var(--color-neutral-darkest);
+  margin: 0;
+}
+
+.case-study-section-text {
+  font-family: var(--font-primary);
+  font-size: var(--text-regular);
+  font-weight: var(--font-regular);
+  line-height: var(--line-relaxed);
+  color: var(--color-neutral-darkest);
+  opacity: 0.8;
+  margin: 0;
+}
+
+.case-study-testimonial {
+  padding: var(--gap-medium);
+  background: linear-gradient(180deg, rgba(0, 112, 255, 0.06), rgba(0, 0, 0, 0));
+  border-radius: var(--radius-large);
+  border-left: 3px solid var(--color-blue-ribbon);
+  margin-top: var(--gap-small);
+}
+
+.case-study-testimonial-text {
+  font-family: var(--font-primary);
+  font-size: var(--text-large);
+  font-weight: var(--font-regular);
+  line-height: var(--line-relaxed);
+  color: var(--color-neutral-darkest);
+  font-style: italic;
+  margin: 0 0 var(--gap-xxsmall) 0;
+}
+
+.case-study-testimonial-author {
+  font-family: var(--font-primary);
+  font-size: var(--text-medium);
+  font-weight: var(--font-semibold);
+  color: var(--color-blue-ribbon);
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .case-study-modal {
+    padding: var(--gap-small);
+  }
+
+  .case-study-modal-content {
+    max-height: 95vh;
+    border-radius: var(--radius-medium);
+  }
+
+  .case-study-modal-header {
+    border-radius: var(--radius-medium) var(--radius-medium) 0 0;
+  }
+
+  .case-study-modal-body {
+    padding: var(--gap-medium);
+    gap: var(--gap-small);
+  }
+
+  .case-study-modal-title {
+    font-size: var(--heading-3);
+  }
+
+  .case-study-section-title {
+    font-size: var(--heading-5);
+  }
+
+  .case-study-testimonial {
+    padding: var(--gap-small);
+  }
+
+  .case-study-testimonial-text {
+    font-size: var(--text-regular);
+  }
+}
+

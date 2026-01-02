@@ -22,6 +22,21 @@
   position: relative;
   display: inline-flex;
   align-items: center;
+  padding: 6px 14px;
+  background: rgba(0, 122, 255, 0.1);
+  border: none;
+  box-shadow: none;
+  border-radius: 999px;
+  overflow: hidden;
+  isolation: isolate;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hero secties behouden de originele glassmorphism stijl */
+.hero .glass-tagline,
+.hero-text .glass-tagline,
+.diensten-hero-text .glass-tagline,
+.about-hero-text .glass-tagline {
   padding: 8px 16px;
   background: #ffffff;
   backdrop-filter: none;
@@ -30,12 +45,70 @@
   border-radius: 100px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08),
               inset 0 1px 0 rgba(255, 255, 255, 0.6);
-  overflow: hidden;
-  isolation: isolate;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.glass-tagline:hover {
+/* Testimonial kicker stijl voor alle niet-hero taglines */
+.glass-tagline .glass-shimmer {
+  display: none;
+}
+
+.hero .glass-tagline .glass-shimmer,
+.hero-text .glass-tagline .glass-shimmer,
+.diensten-hero-text .glass-tagline .glass-shimmer,
+.about-hero-text .glass-tagline .glass-shimmer {
+  display: block;
+}
+
+/* Tekst styling voor niet-hero taglines */
+.glass-tagline p,
+.glass-tagline span {
+  font-family: var(--font-primary);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: var(--line-normal, 1.5);
+  color: var(--color-blue-ribbon);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+
+/* Witte tekst voor taglines in secties met blauwe achtergrond */
+.process-container .glass-tagline p,
+.process-container .glass-tagline span,
+.whatsapp-section .glass-tagline p,
+.whatsapp-section .glass-tagline span,
+.about-team-stable-container .glass-tagline p,
+.about-team-stable-container .glass-tagline span {
+  color: var(--color-white);
+}
+
+/* Witte achtergrond voor taglines in blauwe secties */
+.process-container .glass-tagline,
+.whatsapp-section .glass-tagline,
+.about-team-stable-container .glass-tagline {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+/* Hero taglines behouden originele tekst styling */
+.hero .glass-tagline p,
+.hero .glass-tagline span,
+.hero-text .glass-tagline p,
+.hero-text .glass-tagline span,
+.diensten-hero-text .glass-tagline p,
+.diensten-hero-text .glass-tagline span,
+.about-hero-text .glass-tagline p,
+.about-hero-text .glass-tagline span {
+  font-size: var(--text-small, 0.875rem);
+  color: var(--color-neutral-darkest, #0d0600);
+  letter-spacing: 0.5px;
+}
+
+/* Hover effect alleen voor hero secties */
+.hero .glass-tagline:hover,
+.hero-text .glass-tagline:hover,
+.diensten-hero-text .glass-tagline:hover,
+.about-hero-text .glass-tagline:hover {
   transform: translateY(-1px);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12),
               inset 0 1px 0 rgba(255, 255, 255, 0.7);
@@ -69,7 +142,10 @@
     animation: none;
   }
 
-  .glass-tagline:hover {
+  .hero .glass-tagline:hover,
+  .hero-text .glass-tagline:hover,
+  .diensten-hero-text .glass-tagline:hover,
+  .about-hero-text .glass-tagline:hover {
     transform: none;
   }
 }
@@ -84,16 +160,4 @@
 
 .glass-tagline-dot {
   display: none;
-}
-
-.glass-tagline p,
-.glass-tagline span {
-  font-family: var(--font-primary);
-  font-size: var(--text-small, 0.875rem);
-  font-weight: var(--font-semibold, 600);
-  line-height: var(--line-normal, 1.5);
-  color: var(--color-neutral-darkest, #0d0600);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin: 0;
 }

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import './AboutTeamInteractive.css';
 import GlassTagline from '../GlassTagline/GlassTagline';
+import { openWhatsApp } from '../../../utils/whatsapp';
 
 const teamData = [
   {
@@ -202,7 +203,11 @@ function AboutTeamInteractive() {
                 </div>
                 <p className="detail-card-description">{member.description}</p>
                 {member.badge && (
-                  <button className="btn btn-whatsapp" type="button">
+                  <button 
+                    className="btn btn-whatsapp" 
+                    type="button"
+                    onClick={() => openWhatsApp()}
+                  >
                     Contact via WhatsApp
                   </button>
                 )}

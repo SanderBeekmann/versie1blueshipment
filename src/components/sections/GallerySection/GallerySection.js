@@ -1,6 +1,7 @@
 import React, { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { gsap } from "gsap";
 import './GallerySection.css';
+import CaseStudyModal from '../../ui/CaseStudyModal/CaseStudyModal';
 import analytics1 from '../../../assets/analytics/analytics.png';
 import analytics2 from '../../../assets/analytics/analytics2.png';
 import analytics3 from '../../../assets/analytics/analytics3.png';
@@ -15,6 +16,8 @@ function GallerySection() {
   const resizeTimerRef = useRef(null);
 
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [selectedCaseStudy, setSelectedCaseStudy] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const items = useMemo(
     () => [
@@ -22,25 +25,53 @@ function GallerySection() {
         id: 1, 
         image: analytics1, 
         alt: "Analytics dashboard met bestellingen en omzet",
-        description: "Na implementatie van onze oplossing zagen onze klanten een stijging van 45% in online bestellingen en een verbetering van 30% in orderverwerkingsefficiëntie."
+        description: "Na implementatie van onze oplossing zagen onze klanten een stijging van 45% in online bestellingen en een verbetering van 30% in orderverwerkingsefficiëntie.",
+        title: "45% stijging in online bestellingen",
+        client: "TechStore Nederland",
+        challenge: "TechStore Nederland worstelde met handmatige orderverwerking en trage verzendingen. Dit leidde tot klachten van klanten en gemiste verkoopkansen tijdens piekperiodes.",
+        solution: "We implementeerden een volledig geautomatiseerd fulfilment systeem met real-time voorraadsynchronisatie en geïntegreerde verzendkoppelingen. Alle bestellingen worden nu automatisch verwerkt en dezelfde dag verzonden.",
+        results: "Binnen 3 maanden zagen ze een stijging van 45% in online bestellingen en een verbetering van 30% in orderverwerkingsefficiëntie. Klanttevredenheid steeg met 28% en retouren daalden met 22%.",
+        testimonial: "BlueShipment heeft onze logistiek volledig getransformeerd. We kunnen nu focussen op groei in plaats van operationele problemen.",
+        testimonialAuthor: "Jan de Vries, CEO TechStore Nederland"
       },
       { 
         id: 2, 
         image: analytics2, 
         alt: "Analytics dashboard met verkoopcijfers",
-        description: "Met onze geïntegreerde verzendsystemen realiseerden klanten een kostenbesparing van 25% op logistiek en een reductie van 40% in leveringsfouten."
+        description: "Met onze geïntegreerde verzendsystemen realiseerden klanten een kostenbesparing van 25% op logistiek en een reductie van 40% in leveringsfouten.",
+        title: "25% kostenbesparing op logistiek",
+        client: "Home & Living Shop",
+        challenge: "Home & Living Shop had te maken met hoge logistiekkosten en veel leveringsfouten. Ze werkten met meerdere verzendpartners zonder centrale controle, wat leidde tot verwarring en extra kosten.",
+        solution: "We centraliseerden hun logistiek via ons fulfilmentcenter en integreerden alle verzendpartners in één platform. Automatische route-optimalisatie en real-time tracking werden geïmplementeerd.",
+        results: "Ze realiseerden een kostenbesparing van 25% op logistiek en een reductie van 40% in leveringsfouten. Levertijden werden met gemiddeld 2 dagen verkort en klanttevredenheid steeg aanzienlijk.",
+        testimonial: "De kostenbesparing en betrouwbaarheid die we nu hebben, hadden we nooit kunnen bereiken zonder BlueShipment. Het heeft onze business echt naar een hoger niveau getild.",
+        testimonialAuthor: "Maria van der Berg, Operations Manager Home & Living Shop"
       },
       { 
         id: 3, 
         image: analytics3, 
         alt: "Analytics dashboard met conversie data",
-        description: "Onze analytics tools helpen klanten om hun conversiepercentage te verhogen met gemiddeld 35% door real-time inzichten in klantgedrag en verzendprestaties."
+        description: "Onze analytics tools helpen klanten om hun conversiepercentage te verhogen met gemiddeld 35% door real-time inzichten in klantgedrag en verzendprestaties.",
+        title: "35% verhoging in conversiepercentage",
+        client: "Fashion Forward",
+        challenge: "Fashion Forward had een laag conversiepercentage op hun bol.com shop. Ze misten inzicht in welke producten goed presteerden en waarom klanten niet kochten.",
+        solution: "We implementeerden geavanceerde analytics tools met real-time inzichten in klantgedrag, productprestaties en verzendstatistieken. Daarnaast optimaliseerden we hun productlistings met data-gedreven aanbevelingen.",
+        results: "Hun conversiepercentage steeg met gemiddeld 35% door betere productlistings en snellere levering. Ze kunnen nu data-gedreven beslissingen nemen en hun assortiment continu optimaliseren.",
+        testimonial: "De inzichten die we nu hebben zijn onbetaalbaar. We weten precies wat werkt en kunnen daar direct op inspelen. Onze omzet is sindsdien met 60% gestegen.",
+        testimonialAuthor: "Lisa Jansen, E-commerce Manager Fashion Forward"
       },
       { 
         id: 4, 
         image: analytics4, 
         alt: "Analytics dashboard met voorraad statistieken",
-        description: "Door geautomatiseerde voorraadsynchronisatie reduceren klanten voorraadkosten met 20% en verbeteren ze beschikbaarheid met 15%."
+        description: "Door geautomatiseerde voorraadsynchronisatie reduceren klanten voorraadkosten met 20% en verbeteren ze beschikbaarheid met 15%.",
+        title: "20% reductie in voorraadkosten",
+        client: "ElectroMax",
+        challenge: "ElectroMax had problemen met voorraadbeheer. Ze hadden te veel voorraad van langzame producten en te weinig van populaire items, wat leidde tot hoge kosten en gemiste verkopen.",
+        solution: "We implementeerden geautomatiseerde voorraadsynchronisatie tussen hun bol.com shop en ons fulfilmentcenter. Real-time voorraadupdates en voorspellende analyses helpen hen om de juiste voorraadniveaus te behouden.",
+        results: "Ze reduceerden voorraadkosten met 20% en verbeterden productbeschikbaarheid met 15%. Out-of-stock situaties daalden met 50% en ze kunnen nu beter inspelen op seizoensgebonden vraag.",
+        testimonial: "Het voorraadbeheer is nu volledig geautomatiseerd. We hebben altijd de juiste voorraad op het juiste moment, zonder dat we er zelf naar hoeven te kijken.",
+        testimonialAuthor: "Peter Bakker, Supply Chain Manager ElectroMax"
       },
     ],
     []
@@ -143,9 +174,13 @@ function GallerySection() {
     cards.forEach((card) => {
       const overlay = card.querySelector('.gallery-card-overlay');
       const text = card.querySelector('.gallery-card-text');
+      const cta = card.querySelector('.gallery-card-cta');
       if (overlay && text) {
         gsap.set(overlay, { opacity: 0 });
         gsap.set(text, { opacity: 0, y: 20 });
+      }
+      if (cta) {
+        gsap.set(cta, { opacity: 0, y: 10 });
       }
       // Set initial scale to 0.95 for smaller initial state
       gsap.set(card, { scale: 0.95 });
@@ -167,12 +202,15 @@ function GallerySection() {
       // Ensure initial scale is 0.95 before creating timeline
       gsap.set(el, { scale: 0.95 });
       
+      const cta = el.querySelector('.gallery-card-cta');
+      
       ht = gsap.timeline({ paused: true });
       // Scale from 0.95 to 1.0 (grows from smaller initial state)
       ht.to(el, { scale: 1.0, duration: 0.2, ease: "power2.out" }, 0)
         .to(el, { boxShadow: "0 12px 30px rgba(0,0,0,0.12)", duration: 0.2, ease: "power2.out" }, 0)
         .to(overlay, { opacity: 1, duration: 0.2, ease: "power2.out" }, 0)
-        .to(text, { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }, 0.1);
+        .to(text, { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }, 0.1)
+        .to(cta, { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }, 0.2);
       hoverTlRef.current.set(el, ht);
     }
     ht.play(0);
@@ -190,6 +228,23 @@ function GallerySection() {
     }
 
     if (tlRef.current) tlRef.current.play();
+  };
+
+  const handleCardClick = (item) => {
+    // Find the original item (not the duplicated one)
+    const originalItem = items.find(i => i.id === item.id);
+    if (originalItem) {
+      setSelectedCaseStudy(originalItem);
+      setIsModalOpen(true);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    // Small delay before clearing to allow animation to complete
+    setTimeout(() => {
+      setSelectedCaseStudy(null);
+    }, 300);
   };
 
   return (
@@ -228,7 +283,7 @@ function GallerySection() {
             return (
               <article
                 key={key}
-                className="gallery-card shrink-0 w-[560px] max-w-[90vw] rounded-3xl border-2 border-blue-500 shadow-md overflow-hidden relative bg-white"
+                className="gallery-card shrink-0 w-[560px] max-w-[90vw] rounded-3xl border-2 border-blue-500 shadow-md overflow-hidden relative bg-white cursor-pointer"
                 style={{
                   flex: "0 0 auto",
                   width: 560,
@@ -239,6 +294,16 @@ function GallerySection() {
                 }}
                 onMouseEnter={onEnter}
                 onMouseLeave={onLeave}
+                onClick={() => handleCardClick(item)}
+                role="button"
+                tabIndex={0}
+                aria-label={`Bekijk case study: ${item.title || item.description}`}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleCardClick(item);
+                  }
+                }}
               >
                 <img
                   src={item.image}
@@ -248,6 +313,9 @@ function GallerySection() {
                 <div className="gallery-card-overlay">
                   <div className="gallery-card-text">
                     {item.description}
+                  </div>
+                  <div className="gallery-card-cta">
+                    Klik voor volledig verhaal →
                   </div>
                 </div>
               </article>
@@ -262,6 +330,12 @@ function GallerySection() {
           Bekijk meer resultaten
         </button>
       </div>
+
+      <CaseStudyModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        caseStudy={selectedCaseStudy}
+      />
     </section>
   );
 }

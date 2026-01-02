@@ -22,9 +22,14 @@ function Hero() {
             </p>
           </div>
 
-          <button className="btn btn-primary hero-cta">
+          <a 
+            href="https://calendly.com/mouseclick2017/30min" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="btn btn-primary hero-cta"
+          >
             Boek een kennismakingsgesprek
-          </button>
+          </a>
         </div>
       </div>
     </section>

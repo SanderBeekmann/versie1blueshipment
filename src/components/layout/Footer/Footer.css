@@ -1,68 +1,120 @@
-/* Footer */
+/* Footer - Fixed Reveal Pattern (behind content) */
+/* DEBUG: Issue op ultrawide schermen - tekst verdwijnt door overflow hidden en grid clipping */
 .footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
   width: 100%;
-  background: var(--color-blue-ribbon);
   padding: 50px var(--section-padding-medium) 0;
+  z-index: 1;
+  /* Footer sits behind content visually, but links are clickable */
+  pointer-events: auto;
+  /* FIX: overflow visible om clipping te voorkomen op grote schermen */
+  overflow: visible;
+}
+
+/* Footer background as pseudo-element so watermark can be above it */
+.footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--color-blue-ribbon);
+  z-index: 0;
+}
+
+/* Footer Watermark */
+.footer-watermark {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 50%;
+  max-height: 300px;
+  z-index: 1;
+  pointer-events: none;
+  /* FIX: overflow hidden alleen op watermark zelf, niet op footer */
+  overflow: hidden;
+  display: block;
+}
+
+.footer-watermark-image {
+  width: 100%;
+  height: 600px;
+  object-fit: contain;
+  object-position: center top;
+  opacity: 0.15;
+  user-select: none;
+  display: block;
+  filter: brightness(1.3);
+}
+
+/* Ensure all links and buttons in footer are clickable with higher z-index */
+.footer a,
+.footer button {
+  position: relative;
+  z-index: 100;
 }
 
 .footer-container {
+  position: relative;
   max-width: var(--container-large);
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: var(--gap-large);
+  z-index: 2;
+  background: transparent;
 }
 
 .footer-content {
-  display: flex;
-  gap: var(--page-padding);
+  display: grid;
+  /* FIX: minmax(0, 1fr) voorkomt grid item overflow op grote schermen */
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 520px);
+  gap: clamp(48px, 5vw, 80px);
+  align-items: start;
+  position: relative;
+  z-index: 3;
+  /* Zorg dat grid items niet buiten container vallen */
+  min-width: 0;
 }
 
-.footer-info {
-  flex: 2;
+.footer-branding {
   display: flex;
   flex-direction: column;
-  gap: var(--gap-xsmall);
-}
-
-.footer-brand {
-  display: flex;
-  flex-direction: column;
-  gap: var(--gap-xsmall);
-}
-
-.footer-logo {
-  width: 66px;
-  height: 66px;
-  box-shadow: var(--shadow-small);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: white;
-  border-radius: var(--radius-medium);
-  border: 1px solid var(--color-blue-ribbon);
-  overflow: hidden;
-}
-
-.footer-logo img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
+  gap: 0;
+  min-width: 0;
+  /* FIX: Zorg dat branding container niet clipt op grote schermen */
+  overflow: visible;
+  max-width: 100%;
 }
 
 .footer-brand-name {
   font-family: var(--font-secondary);
-  font-size: var(--heading-6);
-  font-weight: var(--font-semibold);
-  line-height: var(--line-normal);
-  letter-spacing: var(--tracking-h6);
-  color: var(--color-blue-ribbon-lightest);
+  font-size: clamp(2rem, 4vw + 1rem, 6.5rem);
+  font-weight: var(--font-bold);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: var(--color-white);
+  margin: 0;
+  /* FIX: white-space nowrap kan clipping veroorzaken op ultrawide - gebruik normal op grote schermen */
+  white-space: nowrap;
+  overflow: visible; /* FIX: visible in plaats van hidden om clipping te voorkomen */
+  text-overflow: clip;
+  max-width: 100%;
+  /* Zorg dat tekst altijd zichtbaar blijft */
+  min-width: 0; /* Laat flex/grid shrinking toe */
 }
 
 .footer-contact {
   display: flex;
   flex-direction: column;
   gap: var(--gap-xsmall);
+  margin-top: var(--gap-small);
 }
 
 .contact-item {
@@ -102,9 +154,10 @@
 }
 
 .footer-links-container {
-  flex: 1;
   display: flex;
   gap: var(--gap-xsmall);
+  flex-shrink: 0;
+  min-width: fit-content;
 }
 
 .footer-links {
@@ -163,6 +216,19 @@
   color: var(--color-white);
 }
 
+.footer-credit-link {
+  color: var(--color-white);
+  text-decoration: underline;
+  transition: opacity 0.2s ease;
+  pointer-events: auto;
+  cursor: pointer;
+  display: inline;
+}
+
+.footer-credit-link:hover {
+  opacity: 0.8;
+}
+
 .footer-legal {
   display: flex;
   gap: var(--gap-xsmall);
@@ -177,11 +243,38 @@
   text-decoration: underline;
 }
 
+/* FIX: Ultrawide schermen - voorkom tekst clipping */
+@media (min-width: 1920px) {
+  .footer-brand-name {
+    /* Op ultrawide schermen: zorg dat tekst altijd zichtbaar blijft */
+    white-space: normal;
+    word-break: break-word;
+    overflow: visible;
+    max-width: 100%;
+  }
+
+  .footer-content {
+    /* Extra ruimte op ultrawide schermen */
+    gap: clamp(48px, 6vw, 120px);
+  }
+
+  .footer-container {
+    /* Max width op ultrawide om layout te behouden */
+    max-width: min(100%, 1800px);
+  }
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
   .footer-content {
-    flex-direction: column;
+    grid-template-columns: 1fr;
     gap: var(--gap-medium);
+  }
+
+  .footer-brand-name {
+    font-size: clamp(1.75rem, 3vw + 1rem, 3.5rem);
+    white-space: normal;
+    word-break: break-word;
   }
 
   .footer-links-container {
@@ -203,13 +296,59 @@
 }
 
 @media (max-width: 768px) {
+  /* FIX: Mobile footer - normale flow in plaats van fixed */
+  /* Dit voorkomt clipping, overlap en scroll glitches op iOS */
   .footer {
-    padding: var(--gap-small) var(--gap-xsmall) 0;
+    position: relative;
+    bottom: auto;
+    left: auto;
+    right: auto;
+    width: 100%;
+    padding: var(--gap-medium) var(--gap-xsmall);
+    /* Extra ruimte voor iOS safe area en WhatsApp knop */
+    padding-bottom: calc(var(--gap-medium) + env(safe-area-inset-bottom, 0px));
+    overflow: visible;
+    z-index: auto;
   }
 
+  .footer-watermark {
+    width: 400px;
+    height: 50%;
+    max-height: 200px;
+  }
+
+  .footer-watermark-image {
+    height: 400px;
+  }
+
+  /* Mobile layout fix - zorg dat branding altijd zichtbaar is */
+  .footer-brand-name {
+    font-size: clamp(2.2rem, 9vw, 3.2rem);
+    line-height: 1;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    max-width: 100%;
+    word-break: break-word;
+  }
+
+  /* Zet content onder elkaar */
+  .footer-content {
+    grid-template-columns: 1fr;
+    gap: var(--gap-medium);
+  }
+
+  /* Links in 2 kolommen naast elkaar */
   .footer-links-container {
-    flex-direction: column;
-    gap: var(--gap-small);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: var(--gap-medium);
+    row-gap: var(--gap-xsmall);
+    min-width: 0;
+  }
+
+  .footer-links {
+    min-width: 0;
   }
 }
 

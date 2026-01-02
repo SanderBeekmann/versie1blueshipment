@@ -6,6 +6,7 @@ import timoImg from '../../../assets/timo.jpg';
 import colinImg from '../../../assets/colin.jpg';
 import reitzeImg from '../../../assets/reitze.jpg';
 import davidImg from '../../../assets/david.jpeg';
+import { openWhatsApp } from '../../../utils/whatsapp';
 
 const teamData = [
   {
@@ -242,7 +243,11 @@ function AboutTeamStable() {
               </div>
               <p className="team-detail-description">{member.fullDescription}</p>
               {member.badge && (
-                <button className="btn btn-whatsapp" type="button">
+                <button 
+                  className="btn btn-whatsapp" 
+                  type="button"
+                  onClick={() => openWhatsApp()}
+                >
                   Contact via WhatsApp
                 </button>
               )}

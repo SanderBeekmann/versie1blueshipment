@@ -1,4 +1,5 @@
-import React, { useLayoutEffect, useRef } from 'react';
+import React, { useLayoutEffect, useRef, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import './DienstenPage.css';
 import Navbar from '../../components/layout/Navbar/Navbar';
 import GlassTagline from '../../components/sections/GlassTagline/GlassTagline';
@@ -26,144 +27,42 @@ const ArrowRightIcon = () => (
 function DienstenPage() {
   const bentoRef = useRef(null);
   const cardRefs = useRef([]);
+  const location = useLocation();
+  const hasScrolledToHashRef = useRef(false);
 
-  // Comprehensive scroll monitoring for Diensten section
-  useLayoutEffect(() => {
-    const isMobile = window.innerWidth < 768;
-    if (!isMobile) return; // Only monitor on mobile
-    
-    let lastScrollY = window.scrollY;
-    let scrollChangeCount = 0;
-    
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      const diff = currentScrollY - lastScrollY;
-      
-      // Log significant scroll changes (especially scroll-to-top)
-      if (Math.abs(diff) > 50 || currentScrollY < 100) {
-        scrollChangeCount++;
-        console.warn('[DienstenPage] Significant scroll detected', {
-          from: lastScrollY,
-          to: currentScrollY,
-          diff,
-          count: scrollChangeCount,
-          timestamp: Date.now(),
-          location: window.location.href,
-          hash: window.location.hash
-        });
-      }
-      
-      lastScrollY = currentScrollY;
-    };
-    
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
+  // FIX 3: Detect mobile once - disable ScrollTrigger on mobile to prevent scroll conflicts
+  const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches;
 
   useLayoutEffect(() => {
-    // Initialize all animations
-    initScrollAnimations();
-    initTitleAnimations();
-    initHeroTitleAnimation();
-    initLogoRevealAnimation(1000);
-
-    // Ensure ScrollTrigger refreshes after layout is stable
-    // On mobile, preserve scroll position more carefully
-    const refreshTimeout = setTimeout(() => {
-      const scrollY = window.scrollY;
-      const isMobile = window.innerWidth < 768;
-      
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          console.log('[DienstenPage] Initial ScrollTrigger.refresh()', {
-            scrollY,
-            isMobile,
-            timestamp: Date.now()
-          });
-          
-          ScrollTrigger.refresh();
-          
-          // On mobile, restore scroll position if it changed
-          if (isMobile && Math.abs(window.scrollY - scrollY) > 5) {
-            console.log('[DienstenPage] Restoring scroll position after initial refresh', {
-              before: scrollY,
-              after: window.scrollY
-            });
-            window.scrollTo({ top: scrollY, behavior: 'instant' });
-          }
-        });
-      });
-    }, 100);
-
-    // Scroll to hash anchor if present in URL (only on initial load, not on scroll)
-    // This should only run once when the page loads, not during scrolling
-    let hashTimeout = null;
-    const hash = window.location.hash;
-    if (hash) {
-      const sectionId = hash.substring(1); // Remove #
-      console.log('[DienstenPage] Hash detected on mount, will scroll to section', {
-        hash,
-        sectionId,
-        currentScrollY: window.scrollY,
-        timestamp: Date.now()
-      });
-      
-      // Use a longer delay to ensure page is fully rendered
-      // Only scroll if we're at the top (initial load), not if user has already scrolled
-      const initialScrollY = window.scrollY;
-      hashTimeout = setTimeout(() => {
-        // Only scroll if user hasn't scrolled away from top
-        // This prevents scroll-to-section when user is already scrolling
-        if (Math.abs(window.scrollY - initialScrollY) < 50) {
-          scrollToSection(sectionId);
-        } else {
-          console.log('[DienstenPage] Skipping hash scroll - user has scrolled', {
-            initialScrollY,
-            currentScrollY: window.scrollY
-          });
-        }
-      }, 800); // Longer delay to ensure layout is stable
+    // FIX 3: Only initialize ScrollTrigger animations on desktop
+    // Mobile doesn't need ScrollTrigger - it causes scroll conflicts
+    if (!isMobile) {
+      initScrollAnimations();
+      initTitleAnimations();
+      initHeroTitleAnimation();
+      initLogoRevealAnimation(1000);
     }
-    
-    // Monitor hash changes to prevent unwanted scrolls
-    const handleHashChange = (e) => {
-      console.warn('[DienstenPage] Hash change detected', {
-        oldURL: e.oldURL,
-        newURL: e.newURL,
-        hash: window.location.hash,
-        scrollY: window.scrollY,
-        timestamp: Date.now()
-      });
-      
-      // Prevent default browser scroll-to-hash behavior on mobile during active scrolling
-      const isMobile = window.innerWidth < 768;
-      if (isMobile && window.scrollY > 200) {
-        console.warn('[DienstenPage] Preventing hash scroll on mobile - user is scrolling', {
-          scrollY: window.scrollY
-        });
-        // Note: hashchange event doesn't have preventDefault, but we log it for debugging
-      }
-    };
-    
-    window.addEventListener('hashchange', handleHashChange);
+
+    // FIX 1: Simplified ScrollTrigger refresh - removed mobile scroll restoration
+    // No scrollTo calls, no rAF nesting - let browser handle scroll naturally
+    const refreshTimeout = setTimeout(() => {
+      ScrollTrigger.refresh(true);
+    }, 150);
     
     return () => {
-      if (hashTimeout) clearTimeout(hashTimeout);
       clearTimeout(refreshTimeout);
-      window.removeEventListener('hashchange', handleHashChange);
       cleanupScrollAnimations();
     };
   }, []);
 
   // GSAP Bento Grid Animation
+  // FIX: Use gsap.matchMedia to disable animation on mobile (max-width: 767px)
   useLayoutEffect(() => {
     if (!bentoRef.current) return;
     
     let ctx = null;
     let timeoutId = null;
+    let mm = null;
     
     // Wait for next frame to ensure layout is complete
     timeoutId = setTimeout(() => {
@@ -176,82 +75,14 @@ function DienstenPage() {
       const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       
       ctx = gsap.context(() => {
-        // Get container bounds for column detection
-        const bentoRect = bento.getBoundingClientRect();
-        const containerWidth = bentoRect.width;
-        const columnWidth = containerWidth / 3;
-
-        // Prepare cards with column detection based on their center position
-        const cardsWithData = cards.map((card) => {
-          const cardRect = card.getBoundingClientRect();
-          const relativeLeft = cardRect.left - bentoRect.left;
-          const cardCenterX = relativeLeft + cardRect.width / 2;
-          const relativeTop = cardRect.top - bentoRect.top;
-          
-          // Determine column (0 = left, 1 = middle, 2 = right)
-          // Use thirds of container width
-          let columnIndex = 0;
-          if (cardCenterX < columnWidth) {
-            columnIndex = 0; // Left
-          } else if (cardCenterX < columnWidth * 2) {
-            columnIndex = 1; // Middle
-          } else {
-            columnIndex = 2; // Right
-          }
-
-          return {
-            element: card,
-            columnIndex,
-            top: relativeTop,
-            left: relativeLeft
-          };
-        });
-
-        // Sort by column, then by vertical position (bottom first, then top within each column)
-        cardsWithData.sort((a, b) => {
-          if (a.columnIndex !== b.columnIndex) {
-            return a.columnIndex - b.columnIndex;
-          }
-          // Sort by top in reverse (highest first = bottom first)
-          return b.top - a.top;
-        });
-
-        // Calculate index within column for stagger
-        const columnCounts = [0, 0, 0];
-        cardsWithData.forEach((cardData) => {
-          cardData.indexInColumn = columnCounts[cardData.columnIndex];
-          columnCounts[cardData.columnIndex]++;
-        });
-
-        // Set initial state for all cards (before timeline)
-        cardsWithData.forEach((cardData) => {
-          const { element, columnIndex } = cardData;
-          
-          // Determine initial x offset based on column
-          let initialX = -80; // Left column
-          let initialRotate = -2;
-          
-          if (columnIndex === 1) {
-            initialX = 55; // Middle column
-            initialRotate = 1;
-          } else if (columnIndex === 2) {
-            initialX = 90; // Right column
-            initialRotate = 2;
-          }
-
-          gsap.set(element, {
-            opacity: 0,
-            x: initialX,
-            y: -18,
-            rotate: initialRotate,
-            willChange: 'transform, opacity'
-          });
-        });
-
-        // If reduced motion, show cards immediately
-        if (prefersReducedMotion) {
-          cardsWithData.forEach((cardData) => {
-            gsap.set(cardData.element, {
+        // Use gsap.matchMedia to separate mobile and desktop behavior
+        mm = gsap.matchMedia();
+        
+        // MOBILE: Disable animation, show cards immediately
+        mm.add('(max-width: 767px)', () => {
+          // Reset all cards to visible state immediately
+          cards.forEach((card) => {
+            gsap.set(card, {
               opacity: 1,
               x: 0,
               y: 0,
@@ -259,72 +90,136 @@ function DienstenPage() {
               willChange: 'auto'
             });
           });
-          return;
-        }
-
-        // Create timeline with ScrollTrigger scrub
-        // Note: bento is the trigger wrapper (diensten-bento-trigger)
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: bento,
-            start: 'top 85%',
-            end: 'top 20%',
-            scrub: 1.5,
-            invalidateOnRefresh: true
-          }
         });
+        
+        // DESKTOP: Full animation with ScrollTrigger
+        mm.add('(min-width: 768px)', () => {
+          // Get container bounds for column detection
+          const bentoRect = bento.getBoundingClientRect();
+          const containerWidth = bentoRect.width;
+          const columnWidth = containerWidth / 3;
 
-        // Add animations to timeline using position offsets (not delay)
-        cardsWithData.forEach((cardData) => {
-          const { element, columnIndex, indexInColumn } = cardData;
-          
-          // Calculate timeline position: column delay + stagger within column
-          const position = columnIndex * 0.40 + indexInColumn * 0.8;
+          // Prepare cards with column detection based on their center position
+          const cardsWithData = cards.map((card) => {
+            const cardRect = card.getBoundingClientRect();
+            const relativeLeft = cardRect.left - bentoRect.left;
+            const cardCenterX = relativeLeft + cardRect.width / 2;
+            const relativeTop = cardRect.top - bentoRect.top;
+            
+            // Determine column (0 = left, 1 = middle, 2 = right)
+            // Use thirds of container width
+            let columnIndex = 0;
+            if (cardCenterX < columnWidth) {
+              columnIndex = 0; // Left
+            } else if (cardCenterX < columnWidth * 2) {
+              columnIndex = 1; // Middle
+            } else {
+              columnIndex = 2; // Right
+            }
 
-          tl.to(element, {
-            opacity: 1,
-            x: 0,
-            y: 0,
-            rotate: 0,
-            duration: 1.5,
-            ease: 'power2.out'
-          }, position);
-        });
-
-        // Refresh ScrollTrigger to ensure correct start/end positions
-        // Using setTimeout for better reliability with images/async content
-        // Preserve scroll position during refresh to prevent viewport jumps on mobile
-        setTimeout(() => {
-          const scrollY = window.scrollY;
-          const isMobile = window.innerWidth < 768;
-          
-          console.log('[DienstenPage] ScrollTrigger.refresh() called', {
-            scrollY,
-            isMobile,
-            timestamp: Date.now()
+            return {
+              element: card,
+              columnIndex,
+              top: relativeTop,
+              left: relativeLeft
+            };
           });
-          
-          ScrollTrigger.refresh();
-          
-          // Restore scroll position if it changed (prevents viewport jumps)
-          // On mobile, be more aggressive about preserving scroll position
-          const scrollDiff = Math.abs(window.scrollY - scrollY);
-          const threshold = isMobile ? 5 : 10; // Lower threshold on mobile
-          
-          if (scrollDiff > threshold) {
-            console.log('[DienstenPage] Scroll position changed after refresh, restoring', {
-              before: scrollY,
-              after: window.scrollY,
-              diff: scrollDiff
+
+          // Sort by column, then by vertical position (bottom first, then top within each column)
+          cardsWithData.sort((a, b) => {
+            if (a.columnIndex !== b.columnIndex) {
+              return a.columnIndex - b.columnIndex;
+            }
+            // Sort by top in reverse (highest first = bottom first)
+            return b.top - a.top;
+          });
+
+          // Calculate index within column for stagger
+          const columnCounts = [0, 0, 0];
+          cardsWithData.forEach((cardData) => {
+            cardData.indexInColumn = columnCounts[cardData.columnIndex];
+            columnCounts[cardData.columnIndex]++;
+          });
+
+          // Set initial state for all cards (before timeline)
+          cardsWithData.forEach((cardData) => {
+            const { element, columnIndex } = cardData;
+            
+            // Determine initial x offset based on column
+            let initialX = -80; // Left column
+            let initialRotate = -2;
+            
+            if (columnIndex === 1) {
+              initialX = 55; // Middle column
+              initialRotate = 1;
+            } else if (columnIndex === 2) {
+              initialX = 90; // Right column
+              initialRotate = 2;
+            }
+
+            gsap.set(element, {
+              opacity: 0,
+              x: initialX,
+              y: -18,
+              rotate: initialRotate,
+              willChange: 'transform, opacity'
             });
-            window.scrollTo({ top: scrollY, behavior: 'instant' });
+          });
+
+          // If reduced motion, show cards immediately
+          if (prefersReducedMotion) {
+            cardsWithData.forEach((cardData) => {
+              gsap.set(cardData.element, {
+                opacity: 1,
+                x: 0,
+                y: 0,
+                rotate: 0,
+                willChange: 'auto'
+              });
+            });
+            return;
           }
-        }, 50);
+
+          // Create timeline with ScrollTrigger scrub
+          // Note: bento is the trigger wrapper (diensten-bento-trigger)
+          const tl = gsap.timeline({
+            scrollTrigger: {
+              trigger: bento,
+              start: 'top 85%',
+              end: 'top 20%',
+              scrub: 1.5,
+              invalidateOnRefresh: true
+            }
+          });
+
+          // Add animations to timeline using position offsets (not delay)
+          cardsWithData.forEach((cardData) => {
+            const { element, columnIndex, indexInColumn } = cardData;
+            
+            // Calculate timeline position: column delay + stagger within column
+            const position = columnIndex * 0.40 + indexInColumn * 0.8;
+
+            tl.to(element, {
+              opacity: 1,
+              x: 0,
+              y: 0,
+              rotate: 0,
+              duration: 1.5,
+              ease: 'power2.out'
+            }, position);
+          });
+
+          // ScrollTrigger refresh after animation setup
+          setTimeout(() => {
+            ScrollTrigger.refresh();
+          }, 50);
+        });
       }, bentoRef);
     }, 0);
 
     return () => {
       if (timeoutId) clearTimeout(timeoutId);
+      if (mm) mm.revert(); // Revert matchMedia (kills all ScrollTriggers and tweens)
       if (ctx) ctx.revert();
     };
   }, []); // Run once on mount - services is constant
@@ -443,12 +338,6 @@ function DienstenPage() {
       return;
     }
 
-    console.log('[DienstenPage] scrollToSection called', {
-      sectionId,
-      currentScrollY: window.scrollY,
-      timestamp: Date.now()
-    });
-
     // Get navbar height or use fallback
     const navbar = document.querySelector('.navbar');
     const navbarHeight = navbar?.offsetHeight || 110;
@@ -461,13 +350,22 @@ function DienstenPage() {
       top: offsetPosition,
       behavior: 'smooth'
     });
-
-    // Remove focus to prevent outline
-    // element.setAttribute('tabIndex', '-1');
-    // setTimeout(() => {
-    //   element.focus({ preventScroll: true });
-    // }, 500);
   };
+
+  // FIX 2: Handle hash navigation - scroll to section only once when hash is present
+  // Prevents repeated scrolling on mobile viewport changes
+  useEffect(() => {
+    // Don't scroll if we already handled this hash
+    if (!location.hash || hasScrolledToHashRef.current) return;
+
+    const timeout = setTimeout(() => {
+      const sectionId = location.hash.substring(1); // Remove #
+      scrollToSection(sectionId);
+      hasScrolledToHashRef.current = true;
+    }, 300);
+
+    return () => clearTimeout(timeout);
+  }, [location.hash]);
 
   // Service cards data
   const services = [
@@ -554,7 +452,7 @@ function DienstenPage() {
   return (
     <div className="app">
       <Navbar />
-      
+      <div className="page-content">
       {/* Hero Section - Reusing hero layout pattern */}
       <section className="diensten-hero">
         <InfiniteGridOverlay opacity={0.5} />
@@ -733,11 +631,9 @@ function DienstenPage() {
       <div data-animate="fadeUp">
         <FAQSection faqs={faqs} />
       </div>
-
-      {/* Footer */}
-      <div data-animate="fadeUpScale">
-        <Footer />
       </div>
+      {/* Footer - Outside page-content to ensure correct z-index stacking */}
+      <Footer />
     </div>
   );
 }

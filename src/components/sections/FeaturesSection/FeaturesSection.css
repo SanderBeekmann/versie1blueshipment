@@ -4,7 +4,8 @@
   width: 100%;
   padding: var(--section-padding-large) var(--page-padding);
   background-color: var(--color-background);
-  overflow: hidden;
+  overflow: visible;
+  z-index: 1;
 }
 
 /* Brand Watermark */
@@ -50,6 +51,7 @@
   text-align: center;
   max-width: var(--container-medium);
   margin-bottom: var(--gap-large);
+  will-change: transform;
 }
 
 .features-section__header .glass-tagline {
@@ -85,72 +87,147 @@
 .features-section__grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--gap-medium);
+  gap: 28px;
   width: 100%;
   position: relative;
   z-index: 1;
+  align-items: stretch;
 }
 
-/* Feature Card */
+/* Feature Card - Premium styling with micro-details and hierarchy */
 .features-section__card {
-  background-color: var(--color-white);
-  border: 1px solid var(--color-blue-ribbon);
-  border-radius: 16px;
-  padding: 2rem;
+  /* Card basis: echte "surface" met inner stroke + zachte noise highlight */
+  border-radius: 18px;
+  position: relative;
+  overflow: hidden;
+  
+  background: #ffffff;
+  border: 1px solid transparent;
+  border-bottom: 3px solid transparent;
+  
   box-shadow: var(--shadow-xsmall);
-  transition: all 0.3s ease;
+  
+  transform: translateZ(0);
+  will-change: transform;
+  
+  /* Spacing binnen card: meer ritme */
+  padding: 26px 26px 22px;
   display: flex;
   flex-direction: column;
-  gap: var(--gap-small);
-  position: relative;
+  gap: 10px;
+  min-height: 210px;
+}
+
+/* Inner stroke voor premium afwerking - alleen bij hover */
+.features-section__card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  border: 1px solid transparent;
+  pointer-events: none;
+  opacity: 0;
   z-index: 1;
+  transition: opacity 220ms ease, border-color 220ms ease;
 }
 
-.features-section__card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+/* Bottom accent bar verwijderd - nu via border-bottom op card zelf (zoals team cards) */
+
+/* Premium hover: lift + licht "glow" zonder neon (desktop only) */
+@media (hover: hover) and (pointer: fine) {
+  .features-section__card {
+    transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+  }
+
+  .features-section__card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(0, 122, 255, 0.32);
+    border-bottom-color: var(--color-blue-ribbon);
+    box-shadow: var(--shadow-medium);
+  }
+
+  .features-section__card:hover::after {
+    opacity: 1;
+    border-color: rgba(255, 255, 255, 0.65);
+  }
+
+  .features-section__card:hover .features-section__icon-wrapper {
+    box-shadow: var(--shadow-medium);
+  }
 }
 
-/* Icon Wrapper */
+/* Icon Wrapper - sterker en consistenter (ring + diepte) */
 .features-section__icon-wrapper {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background-color: var(--color-blue-ribbon-lightest);
-  border: 1px solid rgba(0, 112, 255, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  
+  background: radial-gradient(circle at 30% 30%, rgba(0, 122, 255, 0.18), rgba(0, 122, 255, 0.08));
+  border: 1px solid rgba(0, 122, 255, 0.18);
+  
+  box-shadow: var(--shadow-small);
+  
   color: var(--color-blue-ribbon);
   flex-shrink: 0;
-  margin-bottom: var(--gap-xxsmall);
+  margin-bottom: 0;
+  position: relative;
+  z-index: 3;
 }
 
 .features-section__icon-wrapper svg {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
 }
 
-/* Card Typography */
+/* Card Typography - titel iets groter, body rustiger, max breedte */
 .features-section__card-title {
   font-family: var(--font-primary);
-  font-size: 1.25rem;
-  font-weight: 600;
-  line-height: 1.5;
-  letter-spacing: var(--tracking-card-title);
+  font-size: 18px;
+  line-height: 1.25;
+  font-weight: 750;
+  letter-spacing: -0.012em;
   color: var(--color-neutral-darkest);
-  margin: 0;
-  min-height: 3.75rem; /* 2 regels hoogte (1.25rem * 1.5 * 2) om descriptions op dezelfde hoogte te krijgen */
+  margin: 10px 0 10px;
+  position: relative;
+  z-index: 2;
 }
 
 .features-section__card-description {
   font-family: var(--font-primary);
-  font-size: 1rem;
-  font-weight: var(--font-regular);
-  line-height: 1.6;
-  color: var(--color-neutral-darkest);
-  opacity: 0.75;
+  font-size: 14px;
+  line-height: 1.7;
+  color: rgba(0, 0, 0, 0.62);
   margin: 0;
+  max-width: 34ch;
+  position: relative;
+  z-index: 2;
+}
+
+/* CTA Section */
+.features-section__cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gap-xsmall);
+  margin-top: var(--gap-large);
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.features-section__cta-text {
+  font-family: var(--font-primary);
+  font-size: var(--text-medium);
+  font-weight: var(--font-semibold);
+  line-height: var(--line-relaxed);
+  color: var(--color-neutral-darkest);
+  margin: 0;
+}
+
+.features-section__cta-button {
+  margin-top: var(--space-xs);
 }
 
 /* Responsive Breakpoints */
@@ -159,7 +236,7 @@
 @media (min-width: 768px) {
   .features-section__grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--gap-medium);
+    gap: 28px;
   }
 
   .features-section__watermark {
@@ -174,11 +251,11 @@
 @media (min-width: 1024px) {
   .features-section__grid {
     grid-template-columns: repeat(4, 1fr);
-    gap: var(--gap-medium);
+    gap: 28px;
   }
 
   .features-section__card {
-    padding: 2rem;
+    padding: 26px 26px 22px;
   }
 
   .features-section__watermark {
@@ -192,7 +269,7 @@
 /* Large Desktop */
 @media (min-width: 1440px) {
   .features-section__grid {
-    gap: var(--gap-large);
+    gap: 28px;
   }
 
   .features-section__watermark {
@@ -216,10 +293,47 @@
     right: -30px;
   }
 
+  .features-section__grid {
+    gap: 20px;
+  }
+
   .features-section__card {
-    padding: 1.5rem;
+    padding: 22px 22px 18px;
+    min-height: auto;
+  }
+
+
+  .features-section__icon-wrapper {
+    width: 42px;
+    height: 42px;
+  }
+
+  .features-section__icon-wrapper svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .features-section__card-title {
+    font-size: 17px;
+    margin: 8px 0 8px;
+    font-weight: 700;
+  }
+
+  .features-section__card-description {
+    font-size: 14px;
+    line-height: 1.65;
+  }
+
+  .features-section__cta {
+    margin-top: var(--gap-medium);
+    gap: var(--gap-xxsmall);
+  }
+
+  .features-section__cta-text {
+    font-size: var(--text-regular);
   }
 }
+
 
 
 

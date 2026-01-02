@@ -2,6 +2,7 @@ import React, { useLayoutEffect, useRef } from 'react';
 import './ProcessSection.css';
 import GlassTagline from '../GlassTagline/GlassTagline';
 import { initTimelineAnimations, cleanupTimelineAnimations } from '../../../utils/scrollAnimations';
+import { openWhatsApp } from '../../../utils/whatsapp';
 import stap1Img from '../../../assets/stap1.svg';
 import stap2Img from '../../../assets/stap 2.png';
 import stap3Img from '../../../assets/stap 3.png';
@@ -192,11 +193,16 @@ function ProcessSection() {
               Dit resulteerd in goede reviews en meer verkoop.
             </p>
             <div className="result-actions">
-              <button className="btn btn-whatsapp">Contact via Whatsapp</button>
-              <button className="text-link">
+              <button 
+                className="btn btn-whatsapp"
+                onClick={() => openWhatsApp()}
+              >
+                Contact via Whatsapp
+              </button>
+              <a href="/diensten" className="text-link">
                 Bekijk diensten
                 <ChevronRight />
-              </button>
+              </a>
             </div>
           </div>
         </div>

@@ -48,44 +48,104 @@
 
 .whatsapp-content-grid {
   display: grid;
-  grid-template-columns: 0.5fr 1fr;
+  grid-template-columns: 1fr;
   gap: 0;
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
 }
 
-.whatsapp-image-frame {
-  background-color: var(--color-white);
-  border: 2px solid var(--color-blue-ribbon);
-  border-right: none;
-  border-radius: 32px 0 0 32px;
+/* Contact Card Container */
+.contact-card {
+  position: relative;
+  width: 100%;
+  border-radius: var(--radius-large);
   overflow: hidden;
+  border: 2px solid var(--color-blue-ribbon);
   box-shadow: var(--shadow-xsmall);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  margin: 0;
+  background-color: var(--color-white);
+  min-height: 300px; /* Ensure card has consistent height */
 }
 
-.whatsapp-image-frame img {
+/* Media Layer (Image) - Behind the panel */
+.contact-card__media {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100%;
+  z-index: 0;
+  display: none;
+  overflow: hidden;
+}
+
+.contact-card__media img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
   display: block;
 }
 
-.whatsapp-card {
+/* Panel Layer (Content) - Overlay on top */
+.contact-card__panel {
   position: relative;
   width: 100%;
   background-color: var(--color-white);
-  border: 2px solid var(--color-blue-ribbon);
-  border-left: none;
-  border-radius: 0 var(--radius-large) var(--radius-large) 0;
-  box-shadow: var(--shadow-xsmall);
   padding: var(--gap-medium);
-  overflow: visible;
+  z-index: 1;
+  transform: translateX(0);
+  transition: transform 380ms ease-out;
+  box-sizing: border-box;
+  overflow: visible; /* Prevent text clipping */
+}
+
+/* Desktop: Hover swipe interaction */
+@media (hover: hover) and (pointer: fine) and (min-width: 1025px) {
+  .contact-card {
+    --reveal: clamp(280px, 38%, 460px);
+  }
+
+  /* Show media container with exact reveal width */
+  .contact-card__media {
+    display: block;
+    width: var(--reveal);
+    height: 100%; /* Fill full card height */
+  }
+
+  /* Set panel width to match hover state from the start to prevent text reflow */
+  .contact-card__panel {
+    width: calc(100% - var(--reveal) - 64px);
+  }
+
+  .contact-card:hover .contact-card__panel,
+  .contact-card:focus-within .contact-card__panel {
+    transform: translateX(calc(var(--reveal) + 64px));
+  }
+}
+
+/* Mobile: Always hide media, panel stays full width */
+@media (max-width: 1024px) {
+  .contact-card__media {
+    display: none;
+  }
+
+  .contact-card__panel {
+    transform: translateX(0) !important;
+    width: 100% !important;
+  }
+}
+
+/* Touch devices: Always hide media */
+@media (hover: none), (pointer: coarse) {
+  .contact-card__media {
+    display: none;
+  }
+
+  .contact-card__panel {
+    transform: translateX(0) !important;
+    width: 100% !important;
+  }
 }
 
 .whatsapp-card-content {
@@ -93,6 +153,9 @@
   flex-direction: column;
   align-items: flex-start;
   gap: var(--gap-small);
+  width: 100%;
+  overflow: visible; /* Prevent content clipping */
+  box-sizing: border-box;
 }
 
 
@@ -147,8 +210,9 @@
   line-height: var(--line-relaxed);
   color: var(--color-neutral-darkest);
   margin: 0;
-  max-width: 680px;
+  width: 100%;
   opacity: 0.85;
+  overflow: visible; /* Prevent text clipping */
 }
 
 .whatsapp-cta-button {
@@ -156,7 +220,12 @@
   font-size: var(--text-regular);
   padding: 12px 32px;
   box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
-  transition: none; /* GSAP handles animations */
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.whatsapp-cta-button:hover {
+  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.5);
+  transform: translateY(-1px);
 }
 
 .whatsapp-title-blue {
@@ -173,10 +242,6 @@
     grid-template-columns: 1fr;
     gap: var(--gap-medium);
   }
-
-  .whatsapp-image-frame {
-    min-height: 300px;
-  }
 }
 
 @media (max-width: 768px) {
@@ -189,9 +254,12 @@
     padding: 0 var(--gap-xsmall);
   }
 
-  .whatsapp-card {
-    padding: var(--gap-small);
+  .contact-card {
     border-radius: var(--radius-medium);
+  }
+
+  .contact-card__panel {
+    padding: var(--gap-small);
   }
 
   .whatsapp-icon-wrapper {

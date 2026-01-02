@@ -20,7 +20,7 @@ function VideoSection() {
             <p className="video-subtitle">
               Wij leggen je uit wat ons proces zo bijzonder maakt.
             </p>
-            <button className="btn btn-primary">
+            <button className="btn btn-primary video-cta-desktop">
               Ervaar het zelf!
             </button>
           </div>
@@ -32,6 +32,9 @@ function VideoSection() {
               </button>
             </div>
           </div>
+          <button className="btn btn-primary video-cta-mobile">
+            Ervaar het zelf!
+          </button>
         </div>
       </div>
     </section>

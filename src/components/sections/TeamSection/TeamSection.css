@@ -4,7 +4,9 @@
   padding: var(--page-padding) calc(var(--section-padding-small) / 2);
   background-color: var(--color-background);
   position: relative;
-  overflow: hidden;
+  overflow: visible;
+  z-index: 2;
+  margin-bottom: 48px;
 }
 
 .team-background {
@@ -16,6 +18,7 @@
   background: var(--gradient-team);
   border-radius: 0 0 var(--radius-large) var(--radius-large);
   box-shadow: var(--shadow-small);
+  z-index: 0;
 }
 
 .team-container {
@@ -29,6 +32,7 @@
   border-radius: var(--radius-large);
   box-shadow: var(--shadow-medium);
   overflow: hidden;
+  z-index: 1;
 }
 
 .team-header {
@@ -220,6 +224,7 @@
 @media (max-width: 768px) {
   .team-section {
     padding: var(--section-padding-small) calc(var(--gap-xsmall) / 2);
+    margin-bottom: 32px;
   }
 
   .team-container {

@@ -93,10 +93,19 @@ export const initScrollAnimations = () => {
   });
 
   // Refresh ScrollTrigger after all animations are set up to ensure correct measurements
+  // FIX: Preserve scroll position on mobile to prevent unwanted scroll-to-top
   // Use requestAnimationFrame to ensure layout is stable
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
+      const isMobile = window.innerWidth < 768;
+      const scrollY = window.scrollY;
+      
       ScrollTrigger.refresh();
+      
+      // On mobile, restore scroll position if it changed during refresh
+      if (isMobile && Math.abs(window.scrollY - scrollY) > 5) {
+        window.scrollTo({ top: scrollY, behavior: 'instant' });
+      }
     });
   });
 };
@@ -1050,8 +1059,17 @@ export const initTimelineAnimations = (stepsContainer, processContainer, options
     });
   });
   
-  // Refresh ScrollTrigger once after initialization
+  // FIX: Refresh ScrollTrigger once after initialization
+  // Preserve scroll position on mobile to prevent unwanted scroll-to-top
+  const scrollY = window.scrollY;
+  const isMobile = window.innerWidth < 768;
+  
   ScrollTrigger.refresh();
+  
+  // On mobile, restore scroll position if it changed during refresh
+  if (isMobile && Math.abs(window.scrollY - scrollY) > 5) {
+    window.scrollTo({ top: scrollY, behavior: 'instant' });
+  }
   
   // Return cleanup function
   return () => {

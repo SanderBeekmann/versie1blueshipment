@@ -10,11 +10,19 @@
 }
 
 html {
+  /* FIX: Disable smooth scroll on mobile to prevent unwanted scroll-to-hash behavior */
   scroll-behavior: smooth;
   /* Last resort: prevent horizontal scroll */
   overflow-x: clip;
   width: 100%;
   max-width: 100vw;
+}
+
+/* Disable smooth scroll on mobile to prevent browser default scroll-to-hash */
+@media (max-width: 768px) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 body {
@@ -70,7 +78,7 @@ ul, ol {
   /* Colors - Neutral */
   --color-neutral-darkest: #0d0600;
   --color-white: #ffffff;
-  --color-background: #ffffff;
+  --color-background: #f7fbff; /* rgba(0, 122, 255, 0.03) over white = 3% blue opacity */
   --color-card-white: #fafafa;
   
   /* Colors - Transparency */
@@ -157,7 +165,7 @@ ul, ol {
   
   /* Gradients */
   --gradient-blue: linear-gradient(180deg, #0070ff 0%, #004399 100%);
-  --gradient-hero: linear-gradient(209.92deg, rgba(0, 112, 255, 0.34) 1.66%, rgba(255, 255, 255, 0.34) 36.93%), linear-gradient(90deg, #ffffff 0%, #ffffff 100%);
+  --gradient-hero: linear-gradient(209.92deg, rgba(0, 112, 255, 0.34) 1.66%, rgba(250, 251, 255, 0.34) 36.93%), linear-gradient(90deg, var(--color-background) 0%, var(--color-background) 100%);
   --gradient-team: linear-gradient(180deg, var(--color-background) 23.56%, #0070ff 100%);
 }
 
@@ -226,6 +234,21 @@ p {
   transition: all 0.2s ease;
   border: none;
   cursor: pointer;
+  text-decoration: none;
+}
+
+/* Ensure links with btn class work correctly */
+a.btn {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  pointer-events: auto;
+  position: relative;
+  z-index: 1;
+}
+
+a.btn-primary {
+  color: var(--color-white);
 }
 
 .btn-primary {
@@ -370,5 +393,15 @@ p {
     --section-padding-large: 64px;
     --gap-large: 48px;
     --gap-medium: 32px;
+  }
+
+  /* Alle titels: letter-spacing naar 0 op mobiel */
+  h1, h2, h3, h4, h5, h6,
+  [data-animate-title],
+  [class*="title"],
+  [class*="Title"],
+  .section-title,
+  .section-heading {
+    letter-spacing: 0 !important;
   }
 }

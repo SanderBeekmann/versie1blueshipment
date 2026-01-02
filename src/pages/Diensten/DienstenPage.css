@@ -60,16 +60,16 @@
   height: clamp(140px, 18vh, 260px);
   background: linear-gradient(
     to bottom,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.15) 25%,
-    rgba(255, 255, 255, 0.35) 45%,
-    rgba(255, 255, 255, 0.55) 60%,
-    rgba(255, 255, 255, 0.72) 72%,
-    rgba(255, 255, 255, 0.85) 82%,
-    rgba(255, 255, 255, 0.93) 90%,
-    rgba(255, 255, 255, 0.97) 95%,
-    rgba(255, 255, 255, 0.99) 98%,
-    #ffffff 100%
+    transparent 0%,
+    rgba(250, 251, 255, 0.15) 25%,
+    rgba(250, 251, 255, 0.35) 45%,
+    rgba(250, 251, 255, 0.55) 60%,
+    rgba(250, 251, 255, 0.72) 72%,
+    rgba(250, 251, 255, 0.85) 82%,
+    rgba(250, 251, 255, 0.93) 90%,
+    rgba(250, 251, 255, 0.97) 95%,
+    rgba(250, 251, 255, 0.99) 98%,
+    var(--color-background) 100%
   );
   pointer-events: none;
   z-index: 2;
@@ -183,7 +183,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--gap-small);
+  gap: var(--gap-xxsmall);
 }
 
 .diensten-services-title {
@@ -194,7 +194,7 @@
   letter-spacing: var(--tracking-h2);
   color: var(--color-neutral-darkest);
   text-align: center;
-  margin-bottom: var(--gap-xxsmall);
+  margin: 0;
   word-break: normal;
   overflow-wrap: break-word;
 }
@@ -207,7 +207,7 @@
   color: var(--color-neutral-darkest);
   opacity: 0.8;
   text-align: center;
-  margin-bottom: var(--gap-medium);
+  margin: 0;
 }
 
 /* CTA Button */
@@ -225,6 +225,7 @@
   width: 100%;
   display: flex;
   justify-content: center;
+  margin-top: var(--gap-medium);
 }
 
 
@@ -245,7 +246,7 @@
 }
 
 .diensten-card {
-  background: var(--color-card-white);
+  background: #ffffff;
   border-radius: var(--radius-large);
   box-shadow: var(--shadow-xsmall);
   border: 1px solid var(--color-blue-ribbon);

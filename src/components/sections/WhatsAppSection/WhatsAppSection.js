@@ -4,6 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import './WhatsAppSection.css';
 import GlassTagline from '../GlassTagline/GlassTagline';
 import colinImg from '../../../assets/colin.jpg';
+import { openWhatsApp } from '../../../utils/whatsapp';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -26,7 +27,6 @@ function WhatsAppSection() {
   const titleRef = useRef(null);
   const descriptionRef = useRef(null);
   const buttonRef = useRef(null);
-  const hoverTweenRef = useRef(null);
 
   useLayoutEffect(() => {
     const section = sectionRef.current;
@@ -168,78 +168,8 @@ function WhatsAppSection() {
       }
     }, sectionRef);
 
-    // Content grid hover animation (whole section - image + card)
-    let hoverTween = null;
-    const handleGridMouseEnter = () => {
-      if (hoverTween) hoverTween.kill();
-      hoverTween = gsap.to(contentGrid, {
-        y: -4,
-        scale: 1.01,
-        duration: 0.4,
-        ease: 'power2.out',
-      });
-      gsap.to([image, card], {
-        boxShadow: '0 12px 32px rgba(0, 0, 0, 0.15)',
-        duration: 0.4,
-        ease: 'power2.out',
-      });
-    };
-
-    const handleGridMouseLeave = () => {
-      if (hoverTween) hoverTween.kill();
-      hoverTween = gsap.to(contentGrid, {
-        y: 0,
-        scale: 1,
-        duration: 0.4,
-        ease: 'power2.out',
-      });
-      gsap.to([image, card], {
-        boxShadow: 'var(--shadow-xsmall)',
-        duration: 0.4,
-        ease: 'power2.out',
-      });
-    };
-
-    if (contentGrid) {
-      contentGrid.addEventListener('mouseenter', handleGridMouseEnter);
-      contentGrid.addEventListener('mouseleave', handleGridMouseLeave);
-    }
-
-    // Button hover animation
-    const handleButtonMouseEnter = () => {
-      gsap.to(button, {
-        scale: 1.05,
-        boxShadow: '0 8px 24px rgba(4, 171, 56, 0.3)',
-        duration: 0.3,
-        ease: 'power2.out',
-      });
-    };
-
-    const handleButtonMouseLeave = () => {
-      gsap.to(button, {
-        scale: 1,
-        boxShadow: '0 4px 12px rgba(37, 211, 102, 0.4)',
-        duration: 0.3,
-        ease: 'power2.out',
-      });
-    };
-
-    if (button) {
-      button.addEventListener('mouseenter', handleButtonMouseEnter);
-      button.addEventListener('mouseleave', handleButtonMouseLeave);
-    }
-
     return () => {
       ctx.revert();
-      if (contentGrid) {
-        contentGrid.removeEventListener('mouseenter', handleGridMouseEnter);
-        contentGrid.removeEventListener('mouseleave', handleGridMouseLeave);
-      }
-      if (button) {
-        button.removeEventListener('mouseenter', handleButtonMouseEnter);
-        button.removeEventListener('mouseleave', handleButtonMouseLeave);
-      }
-      if (hoverTween) hoverTween.kill();
     };
   }, []);
 
@@ -259,28 +189,34 @@ function WhatsAppSection() {
         </div>
 
         <div ref={contentGridRef} className="whatsapp-content-grid">
-          <div className="whatsapp-image-frame">
-            <img ref={imageRef} src={colinImg} alt="Colin Frederiks" />
-          </div>
-          <div ref={cardRef} className="whatsapp-card">
-            <div className="whatsapp-card-content">
-              <div ref={iconRef} className="whatsapp-icon-wrapper">
-                <WhatsAppIcon />
-              </div>
-              <div className="whatsapp-info">
-                <div ref={timeRef} className="whatsapp-time">
-                  <span>Reactie binnen 30 minuten</span>
+          <div className="contact-card">
+            <div className="contact-card__media">
+              <img ref={imageRef} src={colinImg} alt="Colin Frederiks" />
+            </div>
+            <div ref={cardRef} className="contact-card__panel">
+              <div className="whatsapp-card-content">
+                <div ref={iconRef} className="whatsapp-icon-wrapper">
+                  <WhatsAppIcon />
                 </div>
-                <h3 ref={titleRef} className="whatsapp-card-title">
-                  Neem contact op met Colin
-                </h3>
-                <p ref={descriptionRef} className="whatsapp-card-description">
-                  Ben je klaar om te starten? Colin staat klaar om met je in gesprek te gaan via WhatsApp en je dé perfecte begeleiding te geven die je nodig hebt om het beste uit BlueShipment te halen.
-                </p>
+                <div className="whatsapp-info">
+                  <div ref={timeRef} className="whatsapp-time">
+                    <span>Reactie binnen 30 minuten</span>
+                  </div>
+                  <h3 ref={titleRef} className="whatsapp-card-title">
+                    Neem contact op met Colin
+                  </h3>
+                  <p ref={descriptionRef} className="whatsapp-card-description">
+                    Ben je klaar om te starten? Colin staat klaar om met je in gesprek te gaan via WhatsApp en je dé perfecte begeleiding te geven die je nodig hebt om het beste uit BlueShipment te halen.
+                  </p>
+                </div>
+                <button 
+                  ref={buttonRef} 
+                  className="btn btn-whatsapp whatsapp-cta-button"
+                  onClick={() => openWhatsApp()}
+                >
+                  Neem contact op via WhatsApp
+                </button>
               </div>
-              <button ref={buttonRef} className="btn btn-whatsapp whatsapp-cta-button">
-                Neem contact op via WhatsApp
-              </button>
             </div>
           </div>
         </div>

@@ -41,7 +41,7 @@ function Navbar() {
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (isDienstenDropdownOpen && !event.target.closest('.nav-dropdown')) {
+      if (isDienstenDropdownOpen && !event.target.closest('.nav-item--has-dropdown')) {
         setIsDienstenDropdownOpen(false);
       }
     };
@@ -76,73 +76,110 @@ function Navbar() {
             >
               Over ons
             </Link>
-            <div className="nav-dropdown">
-              <button 
-                className={`nav-link dropdown-trigger ${location.pathname === '/diensten' ? 'active' : ''}`}
-                onClick={() => setIsDienstenDropdownOpen(!isDienstenDropdownOpen)}
-                onMouseEnter={() => setIsDienstenDropdownOpen(true)}
-                aria-expanded={isDienstenDropdownOpen}
-                aria-haspopup="true"
+            <div className="nav-item nav-item--has-dropdown">
+              <Link
+                to="/diensten"
+                className={`nav-link ${location.pathname === '/diensten' ? 'active' : ''}`}
+                onMouseEnter={() => {
+                  // Desktop: open dropdown on hover
+                  if (window.innerWidth >= 768) {
+                    setIsDienstenDropdownOpen(true);
+                  }
+                }}
               >
                 Diensten
-                <span className="dropdown-icon"><ChevronDown /></span>
+              </Link>
+              
+              <button
+                type="button"
+                className="nav-dropdown-toggle"
+                aria-label="Open diensten menu"
+                aria-expanded={isDienstenDropdownOpen}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsDienstenDropdownOpen((v) => !v);
+                }}
+                onMouseEnter={() => {
+                  // Desktop: open dropdown on hover
+                  if (window.innerWidth >= 768) {
+                    setIsDienstenDropdownOpen(true);
+                  }
+                }}
+              >
+                <ChevronDown />
               </button>
-              {isDienstenDropdownOpen && (
-                <div 
-                  className="dropdown-menu"
-                  onMouseLeave={() => setIsDienstenDropdownOpen(false)}
+
+              <div 
+                className={`nav-dropdown ${isDienstenDropdownOpen ? 'is-open' : ''}`}
+                onMouseLeave={() => {
+                  // Desktop: close dropdown on mouse leave
+                  if (window.innerWidth >= 768) {
+                    setIsDienstenDropdownOpen(false);
+                  }
+                }}
+              >
+                <Link 
+                  to="/diensten#productlistings" 
+                  className="nav-dropdown-link"
+                  onClick={() => setIsDienstenDropdownOpen(false)}
                 >
-                  <Link 
-                    to="/diensten#productlistings" 
-                    className="dropdown-item"
-                    onClick={() => setIsDienstenDropdownOpen(false)}
-                  >
-                    Listings
-                  </Link>
-                  <Link 
-                    to="/diensten#automatiseren" 
-                    className="dropdown-item"
-                    onClick={() => setIsDienstenDropdownOpen(false)}
-                  >
-                    Automatisering
-                  </Link>
-                  <Link 
-                    to="/diensten#fulfilment" 
-                    className="dropdown-item"
-                    onClick={() => setIsDienstenDropdownOpen(false)}
-                  >
-                    Fulfilment
-                  </Link>
-                  <Link 
-                    to="/diensten#coaching" 
-                    className="dropdown-item"
-                    onClick={() => setIsDienstenDropdownOpen(false)}
-                  >
-                    Coaching
-                  </Link>
-                  <Link 
-                    to="/diensten#software" 
-                    className="dropdown-item"
-                    onClick={() => setIsDienstenDropdownOpen(false)}
-                  >
-                    Software
-                  </Link>
-                </div>
-              )}
+                  Listings
+                </Link>
+                <Link 
+                  to="/diensten#automatiseren" 
+                  className="nav-dropdown-link"
+                  onClick={() => setIsDienstenDropdownOpen(false)}
+                >
+                  Automatisering
+                </Link>
+                <Link 
+                  to="/diensten#fulfilment" 
+                  className="nav-dropdown-link"
+                  onClick={() => setIsDienstenDropdownOpen(false)}
+                >
+                  Fulfilment
+                </Link>
+                <Link 
+                  to="/diensten#coaching" 
+                  className="nav-dropdown-link"
+                  onClick={() => setIsDienstenDropdownOpen(false)}
+                >
+                  Coaching
+                </Link>
+                <Link 
+                  to="/diensten#software" 
+                  className="nav-dropdown-link"
+                  onClick={() => setIsDienstenDropdownOpen(false)}
+                >
+                  Software
+                </Link>
+                <Link 
+                  to="/diensten#scaling" 
+                  className="nav-dropdown-link"
+                  onClick={() => setIsDienstenDropdownOpen(false)}
+                >
+                  Scaling
+                </Link>
+              </div>
             </div>
-            <div className="nav-dropdown">
-              <button className="nav-link dropdown-trigger">
-                Resources
-                <span className="dropdown-icon"><ChevronDown /></span>
-              </button>
-            </div>
+            <Link 
+              to="/resources" 
+              className={`nav-link ${location.pathname === '/resources' ? 'active' : ''}`}
+            >
+              Resources
+            </Link>
           </div>
         </div>
 
         <div className="navbar-actions">
-          <button className="btn btn-primary">
+          <a 
+            href="https://calendly.com/mouseclick2017/30min" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="btn btn-primary"
+          >
             Boek een kennismakingsgesprek
-          </button>
+          </a>
         </div>
 
         <button 

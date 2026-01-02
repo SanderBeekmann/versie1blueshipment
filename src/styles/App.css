@@ -2,6 +2,51 @@
 .app {
   min-height: 100vh;
   background-color: var(--color-background);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Page Content Wrapper - Scrolls over footer, covers footer during scroll */
+/* FIX 4: Force stable scroll container - prevent horizontal scroll and ensure stable stacking */
+.page-content {
+  flex: 1;
+  position: relative;
+  /* Padding-bottom will be set dynamically via JS to match footer height */
+  padding-bottom: var(--footer-h, 0);
+  /* Content has lower z-index than footer, but background covers footer visually */
+  z-index: 2;
+  /* Disable pointer events - only content area will have them via ::before */
+  pointer-events: none;
+  /* Prevent horizontal scroll on mobile */
+  overflow-x: hidden;
+}
+
+/* FIX: Mobile - geen padding-bottom nodig omdat footer in normale flow staat */
+@media (max-width: 768px) {
+  .page-content {
+    padding-bottom: 0;
+  }
+}
+
+/* Pseudo-element covers only the content area, not the padding-bottom space */
+/* This allows footer to be visible in the padding-bottom area at the end */
+.page-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  /* Height is 100% minus footer height, so footer space is not covered */
+  height: calc(100% - var(--footer-h, 0px));
+  background-color: var(--color-background);
+  z-index: -1;
+  pointer-events: auto;
+}
+
+/* Re-enable pointer events for all direct children of page-content */
+.page-content > * {
+  pointer-events: auto;
+  position: relative;
 }
 
 /* Animation wrapper styling */
@@ -15,9 +60,16 @@
   }
 }
 
-/* Ensure smooth scrolling for anchor links */
+/* FIX: Disable smooth scroll on mobile to prevent unwanted scroll-to-hash behavior */
 html {
   scroll-behavior: smooth;
+}
+
+/* Disable smooth scroll on mobile to prevent browser default scroll-to-hash */
+@media (max-width: 768px) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 /* Global link styles */
