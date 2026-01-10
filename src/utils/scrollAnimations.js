@@ -608,16 +608,9 @@ export const initHeroTitleAnimation = () => {
     // Buttons are handled by Hero.js component's useLayoutEffect (runs before paint)
     // Do NOT set button initial state here to prevent flash on navigation
 
-    // Check if hero is already visible in viewport
-    const rect = heroTitle.getBoundingClientRect();
-    const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
-
     // Always animate immediately for hero title (it's at the top of the page)
     // Small delay to ensure smooth animation
     setTimeout(() => {
-      // Calculate title animation duration (base duration + stagger for all letters)
-      const titleDuration = 0.9 + (letters.length * 0.02);
-      
       // Animate title letters
       gsap.to(letters, {
         opacity: 1,

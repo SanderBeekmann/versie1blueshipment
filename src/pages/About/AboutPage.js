@@ -15,12 +15,6 @@ import colinImg from '../../assets/colin.jpg';
 import reitzeImg from '../../assets/reitze.jpg';
 import davidImg from '../../assets/david.jpeg';
 
-const BlueDot = () => (
-  <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-    <circle cx="11" cy="11" r="11" fill="#0070ff"/>
-  </svg>
-);
-
 function AboutPage() {
   // MOBILE OPTIMIZATION: Don't render InfiniteGridOverlay on mobile
   const [isMobile, setIsMobile] = useState(false);

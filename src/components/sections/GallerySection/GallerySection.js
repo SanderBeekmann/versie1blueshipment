@@ -92,6 +92,7 @@ function GallerySection() {
 
     const viewport = viewportRef.current;
     const track = trackRef.current;
+    const hoverTlMap = hoverTlRef.current;
     if (!viewport || !track) return;
 
     const ctx = gsap.context(() => {
@@ -153,8 +154,8 @@ function GallerySection() {
       window.clearTimeout(resizeTimerRef.current);
 
       // kill hover timelines
-      hoverTlRef.current.forEach((t) => t.kill());
-      hoverTlRef.current.clear();
+      hoverTlMap.forEach((t) => t.kill());
+      hoverTlMap.clear();
 
       // kill main timeline
       if (tlRef.current) {

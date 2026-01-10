@@ -53,10 +53,10 @@ function Footer() {
 
   const column2Links = [
     { text: 'FAQ', href: '/#faq', type: 'internal' },
-    { text: 'Contact', href: '#', type: 'whatsapp', action: () => openWhatsApp('Hallo! Ik heb een vraag.') },
+    { text: 'Contact', href: null, type: 'whatsapp', action: () => openWhatsApp('Hallo! Ik heb een vraag.') },
     { text: 'Hulp', href: '/resources', type: 'internal' },
-    { text: 'Voorwaarden', href: '#', type: 'placeholder' },
-    { text: 'Cookies', href: '#', type: 'placeholder' }
+    { text: 'Voorwaarden', href: null, type: 'placeholder' },
+    { text: 'Cookies', href: null, type: 'placeholder' }
   ];
 
   return (
@@ -76,16 +76,15 @@ function Footer() {
               <div className="contact-item">
                 <p className="contact-label">Contact</p>
                 <div className="contact-links">
-                  <a 
-                    href="#" 
+                  <button 
+                    type="button"
                     className="contact-link"
-                    onClick={(e) => {
-                      e.preventDefault();
+                    onClick={() => {
                       openWhatsApp('Hallo! Ik heb een vraag over BlueShipment.');
                     }}
                   >
                     WhatsApp support
-                  </a>
+                  </button>
                   <a href="mailto:info@blueshipment.nl" className="contact-link">info@blueshipment.nl</a>
                 </div>
               </div>
@@ -136,34 +135,29 @@ function Footer() {
               {column2Links.map((link, index) => {
                 if (link.type === 'whatsapp' && link.action) {
                   return (
-                    <a 
+                    <button 
                       key={index} 
-                      href="#" 
+                      type="button"
                       className="footer-link"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        link.action();
-                      }}
+                      onClick={link.action}
                     >
                       {link.text}
-                    </a>
+                    </button>
                   );
                 } else if (link.type === 'placeholder') {
-                  // Placeholder for future pages
+                  // Placeholder for future pages - use button
                   return (
-                    <a 
+                    <button 
                       key={index} 
-                      href="#" 
+                      type="button"
                       className="footer-link"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        // TODO: Add actual page when available
-                      }}
+                      disabled
+                      aria-label={`${link.text} - Coming soon`}
                     >
                       {link.text}
-                    </a>
+                    </button>
                   );
-                } else if (link.href.startsWith('#')) {
+                } else if (link.href && link.href.startsWith('#')) {
                   // Hash link - use anchor
                   return (
                     <a 
@@ -174,7 +168,7 @@ function Footer() {
                       {link.text}
                     </a>
                   );
-                } else {
+                } else if (link.href) {
                   // Internal route - use Link
                   return (
                     <Link 
@@ -186,6 +180,7 @@ function Footer() {
                     </Link>
                   );
                 }
+                return null;
               })}
             </div>
           </div>
@@ -199,9 +194,9 @@ function Footer() {
             </p>
             <p className="footer-credit">Created by <a href="https://blitzworx.nl" target="_blank" rel="noopener noreferrer" className="footer-credit-link">BLITZWORX</a></p>
             <div className="footer-legal">
-              <a href="#" className="legal-link" onClick={(e) => e.preventDefault()}>Privacybeleid</a>
-              <a href="#" className="legal-link" onClick={(e) => e.preventDefault()}>Gebruiksvoorwaarden</a>
-              <a href="#" className="legal-link" onClick={(e) => e.preventDefault()}>Cookie-instellingen</a>
+              <button type="button" className="legal-link" disabled aria-label="Privacybeleid - Coming soon">Privacybeleid</button>
+              <button type="button" className="legal-link" disabled aria-label="Gebruiksvoorwaarden - Coming soon">Gebruiksvoorwaarden</button>
+              <button type="button" className="legal-link" disabled aria-label="Cookie-instellingen - Coming soon">Cookie-instellingen</button>
             </div>
           </div>
         </div>

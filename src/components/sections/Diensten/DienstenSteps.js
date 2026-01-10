@@ -82,7 +82,8 @@ function DienstenSteps() {
   };
 
   useLayoutEffect(() => {
-    if (!sectionRef.current) return;
+    const el = sectionRef.current;
+    if (!el) return;
 
     const isMobile = window.matchMedia('(max-width: 767px)').matches;
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -184,7 +185,7 @@ function DienstenSteps() {
     // Create timeline with ScrollTrigger
     const tl = gsap.timeline({
       scrollTrigger: {
-        trigger: sectionRef.current,
+        trigger: el,
         start: 'top 80%',
         once: true,
         invalidateOnRefresh: true
@@ -305,7 +306,7 @@ function DienstenSteps() {
       resizeObserver.disconnect();
       window.removeEventListener('resize', handleResize);
       ScrollTrigger.getAll().forEach(trigger => {
-        if (trigger.vars.trigger === sectionRef.current) {
+        if (trigger.vars.trigger === el) {
           trigger.kill();
         }
       });

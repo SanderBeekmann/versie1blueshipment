@@ -20,12 +20,6 @@ const CheckIcon = () => (
   </svg>
 );
 
-const ArrowRightIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
-
 function DienstenPage() {
   const bentoRef = useRef(null);
   const cardRefs = useRef([]);
@@ -57,12 +51,12 @@ function DienstenPage() {
     };
   }, []);
 
-  // FIX 3: Detect mobile once - disable ScrollTrigger on mobile to prevent scroll conflicts
-  const isMobileStatic = typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches;
-
   useLayoutEffect(() => {
-    // FIX 3: Only initialize ScrollTrigger animations on desktop
+    // FIX 3: Detect mobile once - disable ScrollTrigger on mobile to prevent scroll conflicts
     // Mobile doesn't need ScrollTrigger - it causes scroll conflicts
+    const isMobileStatic = typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches;
+    
+    // Only initialize ScrollTrigger animations on desktop
     if (!isMobileStatic) {
       initScrollAnimations();
       initTitleAnimations();
