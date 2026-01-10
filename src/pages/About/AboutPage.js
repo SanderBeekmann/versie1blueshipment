@@ -1,4 +1,5 @@
-import React, { useLayoutEffect } from 'react';
+import React, { useLayoutEffect, useState, useEffect } from 'react';
+import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import './AboutPage.css';
 import Navbar from '../../components/layout/Navbar/Navbar';
@@ -21,6 +22,31 @@ const BlueDot = () => (
 );
 
 function AboutPage() {
+  // MOBILE OPTIMIZATION: Don't render InfiniteGridOverlay on mobile
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    // Check on mount
+    checkMobile();
+    
+    // Check on resize (debounced)
+    let resizeTimeout;
+    const handleResize = () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(checkMobile, 150);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      clearTimeout(resizeTimeout);
+    };
+  }, []);
+
   useLayoutEffect(() => {
     // Initialize all animations
     initScrollAnimations();
@@ -29,13 +55,63 @@ function AboutPage() {
     initLogoRevealAnimation(1000); // 1 second delay for hero
     initStatsCountUp();
 
-    // Ensure ScrollTrigger refreshes after layout is stable
+    // Animate hero buttons (AboutPage specific)
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!prefersReducedMotion) {
+      const heroCtas = document.querySelector('.about-hero-ctas');
+      if (heroCtas) {
+        const buttons = heroCtas.querySelectorAll('button, a');
+        if (buttons.length > 0) {
+          // CRITICAL: Set initial state SYNCHRONOUSLY in useLayoutEffect (vóór eerste paint)
+          // Dit voorkomt de flits waar buttons eerst zichtbaar zijn, dan wegvliegen
+          gsap.set(buttons, {
+            autoAlpha: 0,
+            y: 50,
+            scale: 0.95,
+            willChange: 'transform, opacity',
+          });
+
+          // Button animatie starten na de subtitle animatie (same timing as Hero.js)
+          const buttonTimeline = gsap.timeline({ delay: 0.8 });
+          buttonTimeline.to(buttons, {
+            autoAlpha: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.8,
+            ease: 'power3.out',
+            stagger: 0.1,
+            onComplete: () => {
+              gsap.set(buttons, { willChange: 'auto' });
+            },
+          });
+        }
+      }
+    } else {
+      // Reduced motion: show buttons immediately
+      const heroCtas = document.querySelector('.about-hero-ctas');
+      if (heroCtas) {
+        const buttons = heroCtas.querySelectorAll('button, a');
+        if (buttons.length > 0) {
+          gsap.set(buttons, {
+            autoAlpha: 1,
+            y: 0,
+            scale: 1,
+            willChange: 'auto',
+          });
+        }
+      }
+    }
+
+    // MOBILE OPTIMIZATION: Only refresh ScrollTrigger on desktop
+    const isMobileCheck = window.innerWidth < 768;
     const refreshTimeout = setTimeout(() => {
-      requestAnimationFrame(() => {
+      if (!isMobileCheck) {
         requestAnimationFrame(() => {
-          ScrollTrigger.refresh();
+          requestAnimationFrame(() => {
+            ScrollTrigger.refresh();
+          });
         });
-      });
+      }
     }, 100);
 
     return () => {
@@ -50,7 +126,7 @@ function AboutPage() {
       <div className="page-content">
         {/* Hero Section */}
         <section className="about-hero">
-        <InfiniteGridOverlay opacity={0.5} />
+        {!isMobile && <InfiniteGridOverlay opacity={0.5} />}
         <div className="about-hero-content">
           <div className="about-hero-wrapper">
             <div className="about-hero-text">

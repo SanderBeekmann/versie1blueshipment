@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef, useEffect } from 'react';
+import React, { useLayoutEffect, useRef, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import './DienstenPage.css';
 import Navbar from '../../components/layout/Navbar/Navbar';
@@ -8,8 +8,10 @@ import DienstenSteps from '../../components/sections/Diensten/DienstenSteps';
 import Footer from '../../components/layout/Footer/Footer';
 import InfiniteGridOverlay from '../../components/ui/the-infinite-grid/InfiniteGridOverlay';
 import { initScrollAnimations, initTitleAnimations, initHeroTitleAnimation, initLogoRevealAnimation, cleanupScrollAnimations } from '../../utils/scrollAnimations';
+import { openWhatsApp } from '../../utils/whatsapp';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { WatermarkIcon } from '../../utils/bentoCardIcons';
 
 // Icon components for visual elements
 const CheckIcon = () => (
@@ -30,17 +32,92 @@ function DienstenPage() {
   const location = useLocation();
   const hasScrolledToHashRef = useRef(false);
 
+  // MOBILE OPTIMIZATION: Don't render InfiniteGridOverlay on mobile
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    // Check on mount
+    checkMobile();
+    
+    // Check on resize (debounced)
+    let resizeTimeout;
+    const handleResize = () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(checkMobile, 150);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      clearTimeout(resizeTimeout);
+    };
+  }, []);
+
   // FIX 3: Detect mobile once - disable ScrollTrigger on mobile to prevent scroll conflicts
-  const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches;
+  const isMobileStatic = typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches;
 
   useLayoutEffect(() => {
     // FIX 3: Only initialize ScrollTrigger animations on desktop
     // Mobile doesn't need ScrollTrigger - it causes scroll conflicts
-    if (!isMobile) {
+    if (!isMobileStatic) {
       initScrollAnimations();
       initTitleAnimations();
-      initHeroTitleAnimation();
       initLogoRevealAnimation(1000);
+    }
+    
+    // Hero title animation moet ALTIJD werken (ook op mobile)
+    // ScrollTrigger animaties zijn alleen voor andere secties
+    initHeroTitleAnimation();
+
+    // Animate hero buttons (DienstenPage specific)
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!prefersReducedMotion) {
+      const heroCtas = document.querySelector('.diensten-hero-ctas');
+      if (heroCtas) {
+        const buttons = heroCtas.querySelectorAll('button, a');
+        if (buttons.length > 0) {
+          // CRITICAL: Set initial state SYNCHRONOUSLY in useLayoutEffect (vóór eerste paint)
+          // Dit voorkomt de flits waar buttons eerst zichtbaar zijn, dan wegvliegen
+          gsap.set(buttons, {
+            autoAlpha: 0,
+            y: 50,
+            scale: 0.95,
+            willChange: 'transform, opacity',
+          });
+
+          // Button animatie starten na de subtitle animatie (same timing as Hero.js)
+          const buttonTimeline = gsap.timeline({ delay: 0.8 });
+          buttonTimeline.to(buttons, {
+            autoAlpha: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.8,
+            ease: 'power3.out',
+            stagger: 0.1,
+            onComplete: () => {
+              gsap.set(buttons, { willChange: 'auto' });
+            },
+          });
+        }
+      }
+    } else {
+      // Reduced motion: show buttons immediately
+      const heroCtas = document.querySelector('.diensten-hero-ctas');
+      if (heroCtas) {
+        const buttons = heroCtas.querySelectorAll('button, a');
+        if (buttons.length > 0) {
+          gsap.set(buttons, {
+            autoAlpha: 1,
+            y: 0,
+            scale: 1,
+            willChange: 'auto',
+          });
+        }
+      }
     }
 
     // FIX 1: Simplified ScrollTrigger refresh - removed mobile scroll restoration
@@ -239,8 +316,7 @@ function DienstenPage() {
         'Bulk uploaden in minuten, niet uren'
       ],
       buttons: [
-        { text: 'Contact via WhatsApp', type: 'primary' },
-        { text: 'Lees meer', type: 'link' }
+        { text: 'Contact via WhatsApp', type: 'primary', action: 'whatsapp', message: 'Hallo! Ik wil graag meer weten over productlistings.' }
       ]
     },
     {
@@ -256,8 +332,7 @@ function DienstenPage() {
         'Tijd besparen op repetitieve taken'
       ],
       buttons: [
-        { text: 'Meer', type: 'primary' },
-        { text: 'Lees meer', type: 'link' }
+        { text: 'Vraag een demo aan', type: 'primary', action: 'whatsapp', message: 'Hallo! Ik wil graag een demo van de automatiseringstools.' }
       ]
     },
     {
@@ -273,8 +348,7 @@ function DienstenPage() {
         'Zorgvuldige verpakking en verzending'
       ],
       buttons: [
-        { text: 'Meer', type: 'primary' },
-        { text: 'Lees meer', type: 'link' }
+        { text: 'Start met fulfilment', type: 'primary', action: 'whatsapp', message: 'Hallo! Ik wil graag starten met fulfilment voor mijn bol.com shop.' }
       ]
     },
     {
@@ -290,8 +364,7 @@ function DienstenPage() {
         'Uitgebreide analytics en rapportage'
       ],
       buttons: [
-        { text: 'Meer', type: 'primary' },
-        { text: 'Lees meer', type: 'link' }
+        { text: 'Vraag een demo aan', type: 'primary', action: 'whatsapp', message: 'Hallo! Ik wil graag een demo van de software tools.' }
       ]
     },
     {
@@ -307,8 +380,7 @@ function DienstenPage() {
         'Praktische tips en best practices'
       ],
       buttons: [
-        { text: 'Meer', type: 'primary' },
-        { text: 'Lees meer', type: 'link' }
+        { text: 'Boek een gesprek', type: 'primary', action: 'calendly' }
       ]
     },
     {
@@ -324,8 +396,7 @@ function DienstenPage() {
         'Infrastructuur die meeschaalt'
       ],
       buttons: [
-        { text: 'Meer', type: 'primary' },
-        { text: 'Lees meer', type: 'link' }
+        { text: 'Plan een strategiegesprek', type: 'primary', action: 'calendly' }
       ]
     }
   ];
@@ -455,7 +526,7 @@ function DienstenPage() {
       <div className="page-content">
       {/* Hero Section - Reusing hero layout pattern */}
       <section className="diensten-hero">
-        <InfiniteGridOverlay opacity={0.5} />
+        {!isMobile && <InfiniteGridOverlay opacity={0.5} />}
         <div className="diensten-hero-content">
           <div className="diensten-hero-text">
             <GlassTagline withDot>
@@ -464,7 +535,7 @@ function DienstenPage() {
             
             <div className="diensten-hero-title-section">
               <h1 className="diensten-hero-title" data-animate-title>
-                Alles wat je nodig<br />hebt...
+                Alles wat je <span className="diensten-hero-word-nodig">nodig</span><br />hebt...
               </h1>
               <p className="diensten-hero-subtitle">
                 Zes diensten die samen werken.
@@ -519,7 +590,7 @@ function DienstenPage() {
                           aria-label={`Scroll naar ${service.title}`}
                         >
                           <div className="diensten-card__body">
-                            <p className="diensten-card__kicker">{service.kicker}</p>
+                            <WatermarkIcon title={service.title} />
                             <h3 className="diensten-card__title">{service.title}</h3>
                             {service.description && (
                               <p className="diensten-card__text">{service.description}</p>
@@ -595,17 +666,25 @@ function DienstenPage() {
                     <div className="diensten-detail-media-mobile"></div>
                     <div className="diensten-detail-ctas">
                       {detail.buttons.map((button, buttonIndex) => {
+                        const handleClick = (e) => {
+                          e.preventDefault();
+                          
+                          if (button.action === 'whatsapp') {
+                            openWhatsApp(button.message || 'Hallo! Ik heb een vraag over deze dienst.');
+                          } else if (button.action === 'calendly') {
+                            window.open('https://calendly.com/mouseclick2017/30min', '_blank', 'noopener,noreferrer');
+                          } else if (button.action === 'scroll' && button.target) {
+                            scrollToSection(button.target);
+                          }
+                        };
+
                         if (button.type === 'link') {
                           return (
                             <button
                               key={buttonIndex}
                               type="button"
                               className="diensten-detail-link"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                // Prevent default scroll-to-top behavior
-                                console.log('[DienstenPage] Link clicked, preventing default', button.text);
-                              }}
+                              onClick={handleClick}
                             >
                               {button.text}
                             </button>
@@ -613,7 +692,11 @@ function DienstenPage() {
                         }
                         const buttonClass = `btn btn-${button.type}`;
                         return (
-                          <button key={buttonIndex} className={buttonClass}>
+                          <button 
+                            key={buttonIndex} 
+                            className={buttonClass}
+                            onClick={handleClick}
+                          >
                             {button.text}
                           </button>
                         );

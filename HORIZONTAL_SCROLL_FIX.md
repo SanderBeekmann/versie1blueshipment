@@ -104,3 +104,6 @@ body {
 
 **Oplossing:** Arrows binnen viewport geplaatst (`left: 12px`, `right: 12px`) en parent containers hebben `overflow-x: clip` om overflow te voorkomen.
 
+
+
+

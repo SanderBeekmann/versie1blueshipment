@@ -3,9 +3,22 @@ import ReactDOM from 'react-dom/client';
 import './styles/index.css';
 import App from './App';
 
-// Disable browser scroll restoration to prevent unwanted scroll-to-top
+// Disable browser scroll restoration on all devices to prevent unwanted scroll jumps
+// We handle scroll-to-top manually in ScrollToTop component
 if ('scrollRestoration' in window.history) {
   window.history.scrollRestoration = 'manual';
+}
+
+// Immediately scroll to top on initial load (before React renders)
+// This prevents any visible jump from browser scroll restoration
+// Works on all devices (desktop and mobile)
+if (!window.location.hash) {
+  window.scrollTo(0, 0);
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
+  if (document.scrollingElement) {
+    document.scrollingElement.scrollTop = 0;
+  }
 }
 
 // Comprehensive scroll monitoring for debugging

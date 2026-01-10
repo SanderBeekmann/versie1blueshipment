@@ -84,11 +84,7 @@ function DienstenSteps() {
   useLayoutEffect(() => {
     if (!sectionRef.current) return;
 
-    // Position line segments based on dot positions
-    const timeoutId = setTimeout(() => {
-      positionLineSegments();
-    }, 100);
-
+    const isMobile = window.matchMedia('(max-width: 767px)').matches;
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const lineSegments = lineSegmentsRef.current.filter(Boolean);
     const dots = dotsRef.current.filter(Boolean);
@@ -97,22 +93,48 @@ function DienstenSteps() {
     const steps = stepsRef.current.filter(Boolean);
     const cta = ctaRef.current;
 
-    if (prefersReducedMotion || steps.length === 0) {
-      // Show immediately for reduced motion
-      if (kicker) gsap.set(kicker, { opacity: 1, y: 0 });
-      if (title) gsap.set(title, { opacity: 1, y: 0 });
+    // Mobile: disable all GSAP animations to prevent scroll jank
+    if (isMobile || prefersReducedMotion || steps.length === 0) {
+      // Position line segments immediately (no animation)
+      positionLineSegments();
+      
+      // Show all elements immediately with no transforms
+      if (kicker) {
+        kicker.style.opacity = '1';
+        kicker.style.transform = 'none';
+        kicker.style.willChange = 'auto';
+      }
+      if (title) {
+        title.style.opacity = '1';
+        title.style.transform = 'none';
+        title.style.willChange = 'auto';
+      }
       lineSegments.forEach(segment => {
-        gsap.set(segment, { scaleX: 1 });
+        segment.style.transform = 'scaleX(1)';
+        segment.style.willChange = 'auto';
       });
       dots.forEach(dot => {
-        gsap.set(dot, { opacity: 1, scale: 1 });
+        dot.style.opacity = '1';
+        dot.style.transform = 'scale(1)';
+        dot.style.willChange = 'auto';
       });
       steps.forEach(step => {
-        gsap.set(step, { opacity: 1, y: 0 });
+        step.style.opacity = '1';
+        step.style.transform = 'none';
+        step.style.willChange = 'auto';
       });
-      if (cta) gsap.set(cta, { opacity: 1, y: 0 });
+      if (cta) {
+        cta.style.opacity = '1';
+        cta.style.transform = 'none';
+        cta.style.willChange = 'auto';
+      }
       return;
     }
+
+    // Desktop: Position line segments based on dot positions
+    const timeoutId = setTimeout(() => {
+      positionLineSegments();
+    }, 100);
 
     // Set initial state
     if (kicker) {
@@ -256,26 +278,14 @@ function DienstenSteps() {
       }, '+=0.1');
     }
 
-    // Handle resize to reposition segments with debouncing and scroll position preservation
+    // Handle resize to reposition segments with debouncing
     let resizeTimeout;
     const handleResize = () => {
       clearTimeout(resizeTimeout);
       resizeTimeout = setTimeout(() => {
-        // Preserve scroll position during refresh to prevent viewport jumps on mobile
-        const scrollY = window.scrollY;
-        const isMobile = window.innerWidth < 768;
-        
+        // Scroll-to-top bij navigatie wordt afgehandeld door ScrollToTop component
         positionLineSegments();
         ScrollTrigger.refresh();
-        
-        // Restore scroll position if it changed (prevents viewport jumps)
-        // On mobile, be more aggressive about preserving scroll position
-        const scrollDiff = Math.abs(window.scrollY - scrollY);
-        const threshold = isMobile ? 5 : 10;
-        
-        if (scrollDiff > threshold) {
-          window.scrollTo({ top: scrollY, behavior: 'instant' });
-        }
       }, 150);
     };
     
@@ -352,6 +362,7 @@ function DienstenSteps() {
                 key={index}
                 ref={(el) => (stepsRef.current[index] = el)}
                 className="diensten-steps-section-step"
+                data-step-anim
               >
                 <div className="diensten-steps-section-step-dot-wrapper">
                   <div 
@@ -370,7 +381,7 @@ function DienstenSteps() {
           </div>
         </div>
 
-        <div ref={ctaRef} className="diensten-steps-section-ctas">
+        <div ref={ctaRef} className="diensten-steps-section-ctas" data-step-anim>
           <button className="btn btn-secondary">Starten</button>
         </div>
       </div>

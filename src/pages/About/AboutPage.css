@@ -174,6 +174,27 @@
   flex-wrap: wrap;
 }
 
+/* Initial hidden state for buttons - will be animated by GSAP in AboutPage useLayoutEffect */
+/* This prevents flash on navigation before JS sets initial state */
+.about-hero-ctas button,
+.about-hero-ctas a {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(50px) scale(0.95);
+  will-change: transform, opacity;
+}
+
+/* Show buttons immediately if reduced motion is preferred */
+@media (prefers-reduced-motion: reduce) {
+  .about-hero-ctas button,
+  .about-hero-ctas a {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+    will-change: auto;
+  }
+}
+
 .about-hero-trust {
   font-family: var(--font-primary);
   font-size: var(--text-small);
@@ -1136,7 +1157,9 @@
 /* Small Mobile: < 768px */
 @media (max-width: 767px) {
   .about-hero {
-    min-height: auto;
+    /* MOBILE FIX: Use 100svh to fill full mobile viewport, accounting for browser UI */
+    /* This ensures the second section is not visible on initial load */
+    min-height: 100svh;
     padding-bottom: var(--gap-medium);
     padding-left: var(--gap-xsmall);
     padding-right: var(--gap-xsmall);

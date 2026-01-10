@@ -238,6 +238,23 @@
 .hero-cta {
   align-self: center;
   margin-top: var(--space-md);
+  /* Initial hidden state - will be animated by GSAP in Hero.js useLayoutEffect */
+  /* This prevents flash on navigation before JS sets initial state */
+  /* GSAP will override these values immediately in useLayoutEffect (runs before paint) */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(50px) scale(0.95);
+  will-change: transform, opacity;
+}
+
+/* Show buttons immediately if reduced motion is preferred */
+@media (prefers-reduced-motion: reduce) {
+  .hero-cta {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+    will-change: auto;
+  }
 }
 
 /* Tablet: 768px - 1023px - behoud verticale centering */

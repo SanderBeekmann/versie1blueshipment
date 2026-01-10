@@ -133,6 +133,21 @@
   }
 }
 
+/* Mobile: prevent "nodig" from splitting across lines */
+@media (max-width: 767px) {
+  /* Keep "nodig" word together - prevent word from breaking */
+  .diensten-hero-title .diensten-hero-word-nodig {
+    white-space: nowrap;
+    display: inline-block;
+  }
+  
+  /* Prevent individual letters within "nodig" from breaking */
+  .diensten-hero-title .diensten-hero-word-nodig .hero-letter {
+    white-space: nowrap;
+    display: inline-block;
+  }
+}
+
 .diensten-hero-subtitle {
   font-family: var(--font-primary);
   font-size: var(--text-large);
@@ -168,6 +183,27 @@
   gap: var(--gap-xxsmall);
   margin-top: var(--space-md);
   width: 100%;
+}
+
+/* Initial hidden state for buttons - will be animated by GSAP in DienstenPage useLayoutEffect */
+/* This prevents flash on navigation before JS sets initial state */
+.diensten-hero-ctas button,
+.diensten-hero-ctas a {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(50px) scale(0.95);
+  will-change: transform, opacity;
+}
+
+/* Show buttons immediately if reduced motion is preferred */
+@media (prefers-reduced-motion: reduce) {
+  .diensten-hero-ctas button,
+  .diensten-hero-ctas a {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+    will-change: auto;
+  }
 }
 
 /* Section A: Services Overview - Premium Bento Grid */
@@ -375,7 +411,67 @@
 }
 
 /* Card Body */
+/* Premium Watermark System - Consistent placement by card type */
+
+/* Base watermark styles */
+.bento-card-watermark {
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  color: var(--color-blue-ribbon);
+  transition: opacity 180ms ease, filter 180ms ease;
+  filter: blur(0.3px);
+  opacity: 0.045;
+}
+
+/* Subtle radial gradient background for depth */
+.bento-card-watermark::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 150%;
+  height: 150%;
+  background: radial-gradient(
+    circle at center,
+    rgba(0, 112, 255, 0.03) 0%,
+    rgba(0, 112, 255, 0.01) 50%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  z-index: -1;
+}
+
+/* Featured cards (a, b) - Large, wide cards */
+/* Position: top-right with safe inset */
+.diensten-card--featured .bento-card-watermark {
+  top: clamp(20px, 2vw, 28px);
+  right: clamp(20px, 2vw, 28px);
+  width: clamp(100px, 12vw, 140px);
+  height: clamp(100px, 12vw, 140px);
+  bottom: auto;
+  left: auto;
+  transform: none;
+  opacity: 0.05;
+}
+
+/* Compact cards (c, d, e, f) - Smaller cards */
+/* Position: top-right, smaller size */
+.diensten-card--compact .bento-card-watermark {
+  top: clamp(16px, 1.8vw, 24px);
+  right: clamp(16px, 1.8vw, 24px);
+  width: clamp(70px, 8vw, 100px);
+  height: clamp(70px, 8vw, 100px);
+  bottom: auto;
+  left: auto;
+  transform: none;
+  opacity: 0.045;
+}
+
+/* Ensure watermarks never intersect divider - constrain to upper content area */
 .diensten-card__body {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: clamp(8px, 1vw, 10px);
@@ -384,7 +480,60 @@
   min-width: 0;
   min-height: 0;
   overflow: visible;
+  z-index: 1; /* Ensure content is above watermark */
 }
+
+/* Mask watermark before footer divider area */
+.diensten-card__body::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: calc(clamp(10px, 0.8vw, 14px) + 16px + 40px); /* Footer padding + 16px safe + extra fade */
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(255, 255, 255, 0) 30%,
+    rgba(255, 255, 255, 0.5) 70%,
+    rgba(255, 255, 255, 1) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.8;
+}
+
+.diensten-card:hover .bento-card-watermark {
+  opacity: 0.07;
+  filter: blur(0.4px);
+}
+
+@media (max-width: 767px) {
+  .bento-card-watermark {
+    width: 60px;
+    height: 60px;
+    opacity: 0.035;
+    filter: blur(0.2px);
+  }
+
+  .diensten-card--featured .bento-card-watermark,
+  .diensten-card--compact .bento-card-watermark {
+    top: 16px;
+    right: 16px;
+    width: 60px;
+    height: 60px;
+  }
+  
+  .diensten-card:hover .bento-card-watermark {
+    opacity: 0.05;
+  }
+  
+  .bento-card-watermark::before {
+    width: 120%;
+    height: 120%;
+  }
+}
+
 
 .diensten-card__kicker {
   font-family: var(--font-primary);
@@ -1012,6 +1161,7 @@
     gap: var(--gap-medium);
   }
 
+
   .diensten-detail-media {
     max-width: 350px;
   }
@@ -1095,6 +1245,7 @@
     max-width: 52ch;
   }
 
+
   .diensten-detail-block {
     gap: var(--gap-medium);
   }
@@ -1112,7 +1263,9 @@
 /* Small Mobile: < 768px */
 @media (max-width: 767px) {
   .diensten-hero {
-    min-height: auto;
+    /* MOBILE FIX: Use 100svh to fill full mobile viewport, accounting for browser UI */
+    /* This ensures the second section is not visible on initial load */
+    min-height: 100svh;
     padding-bottom: var(--gap-medium);
     padding-left: var(--gap-xsmall);
     padding-right: var(--gap-xsmall);

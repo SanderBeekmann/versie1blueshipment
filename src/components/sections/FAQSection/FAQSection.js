@@ -101,7 +101,7 @@ function FAQSection({ faqs: customFaqs }) {
   };
 
   return (
-    <section className="faq-section">
+    <section id="faq" className="faq-section">
       <div className="faq-container">
         <h2 className="faq-title" data-animate-title>Vragen</h2>
         <div className="faq-content">

@@ -1,28 +1,79 @@
-.sticky-whatsapp-button {
+/* viewport layer die exact de zichtbare viewport volgt (iOS addressbar-proof) */
+.vv-layer {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
+  top: var(--vv-top, 0px);
+  left: var(--vv-left, 0px);
+  width: var(--vv-width, 100vw);
+  height: var(--vv-height, 100vh);
+  pointer-events: none;
+  z-index: 2147483647;
+}
+
+/* button absolute binnen layer, dus stabiel */
+.sticky-whatsapp-button {
+  position: absolute;
+  right: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom));
   width: 56px;
   height: 56px;
   background-color: var(--color-whatsapp-green);
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
   box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
-  z-index: 1000;
-  transition: all 0.3s ease;
+  pointer-events: auto;
   text-decoration: none;
   color: var(--color-white);
+  
+  /* voorkom animatie-jank - gebruik transform voor stable compositing */
+  transition: none !important;
+  transform: translate3d(0, 0, 0) !important; /* Force GPU layer */
+  will-change: transform !important; /* Optimize for transform animations only */
+  backface-visibility: hidden; /* Prevent flicker */
+  -webkit-font-smoothing: antialiased;
+}
+
+/* iOS Safari mobile: use fixed position directly for maximum stability */
+/* This prevents glitches when Safari address bar expands/contracts */
+@supports (-webkit-touch-callout: none) {
+  @media (max-width: 767px) {
+    .vv-layer {
+      /* On iOS, don't use dynamic viewport variables - use stable fixed position */
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 2147483647;
+      /* Disable dynamic CSS variable updates on iOS */
+      --vv-top: 0px;
+      --vv-left: 0px;
+      --vv-width: 100vw;
+      --vv-height: 100vh;
+    }
+    
+    .sticky-whatsapp-button {
+      /* Direct fixed positioning on iOS - bypasses viewport layer updates */
+      position: fixed !important;
+      right: 16px;
+      bottom: calc(16px + env(safe-area-inset-bottom));
+      transform: translate3d(0, 0, 0) !important;
+      will-change: transform !important;
+      backface-visibility: hidden;
+      -webkit-transform: translate3d(0, 0, 0) !important; /* iOS specific */
+    }
+  }
 }
 
 .sticky-whatsapp-button:hover {
-  transform: translateY(-4px) scale(1.05);
+  transform: translate3d(0, -4px, 0) scale(1.05) !important;
   box-shadow: 0 6px 20px rgba(37, 211, 102, 0.5);
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
 }
 
 .sticky-whatsapp-button:active {
-  transform: translateY(-2px) scale(1.02);
+  transform: translate3d(0, -2px, 0) scale(1.02) !important;
 }
 
 .whatsapp-icon {
@@ -35,8 +86,16 @@
   .sticky-whatsapp-button {
     width: 52px;
     height: 52px;
-    bottom: 20px;
-    right: 20px;
+    right: 16px;
+    bottom: calc(16px + env(safe-area-inset-bottom));
+    /* MOBILE OPTIMIZATION: Reduce box-shadow complexity for better performance */
+    box-shadow: 0 2px 8px rgba(37, 211, 102, 0.3);
+  }
+
+  .sticky-whatsapp-button:hover {
+    /* Simplified hover on mobile - use translate3d for GPU acceleration */
+    transform: translate3d(0, -2px, 0) scale(1.03) !important;
+    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
   }
 
   .whatsapp-icon {

@@ -135,3 +135,6 @@ Op mobiel (<1024px):
 
 5. **Geïsoleerde mobile code:** `gsap.matchMedia()` zorgt dat mobile code alleen op mobiel draait, desktop blijft 100% hetzelfde.
 
+
+
+

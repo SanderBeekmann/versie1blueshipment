@@ -204,3 +204,13 @@
   }
 }
 
+/* Mobile: Ensure no animations or will-change to prevent scroll jank */
+@media (max-width: 767px) {
+  .diensten-steps-section [data-step-anim] {
+    opacity: 1 !important;
+    transform: none !important;
+    will-change: auto !important;
+    transition: none !important;
+  }
+}
+

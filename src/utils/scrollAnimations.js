@@ -12,6 +12,9 @@ ScrollTrigger.config({
 
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+// Mobile detection helper - consistent across codebase
+const isMobile = () => typeof window !== 'undefined' && window.innerWidth < 768;
+
 const animationVariants = {
   fadeUp: {
     y: 60,
@@ -47,6 +50,44 @@ const easings = [
 ];
 
 export const initScrollAnimations = () => {
+  // MOBILE OPTIMIZATION: Disable ScrollTrigger on mobile to prevent scroll stutter
+  // Use simple IntersectionObserver-based animations instead
+  if (isMobile()) {
+    const sections = document.querySelectorAll('[data-animate]');
+    sections.forEach((section) => {
+      const variantName = section.getAttribute('data-animate') || 'fadeUp';
+      const variant = animationVariants[variantName];
+      if (!variant) return;
+
+      // Set initial state
+      gsap.set(section, { opacity: 0, y: variant.y || 0, x: variant.x || 0, scale: variant.scale || 1 });
+
+      // Use IntersectionObserver for smooth, performant animations on mobile
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              gsap.to(entry.target, {
+                opacity: 1,
+                y: 0,
+                x: 0,
+                scale: 1,
+                duration: 0.6,
+                ease: 'power2.out',
+              });
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.1, rootMargin: '0px 0px -10% 0px' }
+      );
+
+      observer.observe(section);
+    });
+    return; // Early return - no ScrollTrigger on mobile
+  }
+
+  // DESKTOP: Use ScrollTrigger for advanced animations
   const sections = document.querySelectorAll('[data-animate]');
 
   sections.forEach((section, index) => {
@@ -92,19 +133,11 @@ export const initScrollAnimations = () => {
     });
   });
 
-  // Refresh ScrollTrigger after all animations are set up to ensure correct measurements
-  // FIX: Preserve scroll position on mobile to prevent unwanted scroll-to-top
-  // Use requestAnimationFrame to ensure layout is stable
+  // Refresh ScrollTrigger after all animations are set up (desktop only)
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
-      const isMobile = window.innerWidth < 768;
-      const scrollY = window.scrollY;
-      
-      ScrollTrigger.refresh();
-      
-      // On mobile, restore scroll position if it changed during refresh
-      if (isMobile && Math.abs(window.scrollY - scrollY) > 5) {
-        window.scrollTo({ top: scrollY, behavior: 'instant' });
+      if (!isMobile()) {
+        ScrollTrigger.refresh();
       }
     });
   });
@@ -135,6 +168,34 @@ const titleAnimationConfig = {
 };
 
 export const initTitleAnimations = () => {
+  // MOBILE OPTIMIZATION: Disable ScrollTrigger on mobile
+  if (isMobile()) {
+    const titles = document.querySelectorAll('[data-animate-title]:not(.hero-title)');
+    titles.forEach((title) => {
+      // Simple fade-in on mobile using IntersectionObserver
+      gsap.set(title, { opacity: 0, y: 18 });
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              gsap.to(entry.target, {
+                opacity: 1,
+                y: 0,
+                duration: 0.6,
+                ease: 'power2.out',
+              });
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.1, rootMargin: '0px 0px -10% 0px' }
+      );
+      observer.observe(title);
+    });
+    return; // Early return - no ScrollTrigger on mobile
+  }
+
+  // DESKTOP: Use ScrollTrigger for advanced animations
   // Exclude hero title - it has its own letter-by-letter animation
   const titles = document.querySelectorAll('[data-animate-title]:not(.hero-title)');
 
@@ -423,6 +484,18 @@ const splitHeroTitleIntoLetters = (element) => {
         return;
       }
       
+      // Preserve spans with classes that should not be split (e.g., word wrappers)
+      if (node.tagName === 'SPAN' && node.classList && node.classList.contains('diensten-hero-word-nodig')) {
+        // Don't split this span - preserve it as-is but process its text content
+        const text = node.textContent;
+        if (text && text.trim()) {
+          // Process the text inside the span but keep the span wrapper
+          const childNodes = Array.from(node.childNodes);
+          childNodes.forEach(processNode);
+        }
+        return;
+      }
+      
       // Process child nodes of other elements
       const childNodes = Array.from(node.childNodes);
       childNodes.forEach(processNode);
@@ -446,9 +519,25 @@ export const initHeroTitleAnimation = () => {
   // Use requestAnimationFrame to ensure DOM is ready
   requestAnimationFrame(() => {
     // Support homepage, about page, and diensten page hero titles
-    const heroTitle = document.querySelector('.hero-title') || 
-                      document.querySelector('.about-hero-title') || 
-                      document.querySelector('.diensten-hero-title');
+    // For homepage: select the visible title (desktop or mobile based on viewport)
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+    let heroTitle = null;
+    
+    // Homepage has separate desktop and mobile titles - select the visible one
+    if (isMobile) {
+      heroTitle = document.querySelector('.hero-title-mobile') || 
+                  document.querySelector('.hero-title');
+    } else {
+      heroTitle = document.querySelector('.hero-title-desktop') || 
+                  document.querySelector('.hero-title');
+    }
+    
+    // Fallback to other page titles
+    if (!heroTitle) {
+      heroTitle = document.querySelector('.about-hero-title') || 
+                  document.querySelector('.diensten-hero-title');
+    }
+    
     if (!heroTitle) return;
 
     // Find subtitle (supports all hero pages)
@@ -459,25 +548,8 @@ export const initHeroTitleAnimation = () => {
     // Find intro text (diensten page specific)
     const heroIntro = document.querySelector('.diensten-hero-intro');
 
-    // Find buttons/CTAs (supports all hero pages)
-    const heroCta = document.querySelector('.hero-cta');
-    const aboutHeroCtas = document.querySelector('.about-hero-ctas');
-    const dienstenHeroCtas = document.querySelector('.diensten-hero-ctas');
-    const heroButtons = [];
-    
-    if (heroCta) {
-      heroButtons.push(heroCta);
-    }
-    if (aboutHeroCtas) {
-      // Get all buttons and links in the CTA container
-      const buttons = aboutHeroCtas.querySelectorAll('button, a');
-      heroButtons.push(...Array.from(buttons));
-    }
-    if (dienstenHeroCtas) {
-      // Get all buttons and links in the CTA container
-      const buttons = dienstenHeroCtas.querySelectorAll('button, a');
-      heroButtons.push(...Array.from(buttons));
-    }
+    // Buttons are handled by their respective Hero components (Hero.js, AboutPage, DienstenPage)
+    // Do NOT animate buttons here to prevent flash on navigation
 
     // Reduced motion: show text immediately
     if (prefersReducedMotion) {
@@ -488,9 +560,7 @@ export const initHeroTitleAnimation = () => {
       if (heroIntro) {
         gsap.set(heroIntro, { opacity: 1, y: 0 });
       }
-      if (heroButtons.length > 0) {
-        gsap.set(heroButtons, { opacity: 1, y: 0 });
-      }
+      // Buttons are handled by their respective Hero components
       return;
     }
 
@@ -506,6 +576,7 @@ export const initHeroTitleAnimation = () => {
       if (heroIntro) {
         gsap.set(heroIntro, { opacity: 1, y: 0 });
       }
+      // Buttons are handled by their respective Hero components
       return;
     }
 
@@ -534,15 +605,8 @@ export const initHeroTitleAnimation = () => {
       });
     }
 
-    // Set initial state for buttons - powerful animation from below
-    if (heroButtons.length > 0) {
-      gsap.set(heroButtons, {
-        opacity: 0,
-        y: 50, // Stronger offset from below for more impact
-        scale: 0.95,
-        willChange: 'transform, opacity',
-      });
-    }
+    // Buttons are handled by Hero.js component's useLayoutEffect (runs before paint)
+    // Do NOT set button initial state here to prevent flash on navigation
 
     // Check if hero is already visible in viewport
     const rect = heroTitle.getBoundingClientRect();
@@ -594,21 +658,8 @@ export const initHeroTitleAnimation = () => {
         });
       }
 
-      // Animate buttons with powerful animation from below - after subtitle
-      if (heroButtons.length > 0) {
-        gsap.to(heroButtons, {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.8,
-          ease: 'power3.out', // Stronger easing for more impact
-          delay: 0.6, // Delay after subtitle starts
-          stagger: 0.1, // Small stagger if multiple buttons
-          onComplete: () => {
-            gsap.set(heroButtons, { willChange: 'auto' });
-          },
-        });
-      }
+      // Buttons are animated by Hero.js component's useLayoutEffect
+      // Do NOT animate buttons here to prevent flash on navigation
     }, 200);
   });
 };
@@ -1060,16 +1111,8 @@ export const initTimelineAnimations = (stepsContainer, processContainer, options
   });
   
   // FIX: Refresh ScrollTrigger once after initialization
-  // Preserve scroll position on mobile to prevent unwanted scroll-to-top
-  const scrollY = window.scrollY;
-  const isMobile = window.innerWidth < 768;
-  
+  // Scroll-to-top wordt afgehandeld door ScrollToTop component bij navigatie
   ScrollTrigger.refresh();
-  
-  // On mobile, restore scroll position if it changed during refresh
-  if (isMobile && Math.abs(window.scrollY - scrollY) > 5) {
-    window.scrollTo({ top: scrollY, behavior: 'instant' });
-  }
   
   // Return cleanup function
   return () => {
@@ -1329,6 +1372,59 @@ export const initTeamCardsDotAccentAnimation = (containerEl) => {
 
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  // MOBILE OPTIMIZATION: Use IntersectionObserver on mobile instead of ScrollTrigger
+  if (isMobile()) {
+    const teamCards = containerEl.querySelectorAll('.team-card');
+    const dots = containerEl.querySelectorAll('.card-dot');
+    
+    if (teamCards.length === 0 || dots.length === 0) return;
+    
+    // Simple fade-in animation on mobile
+    gsap.set(teamCards, { opacity: 0, y: 16 });
+    gsap.set(dots, { opacity: 1, scale: 0.5 });
+    
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry, index) => {
+          if (entry.isIntersecting) {
+            const card = entry.target;
+            const dot = containerEl.querySelector(`.card-dot[data-card-index="${index}"]`) || 
+                       Array.from(dots)[index];
+            
+            gsap.to(card, {
+              opacity: 1,
+              y: 0,
+              duration: 0.5,
+              ease: 'power2.out',
+              delay: index * 0.1,
+            });
+            
+            if (dot) {
+              gsap.to(dot, {
+                scale: 1,
+                duration: 0.3,
+                ease: 'power2.out',
+                delay: index * 0.1 + 0.2,
+              });
+            }
+            
+            observer.unobserve(card);
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -10% 0px' }
+    );
+    
+    teamCards.forEach((card, index) => {
+      const dot = Array.from(dots)[index];
+      if (dot) dot.setAttribute('data-card-index', index);
+      observer.observe(card);
+    });
+    
+    return; // Early return - no ScrollTrigger on mobile
+  }
+
+  // DESKTOP: Use ScrollTrigger for advanced animations
   // Find all team cards and dots
   const teamCards = containerEl.querySelectorAll('.team-card');
   const dots = containerEl.querySelectorAll('.card-dot');
@@ -1613,13 +1709,8 @@ export const initTestimonialsScrollExperience = (rootEl) => {
         
         measurements = getMeasurements();
         if (scrollTriggerInstance) {
-          // Preserve scroll position during refresh on mobile
-          const scrollY = window.scrollY;
+          // Refresh ScrollTrigger - scroll-to-top wordt afgehandeld door ScrollToTop component
           scrollTriggerInstance.refresh();
-          // Restore scroll position if it changed
-          if (Math.abs(window.scrollY - scrollY) > 10) {
-            window.scrollTo({ top: scrollY, behavior: 'instant' });
-          }
         }
       }, 250); // Increased debounce for mobile stability
     };

@@ -17,6 +17,7 @@ import CTASection from '../../components/sections/CTASection/CTASection';
 import FAQSection from '../../components/sections/FAQSection/FAQSection';
 import Footer from '../../components/layout/Footer/Footer';
 import { initScrollAnimations, initTitleAnimations, initHeroTitleAnimation, initTeamCardsDotAccentAnimation, initLogoRevealAnimation, cleanupScrollAnimations } from '../../utils/scrollAnimations';
+import { WatermarkIcon } from '../../utils/bentoCardIcons';
 
 function HomePage() {
   const bentoRef = useRef(null);
@@ -95,19 +96,11 @@ function HomePage() {
 
     // Ensure ScrollTrigger refreshes after layout is stable
     // Use double RAF to ensure all initial states are set and layout is calculated
-    // On mobile, preserve scroll position more carefully
+    // Scroll-to-top wordt afgehandeld door ScrollToTop component bij navigatie
     const refreshTimeout = setTimeout(() => {
-      const scrollY = window.scrollY;
-      const isMobile = window.innerWidth < 768;
-      
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           ScrollTrigger.refresh();
-          
-          // On mobile, restore scroll position if it changed
-          if (isMobile && Math.abs(window.scrollY - scrollY) > 5) {
-            window.scrollTo({ top: scrollY, behavior: 'instant' });
-          }
         });
       });
     }, 100);
@@ -318,6 +311,7 @@ function HomePage() {
                         aria-label={`Bekijk ${service.title}`}
                       >
                         <div className="diensten-card__body">
+                          <WatermarkIcon title={service.title} />
                           <h3 className="diensten-card__title">{service.title}</h3>
                           {service.description && (
                             <p className="diensten-card__text">{service.description}</p>

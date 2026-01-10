@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef } from 'react';
+import React, { useLayoutEffect, useRef, useState, useEffect } from 'react';
 import { gsap } from 'gsap';
 import './Hero.css';
 import GlassTagline from '../GlassTagline/GlassTagline';
@@ -9,18 +9,54 @@ function Hero() {
   const primaryBtnRef = useRef(null);
   const secondaryBtnRef = useRef(null);
 
+  // MOBILE OPTIMIZATION: Don't render InfiniteGridOverlay on mobile
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    // Check on mount
+    checkMobile();
+    
+    // Check on resize (debounced)
+    let resizeTimeout;
+    const handleResize = () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(checkMobile, 150);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      clearTimeout(resizeTimeout);
+    };
+  }, []);
+
   useLayoutEffect(() => {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReducedMotion) return;
-
+    
     const ctx = gsap.context(() => {
       // Filter out null refs (voor toekomstige secondary button)
       const buttons = [primaryBtnRef.current, secondaryBtnRef.current].filter(Boolean);
       
       if (buttons.length === 0) return;
 
+      if (prefersReducedMotion) {
+        // For reduced motion: show buttons immediately, no animation
+        gsap.set(buttons, {
+          autoAlpha: 1,
+          y: 0,
+          scale: 1,
+          willChange: 'auto',
+        });
+        return;
+      }
+
       // CRITICAL: Set initial state SYNCHRONOUSLY in useLayoutEffect (vóór eerste paint)
       // Dit voorkomt de flits waar buttons eerst zichtbaar zijn, dan wegvliegen
+      // CSS also sets initial hidden state as safety net (Hero.css)
       gsap.set(buttons, {
         autoAlpha: 0,
         y: 50,
@@ -52,7 +88,7 @@ function Hero() {
 
   return (
     <section className="hero" ref={rootRef}>
-      <InfiniteGridOverlay opacity={0.5} />
+      {!isMobile && <InfiniteGridOverlay opacity={0.5} />}
       <div className="hero-content">
         <div className="hero-text">
           <GlassTagline withDot>

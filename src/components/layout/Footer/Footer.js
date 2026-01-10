@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import './Footer.css';
 import logo from '../../../assets/brand/logo.png';
+import { openWhatsApp } from '../../../utils/whatsapp';
 
 function Footer() {
   const footerRef = useRef(null);
@@ -42,19 +44,19 @@ function Footer() {
     };
   }, []);
   const column1Links = [
-    'Over Ons',
-    'Diensten',
-    'Software',
-    'Resources',
-    'Kennismakingsgesprek'
+    { text: 'Over Ons', href: '/over-ons', type: 'internal' },
+    { text: 'Diensten', href: '/diensten', type: 'internal' },
+    { text: 'Software', href: '/diensten#software', type: 'internal' },
+    { text: 'Resources', href: '/resources', type: 'internal' },
+    { text: 'Kennismakingsgesprek', href: 'https://calendly.com/mouseclick2017/30min', type: 'external' }
   ];
 
   const column2Links = [
-    'FAQ',
-    'Contact',
-    'Hulp',
-    'Voorwaarden',
-    'Cookies'
+    { text: 'FAQ', href: '/#faq', type: 'internal' },
+    { text: 'Contact', href: '#', type: 'whatsapp', action: () => openWhatsApp('Hallo! Ik heb een vraag.') },
+    { text: 'Hulp', href: '/resources', type: 'internal' },
+    { text: 'Voorwaarden', href: '#', type: 'placeholder' },
+    { text: 'Cookies', href: '#', type: 'placeholder' }
   ];
 
   return (
@@ -74,7 +76,16 @@ function Footer() {
               <div className="contact-item">
                 <p className="contact-label">Contact</p>
                 <div className="contact-links">
-                  <a href="#" className="contact-link">WhatsApp support</a>
+                  <a 
+                    href="#" 
+                    className="contact-link"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      openWhatsApp('Hallo! Ik heb een vraag over BlueShipment.');
+                    }}
+                  >
+                    WhatsApp support
+                  </a>
                   <a href="mailto:info@blueshipment.nl" className="contact-link">info@blueshipment.nl</a>
                 </div>
               </div>
@@ -84,28 +95,98 @@ function Footer() {
           <div className="footer-links-container">
             <div className="footer-links">
               {column1Links.map((link, index) => {
-                const href = link === 'Kennismakingsgesprek' 
-                  ? 'https://calendly.com/mouseclick2017/30min' 
-                  : '#';
-                const target = link === 'Kennismakingsgesprek' ? '_blank' : undefined;
-                const rel = link === 'Kennismakingsgesprek' ? 'noopener noreferrer' : undefined;
-                return (
-                  <a 
-                    key={index} 
-                    href={href} 
-                    target={target}
-                    rel={rel}
-                    className="footer-link"
-                  >
-                    {link}
-                  </a>
-                );
+                if (link.type === 'external') {
+                  return (
+                    <a 
+                      key={index} 
+                      href={link.href} 
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="footer-link"
+                    >
+                      {link.text}
+                    </a>
+                  );
+                } else if (link.href.startsWith('#')) {
+                  // Hash link - use anchor
+                  return (
+                    <a 
+                      key={index} 
+                      href={link.href} 
+                      className="footer-link"
+                    >
+                      {link.text}
+                    </a>
+                  );
+                } else {
+                  // Internal route - use Link
+                  return (
+                    <Link 
+                      key={index} 
+                      to={link.href} 
+                      className="footer-link"
+                    >
+                      {link.text}
+                    </Link>
+                  );
+                }
               })}
             </div>
             <div className="footer-links">
-              {column2Links.map((link, index) => (
-                <a key={index} href="#" className="footer-link">{link}</a>
-              ))}
+              {column2Links.map((link, index) => {
+                if (link.type === 'whatsapp' && link.action) {
+                  return (
+                    <a 
+                      key={index} 
+                      href="#" 
+                      className="footer-link"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        link.action();
+                      }}
+                    >
+                      {link.text}
+                    </a>
+                  );
+                } else if (link.type === 'placeholder') {
+                  // Placeholder for future pages
+                  return (
+                    <a 
+                      key={index} 
+                      href="#" 
+                      className="footer-link"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        // TODO: Add actual page when available
+                      }}
+                    >
+                      {link.text}
+                    </a>
+                  );
+                } else if (link.href.startsWith('#')) {
+                  // Hash link - use anchor
+                  return (
+                    <a 
+                      key={index} 
+                      href={link.href} 
+                      className="footer-link"
+                    >
+                      {link.text}
+                    </a>
+                  );
+                } else {
+                  // Internal route - use Link
+                  return (
+                    <Link 
+                      key={index} 
+                      to={link.href} 
+                      className="footer-link"
+                    >
+                      {link.text}
+                    </Link>
+                  );
+                }
+              })}
             </div>
           </div>
         </div>
@@ -118,9 +199,9 @@ function Footer() {
             </p>
             <p className="footer-credit">Created by <a href="https://blitzworx.nl" target="_blank" rel="noopener noreferrer" className="footer-credit-link">BLITZWORX</a></p>
             <div className="footer-legal">
-              <a href="#" className="legal-link">Privacybeleid</a>
-              <a href="#" className="legal-link">Gebruiksvoorwaarden</a>
-              <a href="#" className="legal-link">Cookie-instellingen</a>
+              <a href="#" className="legal-link" onClick={(e) => e.preventDefault()}>Privacybeleid</a>
+              <a href="#" className="legal-link" onClick={(e) => e.preventDefault()}>Gebruiksvoorwaarden</a>
+              <a href="#" className="legal-link" onClick={(e) => e.preventDefault()}>Cookie-instellingen</a>
             </div>
           </div>
         </div>

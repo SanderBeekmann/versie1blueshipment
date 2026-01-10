@@ -107,3 +107,6 @@ const fillHeightPx = Math.max(0, Math.min(rawFill, railHeightPx));
 4. **Geen custom scroller:** Gebruikt standaard `window` scroller
 5. **Geïsoleerde mobile code:** `gsap.matchMedia()` zorgt dat mobile code alleen op mobiel draait
 
+
+
+
