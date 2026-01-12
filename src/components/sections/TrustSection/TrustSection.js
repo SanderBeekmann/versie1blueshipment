@@ -270,7 +270,6 @@ const TrustSection = () => {
                 alt="BlueShipment Logo" 
                 className="trust-section__image"
               />
-              <div className="trust-section__image-overlay"></div>
             </div>
 
             {/* Floating Trust Card 1: Speed/Efficiency */}

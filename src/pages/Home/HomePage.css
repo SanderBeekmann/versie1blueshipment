@@ -1,0 +1,120 @@
+/* Homepage-specific TeamSection overrides */
+/* Remove white container wrapper, reduce spacing, make CTA orange */
+
+/* Add circle gradient in center (same as CTASection) */
+.app .page-content .team-section {
+  position: relative;
+}
+
+.app .page-content .team-section::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(173, 216, 255, 0.2) 0%, rgba(173, 216, 255, 0.08) 50%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.app .page-content .team-container {
+  position: relative;
+  z-index: 1;
+}
+
+/* Remove white container styling - keep only layout/centering */
+.app .page-content .team-container {
+  background-color: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 0 calc(var(--page-padding) / 2) !important;
+  max-width: var(--container-large);
+  margin: 0 auto;
+}
+
+/* Reduce vertical spacing */
+.app .page-content .team-section {
+  padding: var(--gap-medium) calc(var(--section-padding-small) / 2) !important;
+  margin-bottom: 32px;
+}
+
+.app .page-content .team-container {
+  gap: var(--gap-medium) !important; /* 64px - increased by 32px from var(--gap-small) */
+}
+
+.app .page-content .team-grid {
+  padding-top: 0 !important; /* Remove padding-top to reduce gap */
+}
+
+.app .page-content .team-header {
+  margin-bottom: 0 !important; /* Remove margin-bottom */
+}
+
+/* Make title and subtitle white on homepage */
+.app .page-content .team-title {
+  color: var(--color-white) !important;
+}
+
+.app .page-content .team-title .text-blue {
+  color: var(--color-white) !important;
+}
+
+.app .page-content .team-subtitle {
+  color: var(--color-white) !important;
+  opacity: 0.9 !important;
+}
+
+/* Ensure tagline wrapper is visible and styled for blue background */
+.app .page-content .team-header .glass-tagline {
+  display: inline-flex !important;
+  background: rgba(255, 255, 255, 0.15) !important;
+  border: none !important;
+}
+
+.app .page-content .team-header .glass-tagline p {
+  color: var(--color-white) !important;
+}
+
+/* Make CTA button orange */
+.app .page-content .team-cta-button {
+  background-color: var(--color-blaze-orange) !important;
+  color: var(--color-white) !important;
+}
+
+.app .page-content .team-cta-button:hover {
+  background-color: #e65a00 !important;
+  box-shadow: 0 6px 16px rgba(255, 111, 0, 0.4) !important;
+}
+
+/* Mobile adjustments */
+@media (max-width: 1024px) {
+  .app .page-content .team-section::before {
+    width: 500px;
+    height: 500px;
+  }
+}
+
+@media (max-width: 768px) {
+  .app .page-content .team-section {
+    padding: var(--gap-small) calc(var(--gap-xsmall) / 2) !important;
+  }
+
+  .app .page-content .team-container {
+    padding: 0 calc(var(--gap-small) / 2) !important;
+  }
+
+  .app .page-content .team-section::before {
+    width: 400px;
+    height: 400px;
+  }
+}
+
+@media (max-width: 480px) {
+  .app .page-content .team-section::before {
+    width: 300px;
+    height: 300px;
+  }
+}

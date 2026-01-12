@@ -1,11 +1,14 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useLayoutEffect } from 'react';
 import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import './TeamSection.css';
 import timoImg from '../../../assets/timo.jpg';
 import reitzeImg from '../../../assets/reitze.jpg';
 import colinImg from '../../../assets/colin.jpg';
 import davidImg from '../../../assets/david.jpeg';
 import GlassTagline from '../GlassTagline/GlassTagline';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const BlueDot = () => (
   <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
@@ -20,6 +23,8 @@ function TeamSection() {
   const timoCardRef = useRef(null);
   const viewportRef = useRef(null);
   const prevActiveIndexRef = useRef(0);
+  const sectionRef = useRef(null);
+  const cardRefs = useRef([]);
   const teamMembers = [
     {
       id: 1,
@@ -166,9 +171,153 @@ function TeamSection() {
     return () => clearInterval(interval);
   }, [teamMembers.length]);
 
+  // Staggered entrance animation for team avatars
+  useLayoutEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isMobileCheck = window.matchMedia('(max-width: 768px)').matches;
+
+    // Get all card wrappers (card-scale elements) - only on desktop
+    const cards = isMobileCheck 
+      ? [] 
+      : Array.from(section.querySelectorAll('.team-grid > .card-scale')).filter(Boolean);
+
+    if (cards.length === 0 || prefersReducedMotion) {
+      // Show all cards immediately if mobile or reduced motion
+      cards.forEach(card => {
+        gsap.set(card, { opacity: 1, x: 0, y: 0 });
+      });
+      return;
+    }
+
+    // DESKTOP: Staggered directional animation
+    // Set initial states based on position
+    cards.forEach((card, index) => {
+      // Left two (0, 1): start from left (negative translateX)
+      // Right two (2, 3): start from right (positive translateX)
+      const translateX = index < 2 ? -60 : 60;
+      
+      gsap.set(card, {
+        opacity: 0,
+        x: translateX,
+        y: 6,
+        willChange: 'transform, opacity',
+      });
+    });
+
+      // Create timeline with ScrollTrigger
+      const ctx = gsap.context(() => {
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: section,
+            start: 'top 80%',
+            once: true,
+            invalidateOnRefresh: true,
+          },
+        });
+
+        // Animation timing
+        const innerDuration = 0.55; // Inner cards duration
+        const outerDuration = 0.55; // Outer cards duration (same)
+        const outerDelay = 0.2; // Outer cards start 0.2s later
+
+        // Inner two (index 1 and 2) start first at position 0
+        // Animate both inner cards simultaneously
+        [1, 2].forEach(index => {
+          if (cards[index]) {
+            tl.to(cards[index], {
+              opacity: 1,
+              x: 0,
+              y: 0,
+              duration: innerDuration,
+              ease: 'power2.out',
+              onComplete: () => {
+                gsap.set(cards[index], { willChange: 'auto' });
+              },
+            }, 0); // Start at timeline position 0
+          }
+        });
+
+        // Outer two (index 0 and 3) start later at position outerDelay
+        // Animate both outer cards simultaneously
+        [0, 3].forEach(index => {
+          if (cards[index]) {
+            tl.to(cards[index], {
+              opacity: 1,
+              x: 0,
+              y: 0,
+              duration: outerDuration,
+              ease: 'power2.out',
+              onComplete: () => {
+                gsap.set(cards[index], { willChange: 'auto' });
+              },
+            }, outerDelay); // Start at timeline position outerDelay
+          }
+        });
+      }, section);
+
+    return () => {
+      ctx.revert();
+    };
+  }, [teamMembers.length]);
+
+  // MOBILE: Simple from-below animation
+  useLayoutEffect(() => {
+    if (!isMobile) return;
+
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
+    // On mobile, cards are in a slider, so we animate the viewport container
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+
+    // Get the first visible card (top card in deck)
+    const topCard = viewport.querySelector('.team-slider-card--top');
+    if (!topCard) return;
+
+    // Set initial state
+    gsap.set(topCard, {
+      opacity: 0,
+      y: 12,
+      willChange: 'transform, opacity',
+    });
+
+    // Use IntersectionObserver for mobile
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            gsap.to(entry.target, {
+              opacity: 1,
+              y: 0,
+              duration: 0.5,
+              ease: 'power2.out',
+              onComplete: () => {
+                gsap.set(entry.target, { willChange: 'auto' });
+              },
+            });
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -10% 0px' }
+    );
+
+    observer.observe(topCard);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [isMobile, activeIndex]);
+
   return (
-    <section className="team-section">
-      <div className="team-background"></div>
+    <section ref={sectionRef} className="team-section">
       <div className="max-w-7xl mx-auto px-6">
         <div className="team-container">
           <div className="team-header">
@@ -244,7 +393,11 @@ function TeamSection() {
                 teamMembers.map((member, index) => (
                   <div 
                     key={member.id}
-                    ref={index === 0 ? timoCardRef : null}
+                    ref={(el) => {
+                      cardRefs.current[index] = el;
+                      if (index === 0) timoCardRef.current = el;
+                    }}
+                    data-team-index={index}
                     className="card-scale max-w-[352px] w-full"
                   >
                     <TeamCard member={member} />

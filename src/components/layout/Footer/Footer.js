@@ -64,6 +64,7 @@ function Footer() {
       <div className="footer-watermark">
         <img src={logo} alt="BlueShipment" className="footer-watermark-image" />
       </div>
+      <div className="footer-gradient-background"></div>
       <div className="footer-container">
         <div className="footer-content">
           <div className="footer-branding">

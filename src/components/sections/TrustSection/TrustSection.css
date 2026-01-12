@@ -200,14 +200,6 @@
   display: block;
 }
 
-.trust-section__image-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(13, 6, 0, 0.6), transparent);
-  opacity: 0.6;
-  pointer-events: none;
-}
-
 /* Floating Cards */
 .trust-section__floating-card {
   position: absolute;

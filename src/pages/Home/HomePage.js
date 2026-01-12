@@ -1,8 +1,10 @@
 import React, { useLayoutEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { gsap } from 'gsap';
 import '../../styles/App.css';
 import '../Diensten/DienstenPage.css';
+import './HomePage.css';
 import Navbar from '../../components/layout/Navbar/Navbar';
 import Hero from '../../components/sections/Hero/Hero';
 import VideoSection from '../../components/sections/VideoSection/VideoSection';
@@ -305,8 +307,8 @@ function HomePage() {
                       className={cardClass}
                       data-area={service.area}
                     >
-                      <a
-                        href={service.href}
+                      <Link
+                        to={service.href}
                         className="diensten-card__button"
                         aria-label={`Bekijk ${service.title}`}
                       >
@@ -322,12 +324,12 @@ function HomePage() {
                             </span>
                           </div>
                         </div>
-                      </a>
+                      </Link>
                     </article>
                   );
                 })}
                 <div className="diensten-services-cta" data-area="cta">
-                  <a href="/diensten" className="btn btn-primary">Bekijk alle diensten</a>
+                  <Link to="/diensten" className="btn btn-primary">Bekijk alle diensten</Link>
                 </div>
               </div>
             </div>
@@ -340,15 +342,11 @@ function HomePage() {
       <div data-animate="fadeLeft">
         <FeaturesSection />
       </div>
-      <div data-animate="fadeUpScale">
-        <WhatsAppSection />
-      </div>
+      <WhatsAppSection />
       <div data-animate="fadeUp">
         <Testimonials />
       </div>
-      <div data-animate="scaleIn">
-        <CTASection />
-      </div>
+      <CTASection />
       <div data-animate="fadeUp">
         <FAQSection />
       </div>

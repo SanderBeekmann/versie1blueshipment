@@ -2,23 +2,11 @@
 .team-section {
   width: 100%;
   padding: var(--page-padding) calc(var(--section-padding-small) / 2);
-  background-color: var(--color-background);
+  background-color: var(--color-blue-ribbon);
   position: relative;
   overflow: visible;
   z-index: 2;
   margin-bottom: 48px;
-}
-
-.team-background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 100%;
-  background: var(--gradient-team);
-  border-radius: 0 0 var(--radius-large) var(--radius-large);
-  box-shadow: var(--shadow-small);
-  z-index: 0;
 }
 
 .team-container {
@@ -147,7 +135,7 @@
 
 .card-image {
   width: 100%;
-  border-radius: 144px 0 0 0;
+  border-radius: 144px var(--radius-large) 0 0;
   border-top: 1px solid var(--color-blue-ribbon);
   overflow: hidden;
   position: relative;

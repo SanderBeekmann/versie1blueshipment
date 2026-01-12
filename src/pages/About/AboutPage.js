@@ -8,6 +8,8 @@ import LogoSection from '../../components/sections/LogoSection/LogoSection';
 import Footer from '../../components/layout/Footer/Footer';
 import InfiniteGridOverlay from '../../components/ui/the-infinite-grid/InfiniteGridOverlay';
 import TrustSection from '../../components/sections/TrustSection/TrustSection';
+import CTASection from '../../components/sections/CTASection/CTASection';
+import ResourcesSection from '../../components/sections/ResourcesSection/ResourcesSection';
 import { initScrollAnimations, initTitleAnimations, initHeroTitleAnimation, initLogoRevealAnimation, initStatsCountUp, cleanupScrollAnimations } from '../../utils/scrollAnimations';
 import { openWhatsApp } from '../../utils/whatsapp';
 import logo from '../../assets/brand/logo.png';
@@ -135,9 +137,14 @@ function AboutPage() {
               </div>
 
               <div className="about-hero-ctas">
-                <button className="btn btn-primary">
+                <a 
+                  href="https://calendly.com/mouseclick2017/30min" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="btn btn-primary"
+                >
                   Ga voor succes
-                </button>
+                </a>
                 <a href="/diensten" className="btn btn-outline-blue">
                   Bekijk diensten
                 </a>
@@ -212,7 +219,7 @@ function AboutPage() {
         <TeamSection
           title={
             <>
-              Het <span className="text-blue">team</span> achter Blueshipment
+              Het team achter Blueshipment
             </>
           }
           groups={[
@@ -259,23 +266,11 @@ function AboutPage() {
       </div>
 
       {/* Final CTA Section */}
-      <div data-animate="fadeUpScale">
-        <section className="about-final-cta">
-          <div className="about-final-cta-container">
-            <h2 className="about-final-cta-title" data-animate-title>
-              Laten we kennismaken.
-            </h2>
-            <p className="about-final-cta-subtitle">
-              Klaar om te starten? Stuur ons een bericht op WhatsApp en laten we zien wat we voor je kunnen doen.
-            </p>
-            <button 
-              className="btn btn-whatsapp"
-              onClick={() => openWhatsApp()}
-            >
-              Neem contact op via WhatsApp
-            </button>
-          </div>
-        </section>
+      <CTASection />
+
+      {/* Resources Section */}
+      <div data-animate="fadeUp">
+        <ResourcesSection />
       </div>
 
       {/* Partners Section */}

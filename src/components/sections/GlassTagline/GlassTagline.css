@@ -87,7 +87,7 @@
 .whatsapp-section .glass-tagline,
 .about-team-stable-container .glass-tagline {
   background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  border: none;
 }
 
 /* Hero taglines behouden originele tekst styling */
@@ -160,4 +160,18 @@
 
 .glass-tagline-dot {
   display: none;
+}
+
+/* Tagline wrapper styling - gebaseerd op WhatsAppSection taglinewrapper */
+.tagline-wrapper {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 16px;
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  border: none;
+  color: var(--color-white);
+  font-family: var(--font-primary);
+  font-size: var(--text-small);
+  font-weight: var(--font-medium);
 }
