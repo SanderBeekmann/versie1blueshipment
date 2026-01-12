@@ -11,7 +11,6 @@ import TrustSection from '../../components/sections/TrustSection/TrustSection';
 import CTASection from '../../components/sections/CTASection/CTASection';
 import ResourcesSection from '../../components/sections/ResourcesSection/ResourcesSection';
 import { initScrollAnimations, initTitleAnimations, initHeroTitleAnimation, initLogoRevealAnimation, initStatsCountUp, cleanupScrollAnimations } from '../../utils/scrollAnimations';
-import { openWhatsApp } from '../../utils/whatsapp';
 import logo from '../../assets/brand/logo.png';
 import timoImg from '../../assets/timo.jpg';
 import colinImg from '../../assets/colin.jpg';
