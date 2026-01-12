@@ -237,11 +237,10 @@
 
 .diensten-services-subtitle {
   font-family: var(--font-primary);
-  font-size: var(--text-medium);
+  font-size: var(--text-subtitle-size);
   font-weight: var(--font-regular);
-  line-height: var(--line-relaxed);
-  color: var(--color-neutral-darkest);
-  opacity: 0.8;
+  line-height: var(--text-subtitle-line-height);
+  color: var(--text-subtitle-color);
   text-align: center;
   margin: 0;
 }

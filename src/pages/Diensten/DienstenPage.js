@@ -541,9 +541,14 @@ function DienstenPage() {
             </p>
 
             <div className="diensten-hero-ctas">
-              <button className="btn btn-primary">
-                Starten
-              </button>
+              <a 
+                href="https://calendly.com/mouseclick2017/30min" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="btn btn-primary"
+              >
+                Start nu
+              </a>
             </div>
           </div>
         </div>

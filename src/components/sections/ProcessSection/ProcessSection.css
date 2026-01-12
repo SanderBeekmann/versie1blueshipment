@@ -51,12 +51,12 @@
 
 .process-subtitle {
   font-family: var(--font-primary);
-  font-size: var(--text-regular);
+  font-size: var(--text-subtitle-size);
   font-weight: var(--font-regular);
-  line-height: var(--line-relaxed);
+  line-height: var(--text-subtitle-line-height);
   color: var(--color-white);
-  max-width: 440px;
   opacity: 0.8;
+  max-width: 440px;
   margin: 0;
 }
 
@@ -292,11 +292,11 @@
 
 .process-result .result-description {
   font-family: var(--font-primary);
-  font-size: var(--text-medium);
+  font-size: var(--text-subtitle-size);
   font-weight: var(--font-regular);
-  line-height: 1.5;
+  line-height: var(--text-subtitle-line-height);
   color: var(--color-neutral-darkest);
-  opacity: 0.8;
+  opacity: var(--text-subtitle-opacity);
 }
 
 /* GlassTagline styling within result container - same as TeamSection */
@@ -558,7 +558,7 @@
   }
 
   .process-result .result-description {
-    font-size: var(--text-regular);
+    font-size: var(--text-subtext-size);
   }
 }
 

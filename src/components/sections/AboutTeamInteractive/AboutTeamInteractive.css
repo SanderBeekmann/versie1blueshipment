@@ -39,11 +39,10 @@
 
 .about-team-interactive-subtitle {
   font-family: var(--font-primary);
-  font-size: var(--text-regular);
+  font-size: var(--text-subtitle-size);
   font-weight: var(--font-regular);
-  line-height: var(--line-relaxed);
-  color: var(--color-neutral-darkest);
-  opacity: 0.8;
+  line-height: var(--text-subtitle-line-height);
+  color: var(--text-subtitle-color);
   margin: 0;
   max-width: 440px;
 }
@@ -319,11 +318,10 @@
 
 .detail-card-description {
   font-family: var(--font-primary);
-  font-size: var(--text-regular);
+  font-size: var(--text-subtext-size);
   font-weight: var(--font-regular);
-  line-height: var(--line-relaxed);
-  color: var(--color-neutral-darkest);
-  opacity: 0.8;
+  line-height: var(--text-subtext-line-height);
+  color: var(--text-subtext-color);
   margin: 0;
   flex: 1;
   max-width: 100%;

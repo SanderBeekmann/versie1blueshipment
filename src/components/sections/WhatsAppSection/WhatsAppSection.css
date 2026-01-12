@@ -205,13 +205,12 @@
 
 .whatsapp-card-description {
   font-family: var(--font-primary);
-  font-size: var(--text-regular);
+  font-size: var(--text-subtext-size);
   font-weight: var(--font-regular);
-  line-height: var(--line-relaxed);
-  color: var(--color-neutral-darkest);
+  line-height: var(--text-subtext-line-height);
+  color: var(--text-subtext-color);
   margin: 0;
   width: 100%;
-  opacity: 0.85;
   overflow: visible; /* Prevent text clipping */
 }
 

@@ -122,6 +122,18 @@ ul, ol {
   --tracking-h6: -0.22px;
   --tracking-card-title: 0;
   
+  /* Typography - Subtext/Description Styling */
+  --text-subtext-size: 14px;
+  --text-subtext-opacity: 0.62;
+  --text-subtext-color: rgba(0, 0, 0, var(--text-subtext-opacity));
+  --text-subtext-line-height: 1.7;
+  
+  /* Typography - Subtitle Styling */
+  --text-subtitle-size: 16px;
+  --text-subtitle-opacity: 0.8;
+  --text-subtitle-color: rgba(0, 0, 0, var(--text-subtitle-opacity));
+  --text-subtitle-line-height: var(--line-relaxed);
+  
   /* Spacing - Page Level */
   --page-padding: 64px;
   --section-padding-small: 48px;

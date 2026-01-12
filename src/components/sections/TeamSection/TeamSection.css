@@ -27,11 +27,11 @@
   flex-direction: column;
   align-items: center;
   gap: var(--page-padding);
-  padding: var(--section-padding-small) calc(var(--page-padding) / 2);
+  padding: var(--section-padding-small) calc(var(--page-padding) / 2) var(--gap-medium) calc(var(--page-padding) / 2);
   background-color: var(--color-background);
   border-radius: var(--radius-large);
   box-shadow: var(--shadow-medium);
-  overflow: hidden;
+  overflow: visible;
   z-index: 1;
 }
 
@@ -63,10 +63,10 @@
 
 .team-subtitle {
   font-family: var(--font-primary);
-  font-size: var(--text-regular);
+  font-size: var(--text-subtitle-size);
   font-weight: var(--font-regular);
-  line-height: var(--line-relaxed);
-  color: var(--color-neutral-darkest);
+  line-height: var(--text-subtitle-line-height);
+  color: var(--text-subtitle-color);
   max-width: 440px;
   opacity: 0.8;
   margin: 0;
@@ -74,11 +74,14 @@
 
 .team-grid {
   width: 100%;
-  padding: var(--section-padding-small) 0;
+  padding-top: var(--section-padding-small);
+  padding-bottom: 0;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: var(--gap-small);
   justify-items: center;
+  position: relative;
+  z-index: 10;
 }
 
 @media (max-width: 1200px) {
@@ -91,7 +94,8 @@
 @media (max-width: 768px) {
   .team-grid {
     grid-template-columns: 1fr;
-    gap: var(--gap-small);
+    gap: 0;
+    padding: var(--section-padding-small) 0;
   }
 }
 
@@ -213,10 +217,236 @@
 
 .member-description {
   font-family: var(--font-primary);
-  font-size: var(--text-regular);
+  font-size: var(--text-subtext-size);
   font-weight: var(--font-regular);
+  line-height: var(--text-subtext-line-height);
+  color: var(--text-subtext-color);
+}
+
+/* Mobile Slider Styles */
+.team-slider-viewport {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (min-width: 769px) {
+  .team-slider-viewport {
+    display: contents;
+  }
+  
+  .team-slider-card {
+    /* Reset slider styles on desktop */
+    position: static;
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+  }
+}
+
+.team-slider-card {
+  will-change: opacity, transform;
+}
+
+@media (max-width: 768px) {
+  .team-slider-viewport.team-deck {
+    width: 100%;
+    padding: var(--gap-small) 0 0 0;
+    position: relative;
+    min-height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    overflow: visible;
+    z-index: 10;
+  }
+
+  .team-slider-card {
+    position: absolute;
+    width: 100%;
+    max-width: 352px;
+    left: 50%;
+    top: 0;
+    /* All cards must use translateX(-50%) for consistent centering */
+    transform: translate3d(-50%, 0, 0) scale(1);
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+    opacity: 1;
+  }
+
+  /* Top card (active) - fully visible, on top */
+  .team-slider-card--top {
+    transform: translate3d(-50%, 0, 0) scale(1);
+    z-index: 13;
+    pointer-events: auto;
+  }
+
+  /* Entering animation - card flies in from the side and lands smoothly */
+  .team-slider-card--top.team-slider-card--entering {
+    animation: cardEnterFromSide 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    opacity: 1;
+  }
+
+  @keyframes cardEnterFromSide {
+    0% {
+      transform: translate3d(calc(-50% + 100vw), 8px, 0) scale(0.95);
+      z-index: 14;
+    }
+    60% {
+      transform: translate3d(calc(-50% + 8px), 2px, 0) scale(0.98);
+    }
+    100% {
+      transform: translate3d(-50%, 0, 0) scale(1);
+      z-index: 13;
+    }
+  }
+
+  /* Second card in stack - previous top card, now behind */
+  .team-slider-card--second {
+    transform: translate3d(-50%, 14px, 0) scale(0.98);
+    z-index: 12;
+    pointer-events: none;
+  }
+
+  /* Third card in stack - card before previous, further behind */
+  .team-slider-card--third {
+    transform: translate3d(-50%, 28px, 0) scale(0.96);
+    z-index: 11;
+    pointer-events: none;
+  }
+
+  .team-slider-card .card-scale {
+    height: 100%;
+    width: 100%;
+    max-width: 352px;
+    display: flex;
+    margin: 0 auto;
+  }
+
+  .team-slider-card .team-card {
+    height: 100%;
+    width: 100%;
+    max-width: 352px;
+    display: flex;
+    flex-direction: column;
+    /* Reset GSAP rotation transforms on mobile slider cards */
+    transform: none !important;
+  }
+
+  /* Ensure consistent image sizing to prevent layout shifts */
+  .team-slider-card .card-image {
+    width: 100%;
+    aspect-ratio: 1;
+    flex-shrink: 0;
+    height: auto;
+  }
+
+  .team-slider-card .card-image .member-photo {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    display: block;
+  }
+
+  .team-slider-card .card-content {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+  }
+
+  .team-slider-card .member-description {
+    overflow: visible;
+    text-overflow: clip;
+    display: block;
+  }
+
+  /* Progress Indicator - Mobile Only */
+  .team-deck-indicator {
+    --indicator-bar-width: 32px;
+    --indicator-bar-height: 4px;
+    --indicator-bar-radius: 2px;
+    --indicator-bar-gap: 6px;
+    --indicator-active-opacity: 1;
+    --indicator-inactive-opacity: 0.3;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--indicator-bar-gap);
+    margin-bottom: var(--gap-small);
+    padding: calc(var(--gap-xxsmall) / 2) 0;
+    width: 100%;
+  }
+
+  .team-indicator-bar {
+    width: var(--indicator-bar-width);
+    height: var(--indicator-bar-height);
+    border-radius: var(--indicator-bar-radius);
+    background-color: var(--color-blue-ribbon);
+    opacity: var(--indicator-inactive-opacity);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    transform: scale(1);
+    flex-shrink: 0;
+  }
+
+  .team-indicator-bar--active {
+    opacity: var(--indicator-active-opacity);
+    transform: scale(1.1);
+  }
+
+}
+
+/* CTA Button - Shared styles for mobile and desktop */
+.team-deck-cta {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: auto;
+  margin-bottom: 0;
+  width: 100%;
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+.team-cta-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 24px;
+  background-color: var(--color-blue-ribbon);
+  color: var(--color-white);
+  font-family: var(--font-primary);
+  font-size: var(--text-regular);
+  font-weight: var(--font-medium);
   line-height: 1.5;
-  color: var(--color-neutral-darkest);
+  text-decoration: none;
+  border-radius: var(--radius-button);
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-small);
+  border: none;
+  cursor: pointer;
+}
+
+.team-cta-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 112, 255, 0.4);
+}
+
+.team-cta-button:active {
+  transform: translateY(0);
+}
+
+/* Hide indicator on desktop/tablet, but keep CTA visible */
+@media (min-width: 769px) {
+  .team-deck-indicator {
+    display: none;
+  }
 }
 
 /* Responsive */
@@ -228,12 +458,26 @@
   }
 
   .team-container {
-    padding: var(--gap-small) calc(var(--gap-small) / 2);
+    padding: var(--gap-small) calc(var(--gap-small) / 2) var(--gap-medium) calc(var(--gap-small) / 2);
     border-radius: var(--radius-medium);
+    display: flex;
+    flex-direction: column;
   }
   
   .team-card {
     max-width: 100%;
+  }
+
+  /* Disable hover rotation on mobile */
+  .team-card:hover {
+    box-shadow: var(--shadow-xsmall);
+  }
+
+  /* CTA spacing on mobile - uses margin-top: auto for centering */
+  .team-deck-cta {
+    margin-top: auto;
+    padding-top: 12px;
+    padding-bottom: 12px;
   }
 }
 

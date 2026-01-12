@@ -48,11 +48,10 @@
 
 .cta-description {
   font-family: var(--font-primary);
-  font-size: var(--text-medium);
+  font-size: var(--text-subtext-size);
   font-weight: var(--font-regular);
-  line-height: 1.5;
-  color: var(--color-neutral-darkest);
-  opacity: 0.75;
+  line-height: var(--text-subtext-line-height);
+  color: var(--text-subtext-color);
 }
 
 /* Responsive */
@@ -92,8 +91,8 @@
   }
 
   .cta-description {
-    font-size: var(--text-regular);
-    line-height: 1.6;
+    font-size: var(--text-subtext-size);
+    line-height: var(--text-subtext-line-height);
   }
 
   .cta-content .btn {

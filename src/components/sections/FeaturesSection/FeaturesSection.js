@@ -359,7 +359,7 @@ function FeaturesSection() {
 
           {/* CTA Section */}
           <div ref={ctaRef} className="features-section__cta">
-            <p className="features-section__cta-text">Ontdek het zelf.</p>
+            <p className="features-section__cta-text">Ontdek het zelf!</p>
             <a 
               href="https://calendly.com/mouseclick2017/30min" 
               target="_blank" 

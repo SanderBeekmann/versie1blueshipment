@@ -7,6 +7,7 @@ import TeamSection from '../../components/ui/TeamSection';
 import LogoSection from '../../components/sections/LogoSection/LogoSection';
 import Footer from '../../components/layout/Footer/Footer';
 import InfiniteGridOverlay from '../../components/ui/the-infinite-grid/InfiniteGridOverlay';
+import TrustSection from '../../components/sections/TrustSection/TrustSection';
 import { initScrollAnimations, initTitleAnimations, initHeroTitleAnimation, initLogoRevealAnimation, initStatsCountUp, cleanupScrollAnimations } from '../../utils/scrollAnimations';
 import { openWhatsApp } from '../../utils/whatsapp';
 import logo from '../../assets/brand/logo.png';
@@ -252,72 +253,9 @@ function AboutPage() {
         />
       </div>
 
-      {/* Waarden Section */}
+      {/* Trust Section */}
       <div data-animate="fadeUp">
-        <section className="about-values">
-          <div className="about-values-container">
-            <div className="about-values-header">
-              <div className="about-values-kicker">Waarden</div>
-              <h2 className="about-values-title" data-animate-title>
-                Onze waarden
-              </h2>
-              <p className="about-values-subtitle">
-                De principes die ons dagelijks drijven en waarom we anders zijn dan de rest.
-              </p>
-            </div>
-            <div className="about-values-grid">
-              <div className="about-value-card">
-                <div className="value-icon">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                  </svg>
-                </div>
-                <h3 className="value-title">Transparantie</h3>
-                <p className="value-text">
-                  Geen verborgen kosten, geen verrassingen. Je ziet precies wat je betaalt en waarom. Eerlijkheid staat voorop in alles wat we doen.
-                </p>
-              </div>
-              <div className="about-value-card">
-                <div className="value-icon">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <polyline points="12 6 12 12 16 14"></polyline>
-                  </svg>
-                </div>
-                <h3 className="value-title">Snelheid</h3>
-                <p className="value-text">
-                  Reactie binnen 30 minuten, orders dezelfde dag verzonden. We begrijpen dat tijd geld is en handelen daar naar.
-                </p>
-              </div>
-              <div className="about-value-card">
-                <div className="value-icon">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="9" cy="7" r="4"></circle>
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                  </svg>
-                </div>
-                <h3 className="value-title">Persoonlijk</h3>
-                <p className="value-text">
-                  Geen chatbots of automatische antwoorden. Je spreekt altijd met een echt persoon die je kent en begrijpt.
-                </p>
-              </div>
-              <div className="about-value-card">
-                <div className="value-icon">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                  </svg>
-                </div>
-                <h3 className="value-title">Betrouwbaarheid</h3>
-                <p className="value-text">
-                  We doen wat we beloven. Elke dag opnieuw. Je kunt op ons rekenen voor consistente service en kwaliteit.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
+        <TrustSection />
       </div>
 
       {/* Final CTA Section */}

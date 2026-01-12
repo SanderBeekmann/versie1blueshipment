@@ -43,13 +43,13 @@
 
 .testimonials-subtitle {
   font-family: var(--font-primary);
-  font-size: 16px;
-  line-height: var(--line-relaxed);
-  color: rgba(0, 0, 0, 0.65);
+  font-size: var(--text-subtitle-size);
+  line-height: var(--text-subtitle-line-height);
+  color: var(--text-subtitle-color);
   margin: 0;
 }
 
-/* Grid */
+/* Grid - Desktop default */
 .testimonials-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -127,6 +127,19 @@
   flex-grow: 1;
 }
 
+/* Mobile: Fixed height for consistent card sizing */
+@media (max-width: 767px) {
+  .testimonial-quote {
+    min-height: 84px;
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
 /* Author Section */
 .testimonial-author {
   display: flex;
@@ -177,7 +190,7 @@
   }
 }
 
-/* Mobile: 1 column */
+/* Mobile: 1 column with deck animation */
 @media (max-width: 767px) {
   .testimonials-section {
     padding: var(--section-padding-medium) var(--page-padding) 40px var(--page-padding);
@@ -193,16 +206,118 @@
   }
 
   .testimonials-subtitle {
-    font-size: 15px;
+    font-size: var(--text-subtitle-size);
   }
 
   .testimonials-grid {
-    grid-template-columns: 1fr;
-    gap: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  /* Progress Indicator - Mobile Only */
+  .testimonials-deck-indicator {
+    --indicator-bar-width: 32px;
+    --indicator-bar-height: 4px;
+    --indicator-bar-radius: 2px;
+    --indicator-bar-gap: 6px;
+    --indicator-active-opacity: 1;
+    --indicator-inactive-opacity: 0.3;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--indicator-bar-gap);
+    margin-bottom: var(--gap-small);
+    padding: calc(var(--gap-xxsmall) / 2) 0;
+    width: 100%;
+  }
+
+  .testimonials-indicator-bar {
+    width: var(--indicator-bar-width);
+    height: var(--indicator-bar-height);
+    border-radius: var(--indicator-bar-radius);
+    background-color: var(--color-blue-ribbon);
+    opacity: var(--indicator-inactive-opacity);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    transform: scale(1);
+    flex-shrink: 0;
+  }
+
+  .testimonials-indicator-bar--active {
+    opacity: var(--indicator-active-opacity);
+    transform: scale(1.1);
+  }
+
+  /* Deck Viewport */
+  .testimonials-deck-viewport {
+    width: 100%;
+    padding: var(--gap-small) 0 60px 0;
+    position: relative;
+    min-height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    overflow: visible;
   }
 
   .testimonial-card {
+    position: absolute;
+    width: 100%;
+    max-width: 100%;
+    left: 50%;
+    top: 0;
+    transform: translate3d(-50%, 0, 0) scale(1);
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+    opacity: 1;
     padding: 24px;
+    /* Ensure consistent card structure */
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+  }
+
+  /* Top card (active) - fully visible, on top */
+  .testimonial-card--top {
+    transform: translate3d(-50%, 0, 0) scale(1);
+    z-index: 3;
+    pointer-events: auto;
+  }
+
+  /* Entering animation - card flies in from the side and lands smoothly */
+  .testimonial-card--top.testimonial-card--entering {
+    animation: testimonialCardEnterFromSide 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    opacity: 1;
+  }
+
+  @keyframes testimonialCardEnterFromSide {
+    0% {
+      transform: translate3d(calc(-50% + 100vw), 8px, 0) scale(0.95);
+      z-index: 4;
+    }
+    60% {
+      transform: translate3d(calc(-50% + 8px), 2px, 0) scale(0.98);
+    }
+    100% {
+      transform: translate3d(-50%, 0, 0) scale(1);
+      z-index: 3;
+    }
+  }
+
+  /* Second card in stack - previous top card, now behind */
+  .testimonial-card--second {
+    transform: translate3d(-50%, 12px, 0) scale(0.98);
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  /* Third card in stack - card before previous, further behind */
+  .testimonial-card--third {
+    transform: translate3d(-50%, 24px, 0) scale(0.96);
+    z-index: 1;
+    pointer-events: none;
   }
 
   .testimonial-rating {
@@ -217,6 +332,14 @@
   .testimonial-quote {
     font-size: 14px;
     margin-bottom: 20px;
+    /* Fixed height to ensure consistent card heights */
+    min-height: 84px;
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .testimonial-avatar {
@@ -231,6 +354,23 @@
 
   .testimonial-role {
     font-size: 12px;
+  }
+}
+
+/* Desktop/Tablet: Normal grid layout */
+@media (min-width: 768px) {
+  .testimonials-deck-indicator {
+    display: none;
+  }
+  
+  .testimonials-deck-viewport {
+    display: contents;
+  }
+  
+  .testimonial-card {
+    position: relative;
+    transform: none !important;
+    opacity: 1 !important;
   }
 }
 

@@ -37,12 +37,11 @@
 
 .video-subtitle {
   font-family: var(--font-primary);
-  font-size: var(--text-regular);
+  font-size: var(--text-subtitle-size);
   font-weight: var(--font-regular);
-  line-height: var(--line-relaxed);
-  color: var(--color-neutral-darkest);
+  line-height: var(--text-subtitle-line-height);
+  color: var(--text-subtitle-color);
   max-width: 440px;
-  opacity: 0.8;
   margin: 0;
 }
 
