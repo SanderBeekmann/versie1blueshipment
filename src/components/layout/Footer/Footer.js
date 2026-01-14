@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import './Footer.css';
-import logo from '../../../assets/brand/logo.png';
 import { openWhatsApp } from '../../../utils/whatsapp';
 
 function Footer() {
@@ -61,9 +60,6 @@ function Footer() {
 
   return (
     <footer ref={footerRef} className="footer">
-      <div className="footer-watermark">
-        <img src={logo} alt="BlueShipment" className="footer-watermark-image" />
-      </div>
       <div className="footer-gradient-background"></div>
       <div className="footer-container">
         <div className="footer-content">
