@@ -5,6 +5,7 @@ import AboutPage from './pages/About/AboutPage';
 import DienstenPage from './pages/Diensten/DienstenPage';
 import ResourcesPage from './pages/Resources/ResourcesPage';
 import BlogDetailPage from './pages/Resources/BlogDetailPage';
+import ContactPage from './pages/Contact/ContactPage';
 import ScrollToTop from './components/ScrollToTop';
 import StickyWhatsAppButton from './components/StickyWhatsAppButton';
 
@@ -19,6 +20,7 @@ function App() {
         <Route path="/diensten" element={<DienstenPage />} />
         <Route path="/resources" element={<ResourcesPage />} />
         <Route path="/resources/:slug" element={<BlogDetailPage />} />
+        <Route path="/contact" element={<ContactPage />} />
       </Routes>
       <StickyWhatsAppButton />
     </Router>

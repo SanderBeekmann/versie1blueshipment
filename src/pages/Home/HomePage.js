@@ -11,6 +11,7 @@ import VideoSection from '../../components/sections/VideoSection/VideoSection';
 import LogoSection from '../../components/sections/LogoSection/LogoSection';
 import ProcessSection from '../../components/sections/ProcessSection/ProcessSection';
 import GallerySection from '../../components/sections/GallerySection/GallerySection';
+import ResultSection from '../../components/sections/ResultSection/ResultSection';
 import TeamSection from '../../components/sections/TeamSection/TeamSection';
 import FeaturesSection from '../../components/sections/FeaturesSection/FeaturesSection';
 import Testimonials from '../../components/sections/TestimonialSection/Testimonials';
@@ -278,6 +279,9 @@ function HomePage() {
       </div>
       <div data-animate="fadeRight">
         <ProcessSection />
+      </div>
+      <div data-animate="fadeUp">
+        <ResultSection />
       </div>
       <div data-animate="scaleIn">
         <GallerySection />

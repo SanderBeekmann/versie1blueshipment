@@ -168,6 +168,12 @@ function Navbar() {
             >
               Resources
             </Link>
+            <Link 
+              to="/contact" 
+              className={`nav-link ${location.pathname === '/contact' ? 'active' : ''}`}
+            >
+              Contact
+            </Link>
           </div>
         </div>
 

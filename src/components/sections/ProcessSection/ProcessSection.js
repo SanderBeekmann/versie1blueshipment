@@ -2,7 +2,6 @@ import React, { useLayoutEffect, useRef } from 'react';
 import './ProcessSection.css';
 import GlassTagline from '../GlassTagline/GlassTagline';
 import { initTimelineAnimations, cleanupTimelineAnimations } from '../../../utils/scrollAnimations';
-import { openWhatsApp } from '../../../utils/whatsapp';
 import stap1Img from '../../../assets/stap1.svg';
 import stap2Img from '../../../assets/stap 2.png';
 import stap3Img from '../../../assets/stap 3.png';
@@ -178,32 +177,6 @@ function ProcessSection() {
             <h3 className="step-final-title">
               Stap 6.<br />Repeat!
             </h3>
-          </div>
-
-          {/* Result */}
-          <div className="process-result">
-            <GlassTagline>
-              <p>Het resultaat?</p>
-            </GlassTagline>
-            <h2 className="result-title" data-animate-title>
-              Blije klanten en meer winst<br />voor jou!
-            </h2>
-            <p className="result-description">
-              Je klant ontvangt het pakket snel en goed verpakt.<br />
-              Dit resulteerd in goede reviews en meer verkoop.
-            </p>
-            <div className="result-actions">
-              <button 
-                className="btn btn-whatsapp"
-                onClick={() => openWhatsApp()}
-              >
-                Contact via Whatsapp
-              </button>
-              <a href="/diensten" className="text-link">
-                Bekijk diensten
-                <ChevronRight />
-              </a>
-            </div>
           </div>
         </div>
       </div>
