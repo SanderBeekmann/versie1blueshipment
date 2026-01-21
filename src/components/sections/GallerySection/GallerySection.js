@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useLayoutEffect } from 'react';
+import React, { useEffect, useRef, useState, useLayoutEffect, useCallback } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import './GallerySection.css';
@@ -81,10 +81,22 @@ function GallerySection() {
     },
   ];
 
+  const goToSlide = (index) => {
+    setCurrentIndex(index);
+  };
+
+  const goToNext = useCallback(() => {
+    setCurrentIndex((prev) => (prev + 1) % slides.length);
+  }, [slides.length]);
+
+  const goToPrevious = useCallback(() => {
+    setCurrentIndex((prev) => (prev - 1 + slides.length) % slides.length);
+  }, [slides.length]);
+
   // Autoplay functionality
   useEffect(() => {
     autoplayIntervalRef.current = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % slides.length);
+      goToNext();
     }, 15000); // 15 seconds
 
     return () => {
@@ -92,7 +104,7 @@ function GallerySection() {
         clearInterval(autoplayIntervalRef.current);
       }
     };
-  }, [slides.length]);
+  }, [goToNext]);
 
   // Handle keyboard navigation
   useEffect(() => {
@@ -109,19 +121,7 @@ function GallerySection() {
       card.addEventListener('keydown', handleKeyDown);
       return () => card.removeEventListener('keydown', handleKeyDown);
     }
-  }, []);
-
-  const goToSlide = (index) => {
-    setCurrentIndex(index);
-  };
-
-  const goToNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % slides.length);
-  };
-
-  const goToPrevious = () => {
-    setCurrentIndex((prev) => (prev - 1 + slides.length) % slides.length);
-  };
+  }, [goToNext, goToPrevious]);
 
   // Animate title wrapper from bottom to top on scroll
   useLayoutEffect(() => {
