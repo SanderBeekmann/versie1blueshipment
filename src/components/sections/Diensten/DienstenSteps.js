@@ -87,229 +87,278 @@ function DienstenSteps() {
 
     const isMobile = window.matchMedia('(max-width: 767px)').matches;
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const lineSegments = lineSegmentsRef.current.filter(Boolean);
-    const dots = dotsRef.current.filter(Boolean);
-    const kicker = kickerRef.current;
-    const title = titleRef.current;
-    const steps = stepsRef.current.filter(Boolean);
-    const cta = ctaRef.current;
-
-    // Mobile: disable all GSAP animations to prevent scroll jank
-    if (isMobile || prefersReducedMotion || steps.length === 0) {
-      // Position line segments immediately (no animation)
-      positionLineSegments();
-      
-      // Show all elements immediately with no transforms
-      if (kicker) {
-        kicker.style.opacity = '1';
-        kicker.style.transform = 'none';
-        kicker.style.willChange = 'auto';
-      }
-      if (title) {
-        title.style.opacity = '1';
-        title.style.transform = 'none';
-        title.style.willChange = 'auto';
-      }
-      lineSegments.forEach(segment => {
-        segment.style.transform = 'scaleX(1)';
-        segment.style.willChange = 'auto';
-      });
-      dots.forEach(dot => {
-        dot.style.opacity = '1';
-        dot.style.transform = 'scale(1)';
-        dot.style.willChange = 'auto';
-      });
-      steps.forEach(step => {
-        step.style.opacity = '1';
-        step.style.transform = 'none';
-        step.style.willChange = 'auto';
-      });
-      if (cta) {
-        cta.style.opacity = '1';
-        cta.style.transform = 'none';
-        cta.style.willChange = 'auto';
-      }
-      return;
-    }
-
-    // Desktop: Position line segments based on dot positions
+    
+    // Wait for next frame to ensure all refs are populated
+    let ctx = null;
+    let resizeTimeout = null;
+    let resizeObserver = null;
+    let handleResize = null;
+    
     const timeoutId = setTimeout(() => {
-      positionLineSegments();
+      const lineSegments = lineSegmentsRef.current.filter(Boolean);
+      const dots = dotsRef.current.filter(Boolean);
+      const kicker = kickerRef.current;
+      const title = titleRef.current;
+      const steps = stepsRef.current.filter(Boolean);
+      const cta = ctaRef.current;
+
+      // Validate all required elements exist
+      if (steps.length === 0 || dots.length < 4 || lineSegments.length < 3) {
+        console.warn('[DienstenSteps] Missing required elements for animation');
+        return;
+      }
+
+      // Mobile: disable all GSAP animations to prevent scroll jank
+      if (isMobile || prefersReducedMotion) {
+        // Position line segments immediately (no animation)
+        positionLineSegments();
+        
+        // Show all elements immediately with no transforms
+        if (kicker) {
+          kicker.style.opacity = '1';
+          kicker.style.transform = 'none';
+          kicker.style.willChange = 'auto';
+        }
+        if (title) {
+          title.style.opacity = '1';
+          title.style.transform = 'none';
+          title.style.willChange = 'auto';
+        }
+        lineSegments.forEach(segment => {
+          segment.style.transform = 'scaleX(1)';
+          segment.style.willChange = 'auto';
+        });
+        dots.forEach(dot => {
+          dot.style.opacity = '1';
+          dot.style.transform = 'scale(1)';
+          dot.style.willChange = 'auto';
+        });
+        steps.forEach(step => {
+          step.style.opacity = '1';
+          step.style.transform = 'none';
+          step.style.willChange = 'auto';
+        });
+        if (cta) {
+          cta.style.opacity = '1';
+          cta.style.transform = 'none';
+          cta.style.willChange = 'auto';
+        }
+        return;
+      }
+
+      // Desktop: Use GSAP context for proper cleanup
+      ctx = gsap.context(() => {
+        // Position line segments first - wait for layout to be complete
+        positionLineSegments();
+        
+        // Double-check positioning after a small delay to ensure layout is stable
+        setTimeout(() => {
+          positionLineSegments();
+        }, 50);
+
+        // Set initial state
+        if (kicker) {
+          gsap.set(kicker, {
+            opacity: 0,
+            y: 20,
+            willChange: 'transform, opacity'
+          });
+        }
+        if (title) {
+          gsap.set(title, {
+            opacity: 0,
+            y: 20,
+            willChange: 'transform, opacity'
+          });
+        }
+        lineSegments.forEach(segment => {
+          gsap.set(segment, {
+            scaleX: 0,
+            transformOrigin: 'left center',
+            willChange: 'transform'
+          });
+        });
+        // Dots are visible from start, just inactive (low opacity)
+        dots.forEach((dot, index) => {
+          gsap.set(dot, {
+            opacity: index === 0 ? 0.3 : 0.2, // First dot slightly visible, others very faint
+            scale: 0.9,
+            willChange: 'transform, opacity'
+          });
+        });
+        steps.forEach(step => {
+          gsap.set(step, {
+            opacity: 0,
+            y: 15,
+            willChange: 'transform, opacity'
+          });
+        });
+        if (cta) {
+          gsap.set(cta, {
+            opacity: 0,
+            y: 20,
+            willChange: 'transform, opacity'
+          });
+        }
+
+        // Create timeline with ScrollTrigger
+        // Trigger when the title of the first step reaches the viewport
+        // Use the first step element as trigger, or fallback to section if step doesn't exist
+        const firstStepElement = steps[0];
+        const triggerElement = firstStepElement || el;
+        
+        // Kill any existing ScrollTriggers on this element to prevent conflicts
+        const existingTriggers = ScrollTrigger.getAll().filter(st => {
+          const vars = st.vars;
+          return vars && (vars.trigger === triggerElement || vars.trigger === el);
+        });
+        existingTriggers.forEach(st => st.kill());
+        
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: triggerElement,
+            start: 'top 80%', // Start when the first step (including its title) reaches 80% from top of viewport
+            once: true,
+            invalidateOnRefresh: true,
+            // Prevent refresh from resetting completed animation
+            onRefresh: function() {
+              // Only refresh if animation hasn't started yet
+              if (this && typeof this.progress === 'number' && this.progress === 0) {
+                positionLineSegments();
+              }
+            }
+          }
+        });
+
+        // Kicker in
+        if (kicker) {
+          tl.to(kicker, {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            ease: 'power2.out'
+          });
+        }
+
+        // Title in
+        if (title) {
+          tl.to(title, {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            ease: 'power2.out'
+          }, '-=0.2');
+        }
+
+        // Animation timeline: reveal step 1, then line grows to dot 2, dot activates, reveal step 2, etc.
+        const segmentDuration = 0.35; // Duration for each line segment (versneld van 0.6)
+        const stepAppearDuration = 0.25; // Versneld van 0.4
+        const dotActivateDuration = 0.12; // Versneld van 0.18
+        
+        // Reveal step 1 first
+        if (steps[0]) {
+          tl.to(steps[0], {
+            opacity: 1,
+            y: 0,
+            duration: stepAppearDuration,
+            ease: 'power2.out'
+          });
+        }
+        
+        // Activate dot 1 (first dot becomes fully visible)
+        if (dots[0]) {
+          tl.to(dots[0], {
+            opacity: 1,
+            scale: 1,
+            duration: dotActivateDuration,
+            ease: 'power2.out'
+          }, '-=0.1');
+        }
+        
+        // For steps 2, 3, 4: line grows to dot, dot activates, step reveals
+        for (let i = 1; i < 4; i++) {
+          // Line segment grows to next dot
+          if (lineSegments[i - 1]) {
+            tl.to(lineSegments[i - 1], {
+              scaleX: 1,
+              duration: segmentDuration,
+              ease: 'none' // Linear/constant speed
+            }, '+=0.1'); // Pause before line grows (versneld van 0.2)
+          }
+          
+          // Dot activates when line reaches it
+          if (dots[i]) {
+            tl.to(dots[i], {
+              opacity: 1,
+              scale: 1,
+              duration: dotActivateDuration,
+              ease: 'power2.out'
+            }, '-=0.05'); // Start slightly before line completes
+          }
+          
+          // Step reveals after dot activates
+          if (steps[i]) {
+            tl.to(steps[i], {
+              opacity: 1,
+              y: 0,
+              duration: stepAppearDuration,
+              ease: 'power2.out'
+            }, '-=0.1'); // Start right after dot activates
+          }
+        }
+
+        // CTA button fade-up
+        if (cta) {
+          tl.to(cta, {
+            opacity: 1,
+            y: 0,
+            duration: 0.5,
+            ease: 'power2.out'
+          }, '+=0.1');
+        }
+
+        // Handle resize to reposition segments with debouncing
+        handleResize = () => {
+          clearTimeout(resizeTimeout);
+          resizeTimeout = setTimeout(() => {
+            positionLineSegments();
+            // Only refresh if animation hasn't started yet
+            const scrollTrigger = tl.scrollTrigger;
+            if (scrollTrigger && typeof scrollTrigger.progress === 'number' && scrollTrigger.progress === 0) {
+              ScrollTrigger.refresh();
+            }
+          }, 150);
+        };
+        
+        resizeObserver = new ResizeObserver(() => {
+          if (handleResize) {
+            handleResize();
+          }
+        });
+        
+        if (timelineRef.current) {
+          resizeObserver.observe(timelineRef.current);
+        }
+        
+        window.addEventListener('resize', handleResize);
+      }, el);
     }, 100);
 
-    // Set initial state
-    if (kicker) {
-      gsap.set(kicker, {
-        opacity: 0,
-        y: 20,
-        willChange: 'transform, opacity'
-      });
-    }
-    if (title) {
-      gsap.set(title, {
-        opacity: 0,
-        y: 20,
-        willChange: 'transform, opacity'
-      });
-    }
-    lineSegments.forEach(segment => {
-      gsap.set(segment, {
-        scaleX: 0,
-        transformOrigin: 'left center',
-        willChange: 'transform'
-      });
-    });
-    // Dots are visible from start, just inactive (low opacity)
-    dots.forEach((dot, index) => {
-      gsap.set(dot, {
-        opacity: index === 0 ? 0.3 : 0.2, // First dot slightly visible, others very faint
-        scale: 0.9,
-        willChange: 'transform, opacity'
-      });
-    });
-    steps.forEach(step => {
-      gsap.set(step, {
-        opacity: 0,
-        y: 15,
-        willChange: 'transform, opacity'
-      });
-    });
-    if (cta) {
-      gsap.set(cta, {
-        opacity: 0,
-        y: 20,
-        willChange: 'transform, opacity'
-      });
-    }
-
-    // Create timeline with ScrollTrigger
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: el,
-        start: 'top 80%',
-        once: true,
-        invalidateOnRefresh: true
-      }
-    });
-
-    // Kicker in
-    if (kicker) {
-      tl.to(kicker, {
-        opacity: 1,
-        y: 0,
-        duration: 0.6,
-        ease: 'power2.out'
-      });
-    }
-
-    // Title in
-    if (title) {
-      tl.to(title, {
-        opacity: 1,
-        y: 0,
-        duration: 0.6,
-        ease: 'power2.out'
-        }, '-=0.2');
-    }
-
-    // Animation timeline: reveal step 1, then line grows to dot 2, dot activates, reveal step 2, etc.
-    const segmentDuration = 0.35; // Duration for each line segment (versneld van 0.6)
-    const stepAppearDuration = 0.25; // Versneld van 0.4
-    const dotActivateDuration = 0.12; // Versneld van 0.18
-    
-    // Reveal step 1 first
-    if (steps[0]) {
-      tl.to(steps[0], {
-        opacity: 1,
-        y: 0,
-        duration: stepAppearDuration,
-        ease: 'power2.out'
-      });
-    }
-    
-    // Activate dot 1 (first dot becomes fully visible)
-    if (dots[0]) {
-      tl.to(dots[0], {
-        opacity: 1,
-        scale: 1,
-        duration: dotActivateDuration,
-        ease: 'power2.out'
-      }, '-=0.1');
-    }
-    
-    // For steps 2, 3, 4: line grows to dot, dot activates, step reveals
-    for (let i = 1; i < 4; i++) {
-      // Line segment grows to next dot
-      if (lineSegments[i - 1]) {
-        tl.to(lineSegments[i - 1], {
-          scaleX: 1,
-          duration: segmentDuration,
-          ease: 'none' // Linear/constant speed
-        }, '+=0.1'); // Pause before line grows (versneld van 0.2)
-      }
-      
-      // Dot activates when line reaches it
-      if (dots[i]) {
-        tl.to(dots[i], {
-          opacity: 1,
-          scale: 1,
-          duration: dotActivateDuration,
-          ease: 'power2.out'
-        }, '-=0.05'); // Start slightly before line completes
-      }
-      
-      // Step reveals after dot activates
-      if (steps[i]) {
-        tl.to(steps[i], {
-          opacity: 1,
-          y: 0,
-          duration: stepAppearDuration,
-          ease: 'power2.out'
-        }, '-=0.1'); // Start right after dot activates
-      }
-    }
-
-    // CTA button fade-up
-    if (cta) {
-      tl.to(cta, {
-        opacity: 1,
-        y: 0,
-        duration: 0.5,
-        ease: 'power2.out'
-      }, '+=0.1');
-    }
-
-    // Handle resize to reposition segments with debouncing
-    let resizeTimeout;
-    const handleResize = () => {
-      clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(() => {
-        // Scroll-to-top bij navigatie wordt afgehandeld door ScrollToTop component
-        positionLineSegments();
-        ScrollTrigger.refresh();
-      }, 150);
-    };
-    
-    const resizeObserver = new ResizeObserver(() => {
-      handleResize();
-    });
-    
-    if (timelineRef.current) {
-      resizeObserver.observe(timelineRef.current);
-    }
-    
-    window.addEventListener('resize', handleResize);
-
+    // Cleanup: clear timeout, disconnect observers, and revert GSAP context
     return () => {
       clearTimeout(timeoutId);
-      clearTimeout(resizeTimeout);
-      resizeObserver.disconnect();
-      window.removeEventListener('resize', handleResize);
-      ScrollTrigger.getAll().forEach(trigger => {
-        if (trigger.vars.trigger === el) {
-          trigger.kill();
-        }
-      });
+      if (resizeTimeout) {
+        clearTimeout(resizeTimeout);
+      }
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
+      if (handleResize) {
+        window.removeEventListener('resize', handleResize);
+      }
+      if (ctx) {
+        ctx.revert(); // This will kill all ScrollTriggers and remove event listeners created within the context
+      }
     };
   }, []);
 

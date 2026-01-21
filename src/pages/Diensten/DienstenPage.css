@@ -377,7 +377,40 @@
 .diensten-card[data-area="c"] { grid-area: c; }
 .diensten-card[data-area="d"] { grid-area: d; }
 .diensten-card[data-area="e"] { grid-area: e; }
-.diensten-card[data-area="f"] { grid-area: f; }
+.diensten-card[data-area="f"] { 
+  grid-area: f; 
+  background-color: var(--color-blue-ribbon);
+  border-color: var(--color-blue-ribbon);
+}
+
+.diensten-card[data-area="f"] .diensten-card__title,
+.diensten-card[data-area="f"] .diensten-card__text,
+.diensten-card[data-area="f"] .diensten-card__link {
+  color: var(--color-white);
+}
+
+/* Remove hover effects for kennismaken card */
+.diensten-card[data-area="f"]:hover {
+  transform: none;
+  box-shadow: var(--shadow-xsmall);
+  background-color: var(--color-blue-ribbon);
+  border-color: var(--color-blue-ribbon);
+}
+
+/* Remove shimmer effect on hover */
+.diensten-card[data-area="f"]:hover::before {
+  display: none;
+}
+
+/* Remove white fade gradient at bottom */
+.diensten-card[data-area="f"] .diensten-card__body::after {
+  display: none;
+}
+
+/* Ensure watermark doesn't interfere with blue card */
+.diensten-card[data-area="f"] .bento-card-watermark {
+  opacity: 0.1; /* Make watermark very subtle on blue background */
+}
 
 /* Card Media */
 .diensten-card__media {
@@ -556,6 +589,7 @@
   overflow: visible;
   display: block;
   -webkit-line-clamp: unset;
+  line-clamp: unset;
 }
 
 .diensten-card--featured .diensten-card__title {
@@ -586,6 +620,7 @@
   overflow: visible;
   display: block;
   -webkit-line-clamp: unset;
+  line-clamp: unset;
 }
 
 .diensten-card__footer {
@@ -933,7 +968,12 @@
 .diensten-details {
   width: 100%;
   padding: var(--section-padding-medium) var(--page-padding);
-  background-color: var(--color-background);
+  background-color: transparent; /* Make transparent so SVG is visible behind */
+  position: relative;
+  z-index: 1;
+  border: none;
+  outline: none;
+  margin: 0;
 }
 
 .diensten-details-container {

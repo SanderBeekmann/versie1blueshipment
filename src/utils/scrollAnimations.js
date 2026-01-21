@@ -56,8 +56,22 @@ export const initScrollAnimations = () => {
     const sections = document.querySelectorAll('[data-animate]');
     sections.forEach((section) => {
       const variantName = section.getAttribute('data-animate') || 'fadeUp';
-      const variant = animationVariants[variantName];
+      let variant = animationVariants[variantName];
       if (!variant) return;
+
+      // Special case: Details section should animate from top to bottom (fadeDown instead of fadeUp)
+      const isDetailsSection = section.querySelector('.diensten-details-container') !== null;
+      if (isDetailsSection && variantName === 'fadeUp') {
+        // Use fadeDown variant for details section (animates from top to bottom)
+        variant = animationVariants.fadeDown;
+      }
+
+      // Special case: FAQ section on DienstenPage should animate from top to bottom (fadeDown instead of fadeUp)
+      const isFAQSection = section.querySelector('.faq-section') !== null || section.querySelector('.faq-container') !== null;
+      if (isFAQSection && variantName === 'fadeUp') {
+        // Use fadeDown variant for FAQ section (animates from top to bottom)
+        variant = animationVariants.fadeDown;
+      }
 
       // Set initial state
       gsap.set(section, { opacity: 0, y: variant.y || 0, x: variant.x || 0, scale: variant.scale || 1 });
@@ -101,9 +115,23 @@ export const initScrollAnimations = () => {
 
   sections.forEach((section, index) => {
     const variantName = section.getAttribute('data-animate') || 'fadeUp';
-    const variant = animationVariants[variantName];
+    let variant = animationVariants[variantName];
 
     if (!variant) return;
+
+    // Special case: Details section should animate from top to bottom (fadeDown instead of fadeUp)
+    const isDetailsSection = section.querySelector('.diensten-details-container') !== null;
+    if (isDetailsSection && variantName === 'fadeUp') {
+      // Use fadeDown variant for details section (animates from top to bottom)
+      variant = animationVariants.fadeDown;
+    }
+
+    // Special case: FAQ section on DienstenPage should animate from top to bottom (fadeDown instead of fadeUp)
+    const isFAQSection = section.querySelector('.faq-section') !== null || section.querySelector('.faq-container') !== null;
+    if (isFAQSection && variantName === 'fadeUp') {
+      // Use fadeDown variant for FAQ section (animates from top to bottom)
+      variant = animationVariants.fadeDown;
+    }
 
     if (prefersReducedMotion) {
       gsap.set(section, { opacity: 0 });

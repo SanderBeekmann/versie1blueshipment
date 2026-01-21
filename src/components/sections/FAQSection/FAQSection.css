@@ -3,17 +3,34 @@
   width: 100%;
   padding: 64px var(--section-padding-medium) var(--section-padding-large);
   background-color: var(--color-background);
+  border: none;
+  outline: none;
+}
+
+/* Remove top padding on DienstenPage */
+.faq-section--no-top-padding {
+  padding-top: 0;
 }
 
 .faq-container {
   max-width: var(--container-large);
   margin: 0 auto;
-  border: 2px solid var(--color-blue-ribbon);
+  background-color: var(--color-blue-ribbon);
   border-radius: var(--radius-large);
   padding: var(--gap-medium);
   display: flex;
   flex-direction: column;
   gap: var(--gap-large);
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+
+/* Blue container for questions only */
+.faq-list-wrapper {
+  background-color: var(--color-blue-ribbon);
+  border-radius: var(--radius-medium);
+  padding: var(--gap-medium);
 }
 
 .faq-content {
@@ -24,12 +41,15 @@
   align-items: start;
 }
 
-.faq-list {
+.faq-list-wrapper {
   grid-column: 2;
   grid-row: 1 / -1;
+}
+
+.faq-list {
   display: flex;
   flex-direction: column;
-  gap: var(--gap-xxsmall);
+  gap: 0; /* No gap between items, using dividers instead */
 }
 
 .faq-cta {
@@ -47,7 +67,7 @@
   font-weight: var(--font-bold);
   line-height: var(--line-tight);
   letter-spacing: var(--tracking-h2);
-  color: var(--color-neutral-darkest);
+  color: var(--color-white);
   margin: 0;
 }
 
@@ -56,7 +76,7 @@
   font-size: var(--text-medium);
   font-weight: var(--font-medium);
   line-height: 1.5;
-  color: var(--color-neutral-darkest);
+  color: var(--color-white);
   margin: 0;
 }
 
@@ -76,18 +96,32 @@
 }
 
 .faq-item {
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: visible;
+  transition: background-color 0.2s ease;
+  position: relative;
+}
+
+/* Divider lines between items (not first, not last) */
+.faq-item:not(:first-child)::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 0.5px;
   background-color: var(--color-white);
-  border-radius: var(--radius-large);
-  box-shadow: var(--shadow-xsmall);
-  overflow: hidden;
-  border-left: 3px solid transparent;
-  transition: box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.faq-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
 .faq-item.open {
-  border-left-color: var(--color-blue-ribbon);
-  background-color: rgba(0, 112, 255, 0.04);
-  box-shadow: var(--shadow-xsmall);
+  background-color: transparent;
 }
 
 .faq-question {
@@ -96,22 +130,23 @@
   justify-content: space-between;
   gap: var(--gap-xsmall);
   width: 100%;
-  padding: 20px 24px;
+  padding: 24px 0;
   background: none;
   border: none;
   cursor: pointer;
   text-align: left;
   transition: color 0.2s ease;
+  color: var(--color-white);
 }
 
 .faq-item.open .faq-question {
-  color: var(--color-blue-ribbon);
+  color: var(--color-white);
 }
 
 .faq-question:focus-visible {
-  outline: 2px solid var(--color-blue-ribbon);
-  outline-offset: -2px;
-  border-radius: var(--radius-large);
+  outline: 2px solid var(--color-white);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 .faq-question span {
@@ -140,13 +175,13 @@
   opacity: 0;
   overflow: hidden;
   transition: max-height 0.3s ease-out, opacity 0.25s ease-out 0.05s, padding 0.3s ease-out;
-  padding: 0 24px;
+  padding: 0;
 }
 
 .faq-item.open .faq-answer {
   max-height: 800px;
   opacity: 1;
-  padding: 0 24px 24px;
+  padding: 0 0 24px 0;
   transition: max-height 0.3s ease-out, opacity 0.25s ease-out, padding 0.3s ease-out;
 }
 
@@ -155,7 +190,7 @@
   font-size: var(--text-regular);
   font-weight: var(--font-regular);
   line-height: 1.65;
-  color: var(--color-neutral-darkest);
+  color: var(--color-white);
   margin: 0;
   max-width: 65ch;
 }
@@ -176,7 +211,7 @@
     gap: var(--gap-medium);
   }
 
-  .faq-list {
+  .faq-list-wrapper {
     grid-column: 1;
     grid-row: 1;
   }
@@ -199,20 +234,16 @@
     padding: 64px var(--gap-xsmall) var(--section-padding-medium);
   }
 
-  .faq-item {
-    border-radius: var(--radius-medium);
+  .faq-section--no-top-padding {
+    padding-top: 0;
   }
 
   .faq-question {
-    padding: 16px 20px;
-  }
-
-  .faq-answer {
-    padding: 0 20px;
+    padding: 20px 0;
   }
 
   .faq-item.open .faq-answer {
-    padding: 0 20px 20px;
+    padding: 0 0 20px 0;
   }
 }
 

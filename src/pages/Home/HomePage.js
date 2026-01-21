@@ -74,13 +74,14 @@ function HomePage() {
       sectionId: 'coaching'
     },
     {
-      kicker: 'Scaling',
-      title: 'Scaling',
-      description: 'Schaal je business naar het volgende niveau.',
+      kicker: 'Kennismaken?',
+      title: 'Kennismaken?',
+      description: 'Laten we kennismaken en kijken wat we voor elkaar kunnen betekenen.',
       cta: 'Meer',
-      href: '/diensten#scaling',
+      href: 'https://calendly.com/mouseclick2017/30min',
       area: 'f',
-      sectionId: 'scaling'
+      sectionId: null,
+      action: 'calendly'
     }
   ];
 
@@ -311,27 +312,50 @@ function HomePage() {
                       className={cardClass}
                       data-area={service.area}
                     >
-                      <Link
-                        to={service.href}
-                        className="diensten-card__button"
-                        aria-label={`Bekijk ${service.title}`}
-                      >
-                        <div className="diensten-card__body">
-                          <WatermarkIcon title={service.title} />
-                          <h3 className="diensten-card__title">{service.title}</h3>
-                          {service.description && (
-                            <p className="diensten-card__text">{service.description}</p>
-                          )}
-                          <div className="diensten-card__footer">
-                            <span className="diensten-card__link">
-                              {service.cta} <span aria-hidden="true">→</span>
-                            </span>
+                      {service.action === 'calendly' ? (
+                        <button
+                          className="diensten-card__button"
+                          onClick={() => {
+                            window.open('https://calendly.com/mouseclick2017/30min', '_blank', 'noopener,noreferrer');
+                          }}
+                          aria-label={service.title}
+                        >
+                          <div className="diensten-card__body">
+                            <WatermarkIcon title={service.title} />
+                            <h3 className="diensten-card__title">{service.title}</h3>
+                            {service.description && (
+                              <p className="diensten-card__text">{service.description}</p>
+                            )}
+                            <div className="diensten-card__footer">
+                              <span className="diensten-card__link">
+                                {service.cta} <span aria-hidden="true">→</span>
+                              </span>
+                            </div>
                           </div>
-                        </div>
-                      </Link>
+                        </button>
+                      ) : (
+                        <Link
+                          to={service.href}
+                          className="diensten-card__button"
+                          aria-label={`Bekijk ${service.title}`}
+                        >
+                          <div className="diensten-card__body">
+                            <WatermarkIcon title={service.title} />
+                            <h3 className="diensten-card__title">{service.title}</h3>
+                            {service.description && (
+                              <p className="diensten-card__text">{service.description}</p>
+                            )}
+                            <div className="diensten-card__footer">
+                              <span className="diensten-card__link">
+                                {service.cta} <span aria-hidden="true">→</span>
+                              </span>
+                            </div>
+                          </div>
+                        </Link>
+                      )}
                     </article>
                   );
-                })}
+                  })}
                 <div className="diensten-services-cta" data-area="cta">
                   <Link to="/diensten" className="btn btn-primary">Bekijk alle diensten</Link>
                 </div>

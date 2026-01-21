@@ -97,7 +97,7 @@ function GallerySection() {
   useEffect(() => {
     autoplayIntervalRef.current = setInterval(() => {
       goToNext();
-    }, 15000); // 15 seconds
+    }, 8000); // 8 seconds
 
     return () => {
       if (autoplayIntervalRef.current) {

@@ -101,43 +101,45 @@ function FAQSection({ faqs: customFaqs }) {
   };
 
   return (
-    <section id="faq" className="faq-section">
+    <section id="faq" className={`faq-section ${customFaqs ? 'faq-section--no-top-padding' : ''}`}>
       <div className="faq-container">
         <h2 className="faq-title" data-animate-title>Vragen</h2>
         <div className="faq-content">
-          <div className="faq-list">
-            {faqs.map((faq, index) => {
-              const isOpen = openIndex === index;
-              const { lead, rest } = formatAnswer(faq.answer);
-              
-              return (
-                <div 
-                  key={index} 
-                  className={`faq-item ${isOpen ? 'open' : ''}`}
-                >
-                  <button 
-                    className="faq-question"
-                    onClick={() => toggleFAQ(index)}
-                    onKeyDown={(e) => handleKeyDown(e, index)}
-                    aria-expanded={isOpen}
-                    aria-controls={`faq-answer-${index}`}
-                  >
-                    <span>{faq.question}</span>
-                    <PlusIcon />
-                  </button>
+          <div className="faq-list-wrapper">
+            <div className="faq-list">
+              {faqs.map((faq, index) => {
+                const isOpen = openIndex === index;
+                const { lead, rest } = formatAnswer(faq.answer);
+                
+                return (
                   <div 
-                    className="faq-answer"
-                    id={`faq-answer-${index}`}
-                    aria-hidden={!isOpen}
+                    key={index} 
+                    className={`faq-item ${isOpen ? 'open' : ''}`}
                   >
-                    <p>
-                      <span className="faq-answer-lead">{lead}</span>
-                      {rest && <span className="faq-answer-rest"> {rest}</span>}
-                    </p>
+                    <button 
+                      className="faq-question"
+                      onClick={() => toggleFAQ(index)}
+                      onKeyDown={(e) => handleKeyDown(e, index)}
+                      aria-expanded={isOpen}
+                      aria-controls={`faq-answer-${index}`}
+                    >
+                      <span>{faq.question}</span>
+                      <PlusIcon />
+                    </button>
+                    <div 
+                      className="faq-answer"
+                      id={`faq-answer-${index}`}
+                      aria-hidden={!isOpen}
+                    >
+                      <p>
+                        <span className="faq-answer-lead">{lead}</span>
+                        {rest && <span className="faq-answer-rest"> {rest}</span>}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
 
           <div className="faq-cta">

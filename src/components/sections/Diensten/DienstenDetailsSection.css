@@ -1,0 +1,45 @@
+/* DienstenDetailsSection - SVG Background Wrapper */
+.diensten-details-wrapper {
+  position: relative;
+  width: 100%;
+  overflow: visible; /* Allow SVG to be visible */
+  min-height: 100px; /* Ensure container has height */
+}
+
+.diensten-details-svg {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 600px;
+  height: 100%;
+  min-height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  filter: drop-shadow(0 0 8px rgba(37, 99, 235, 0.35));
+  opacity: 1;
+  display: block; /* Ensure SVG is displayed */
+}
+
+.diensten-details-path {
+  fill: none;
+  stroke: var(--color-blue-ribbon);
+  stroke-width: 30;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  visibility: visible;
+  opacity: 1;
+}
+
+.diensten-details-content-wrapper {
+  position: relative;
+  z-index: 1;
+}
+
+/* Hide SVG on mobile for better performance */
+@media (max-width: 767px) {
+  .diensten-details-svg {
+    display: none;
+  }
+}

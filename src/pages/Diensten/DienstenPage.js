@@ -5,6 +5,7 @@ import Navbar from '../../components/layout/Navbar/Navbar';
 import GlassTagline from '../../components/sections/GlassTagline/GlassTagline';
 import FAQSection from '../../components/sections/FAQSection/FAQSection';
 import DienstenSteps from '../../components/sections/Diensten/DienstenSteps';
+import DienstenDetailsSection from '../../components/sections/Diensten/DienstenDetailsSection';
 import Footer from '../../components/layout/Footer/Footer';
 import InfiniteGridOverlay from '../../components/ui/the-infinite-grid/InfiniteGridOverlay';
 import { initScrollAnimations, initTitleAnimations, initHeroTitleAnimation, initLogoRevealAnimation, cleanupScrollAnimations } from '../../utils/scrollAnimations';
@@ -376,22 +377,6 @@ function DienstenPage() {
       buttons: [
         { text: 'Boek een gesprek', type: 'primary', action: 'calendly' }
       ]
-    },
-    {
-      id: 'scaling',
-      label: 'Groeien',
-      title: 'Schaal je business naar het volgende niveau',
-      titleHighlight: 'Scaling',
-      intro: 'Klaar om te groeien? Wij helpen je om je business te schalen zonder de controle te verliezen.',
-      description: 'Scaling betekent niet alleen meer verkopen - het betekent ook je processen optimaliseren en je infrastructuur voorbereiden op groei. We helpen je om systematisch te groeien, met behoud van kwaliteit en controle. Van 10 naar 100 naar 1000 orders per dag.',
-      bullets: [
-        'Systematische groei',
-        'Procesoptimalisatie',
-        'Infrastructuur die meeschaalt'
-      ],
-      buttons: [
-        { text: 'Plan een strategiegesprek', type: 'primary', action: 'calendly' }
-      ]
     }
   ];
 
@@ -480,13 +465,14 @@ function DienstenPage() {
       sectionId: 'coaching'
     },
     {
-      kicker: 'Scaling',
-      title: 'Scaling',
-      description: 'Schaal je business naar het volgende niveau.',
+      kicker: 'Kennismaken?',
+      title: 'Kennismaken?',
+      description: 'Laten we kennismaken en kijken wat we voor elkaar kunnen betekenen.',
       cta: 'Meer',
-      href: '/diensten/scaling',
+      href: 'https://calendly.com/mouseclick2017/30min',
       area: 'f',
-      sectionId: 'scaling'
+      sectionId: null,
+      action: 'calendly'
     }
   ];
 
@@ -582,11 +568,13 @@ function DienstenPage() {
                         <button
                           className="diensten-card__button"
                           onClick={() => {
-                            if (service.sectionId) {
+                            if (service.action === 'calendly') {
+                              window.open('https://calendly.com/mouseclick2017/30min', '_blank', 'noopener,noreferrer');
+                            } else if (service.sectionId) {
                               scrollToSection(service.sectionId);
                             }
                           }}
-                          aria-label={`Scroll naar ${service.title}`}
+                          aria-label={service.sectionId ? `Scroll naar ${service.title}` : service.title}
                         >
                           <div className="diensten-card__body">
                             <WatermarkIcon title={service.title} />
@@ -604,9 +592,6 @@ function DienstenPage() {
                       </article>
                     );
                   })}
-                  <div className="diensten-services-cta" data-area="cta">
-            <button className="btn btn-primary">Starten</button>
-          </div>
                 </div>
             </div>
           </div>
@@ -620,93 +605,95 @@ function DienstenPage() {
 
       {/* Section A.5: Service Details - Alternating layout blocks */}
       <div data-animate="fadeUp">
-        <section className="diensten-details">
-          <div className="diensten-details-container">
-            {serviceDetails.map((detail, index) => {
-              const isReverse = index % 2 === 1;
-              const blockClass = isReverse 
-                ? 'diensten-detail-block diensten-detail-block--reverse' 
-                : 'diensten-detail-block';
-              
-              return (
-                <div key={index} id={detail.id} className={blockClass} tabIndex="-1">
-                  <div className="diensten-detail-media"></div>
-                  <div className="diensten-detail-content">
-                    <p className="diensten-detail-label">{detail.label}</p>
-                    <h2 className="diensten-detail-title" data-animate-title>
-                      {detail.titleHighlight ? (
-                        <>
-                          {detail.title.split(detail.titleHighlight).map((part, index, parts) => (
-                            <React.Fragment key={index}>
-                              {part}
-                              {index < parts.length - 1 && (
-                                <span className="text-blue">{detail.titleHighlight}</span>
-                              )}
-                            </React.Fragment>
-                          ))}
-                        </>
-                      ) : (
-                        detail.title
+        <DienstenDetailsSection>
+          <section className="diensten-details">
+            <div className="diensten-details-container">
+              {serviceDetails.map((detail, index) => {
+                const isReverse = index % 2 === 1;
+                const blockClass = isReverse 
+                  ? 'diensten-detail-block diensten-detail-block--reverse' 
+                  : 'diensten-detail-block';
+                
+                return (
+                  <div key={index} id={detail.id} className={blockClass} tabIndex="-1">
+                    <div className="diensten-detail-media"></div>
+                    <div className="diensten-detail-content">
+                      <p className="diensten-detail-label">{detail.label}</p>
+                      <h2 className="diensten-detail-title" data-animate-title>
+                        {detail.titleHighlight ? (
+                          <>
+                            {detail.title.split(detail.titleHighlight).map((part, index, parts) => (
+                              <React.Fragment key={index}>
+                                {part}
+                                {index < parts.length - 1 && (
+                                  <span className="text-blue">{detail.titleHighlight}</span>
+                                )}
+                              </React.Fragment>
+                            ))}
+                          </>
+                        ) : (
+                          detail.title
+                        )}
+                      </h2>
+                      {detail.description && (
+                        <p className="diensten-detail-description">{detail.description}</p>
                       )}
-                    </h2>
-                    {detail.description && (
-                      <p className="diensten-detail-description">{detail.description}</p>
-                    )}
-                    {detail.bullets && detail.bullets.length > 0 && (
-                      <ul className="diensten-detail-bullets">
-                        {detail.bullets.map((bullet, bulletIndex) => (
-                          <li key={bulletIndex} className="diensten-detail-bullet">
-                            <CheckIcon />
-                            <span>{bullet}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                    <div className="diensten-detail-media-mobile"></div>
-                    <div className="diensten-detail-ctas">
-                      {detail.buttons.map((button, buttonIndex) => {
-                        const handleClick = (e) => {
-                          e.preventDefault();
-                          
-                          if (button.action === 'whatsapp') {
-                            openWhatsApp(button.message || 'Hallo! Ik heb een vraag over deze dienst.');
-                          } else if (button.action === 'calendly') {
-                            window.open('https://calendly.com/mouseclick2017/30min', '_blank', 'noopener,noreferrer');
-                          } else if (button.action === 'scroll' && button.target) {
-                            scrollToSection(button.target);
-                          }
-                        };
+                      {detail.bullets && detail.bullets.length > 0 && (
+                        <ul className="diensten-detail-bullets">
+                          {detail.bullets.map((bullet, bulletIndex) => (
+                            <li key={bulletIndex} className="diensten-detail-bullet">
+                              <CheckIcon />
+                              <span>{bullet}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                      <div className="diensten-detail-media-mobile"></div>
+                      <div className="diensten-detail-ctas">
+                        {detail.buttons.map((button, buttonIndex) => {
+                          const handleClick = (e) => {
+                            e.preventDefault();
+                            
+                            if (button.action === 'whatsapp') {
+                              openWhatsApp(button.message || 'Hallo! Ik heb een vraag over deze dienst.');
+                            } else if (button.action === 'calendly') {
+                              window.open('https://calendly.com/mouseclick2017/30min', '_blank', 'noopener,noreferrer');
+                            } else if (button.action === 'scroll' && button.target) {
+                              scrollToSection(button.target);
+                            }
+                          };
 
-                        if (button.type === 'link') {
+                          if (button.type === 'link') {
+                            return (
+                              <button
+                                key={buttonIndex}
+                                type="button"
+                                className="diensten-detail-link"
+                                onClick={handleClick}
+                              >
+                                {button.text}
+                              </button>
+                            );
+                          }
+                          const buttonClass = `btn btn-${button.type}`;
                           return (
-                            <button
-                              key={buttonIndex}
-                              type="button"
-                              className="diensten-detail-link"
+                            <button 
+                              key={buttonIndex} 
+                              className={buttonClass}
                               onClick={handleClick}
                             >
                               {button.text}
                             </button>
                           );
-                        }
-                        const buttonClass = `btn btn-${button.type}`;
-                        return (
-                          <button 
-                            key={buttonIndex} 
-                            className={buttonClass}
-                            onClick={handleClick}
-                          >
-                            {button.text}
-                          </button>
-                        );
-                      })}
+                        })}
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
+                );
+              })}
+            </div>
+          </section>
+        </DienstenDetailsSection>
       </div>
 
       {/* FAQ Section - Reusing existing component */}
