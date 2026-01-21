@@ -16,7 +16,6 @@ export default function DienstenDetailsSection({ children }) {
 
     let ctx = null;
     let timeoutId = null;
-    let scrollTriggerInstance = null;
 
     // Wait for next frame to ensure layout is complete
     timeoutId = setTimeout(() => {
@@ -42,7 +41,7 @@ export default function DienstenDetailsSection({ children }) {
         // Create the SINGLE ScrollTrigger animation for this path
         // Start when container top reaches viewport center, end when container bottom leaves viewport center
         // This ensures the line drawing progress follows the middle of the viewport
-        const animation = gsap.to(path, {
+        gsap.to(path, {
           strokeDashoffset: 0,
           ease: "none", // Linear progression, no easing
           scrollTrigger: {
@@ -76,9 +75,6 @@ export default function DienstenDetailsSection({ children }) {
             }
           }
         });
-
-        // Store the ScrollTrigger instance
-        scrollTriggerInstance = animation.scrollTrigger;
       }, container);
 
       // Refresh ScrollTrigger after setup to ensure correct calculations
