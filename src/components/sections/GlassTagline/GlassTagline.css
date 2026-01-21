@@ -36,7 +36,8 @@
 .hero .glass-tagline,
 .hero-text .glass-tagline,
 .diensten-hero-text .glass-tagline,
-.about-hero-text .glass-tagline {
+.about-hero-text .glass-tagline,
+.contact-hero-text .glass-tagline {
   padding: 8px 16px;
   background: #ffffff;
   backdrop-filter: none;
@@ -55,7 +56,8 @@
 .hero .glass-tagline .glass-shimmer,
 .hero-text .glass-tagline .glass-shimmer,
 .diensten-hero-text .glass-tagline .glass-shimmer,
-.about-hero-text .glass-tagline .glass-shimmer {
+.about-hero-text .glass-tagline .glass-shimmer,
+.contact-hero-text .glass-tagline .glass-shimmer {
   display: block;
 }
 
@@ -98,7 +100,9 @@
 .diensten-hero-text .glass-tagline p,
 .diensten-hero-text .glass-tagline span,
 .about-hero-text .glass-tagline p,
-.about-hero-text .glass-tagline span {
+.about-hero-text .glass-tagline span,
+.contact-hero-text .glass-tagline p,
+.contact-hero-text .glass-tagline span {
   font-size: var(--text-small, 0.875rem);
   color: var(--color-neutral-darkest, #0d0600);
   letter-spacing: 0.5px;
@@ -108,7 +112,8 @@
 .hero .glass-tagline:hover,
 .hero-text .glass-tagline:hover,
 .diensten-hero-text .glass-tagline:hover,
-.about-hero-text .glass-tagline:hover {
+.about-hero-text .glass-tagline:hover,
+.contact-hero-text .glass-tagline:hover {
   transform: translateY(-1px);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12),
               inset 0 1px 0 rgba(255, 255, 255, 0.7);
@@ -145,7 +150,8 @@
   .hero .glass-tagline:hover,
   .hero-text .glass-tagline:hover,
   .diensten-hero-text .glass-tagline:hover,
-  .about-hero-text .glass-tagline:hover {
+  .about-hero-text .glass-tagline:hover,
+  .contact-hero-text .glass-tagline:hover {
     transform: none;
   }
 }

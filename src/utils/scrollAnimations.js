@@ -485,7 +485,10 @@ const splitHeroTitleIntoLetters = (element) => {
       }
       
       // Preserve spans with classes that should not be split (e.g., word wrappers)
-      if (node.tagName === 'SPAN' && node.classList && node.classList.contains('diensten-hero-word-nodig')) {
+      if (node.tagName === 'SPAN' && node.classList && (
+        node.classList.contains('diensten-hero-word-nodig') ||
+        node.classList.contains('contact-hero-word-samen')
+      )) {
         // Don't split this span - preserve it as-is but process its text content
         const text = node.textContent;
         if (text && text.trim()) {
@@ -535,7 +538,8 @@ export const initHeroTitleAnimation = () => {
     // Fallback to other page titles
     if (!heroTitle) {
       heroTitle = document.querySelector('.about-hero-title') || 
-                  document.querySelector('.diensten-hero-title');
+                  document.querySelector('.diensten-hero-title') ||
+                  document.querySelector('.contact-hero-title');
     }
     
     if (!heroTitle) return;
@@ -543,10 +547,12 @@ export const initHeroTitleAnimation = () => {
     // Find subtitle (supports all hero pages)
     const heroSubtitle = document.querySelector('.hero-subtitle') || 
                          document.querySelector('.about-hero-subtitle') || 
-                         document.querySelector('.diensten-hero-subtitle');
+                         document.querySelector('.diensten-hero-subtitle') ||
+                         document.querySelector('.contact-hero-subtitle');
 
-    // Find intro text (diensten page specific)
-    const heroIntro = document.querySelector('.diensten-hero-intro');
+    // Find intro text (diensten and contact page specific)
+    const heroIntro = document.querySelector('.diensten-hero-intro') ||
+                      document.querySelector('.contact-hero-intro');
 
     // Buttons are handled by their respective Hero components (Hero.js, AboutPage, DienstenPage)
     // Do NOT animate buttons here to prevent flash on navigation

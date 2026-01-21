@@ -1,9 +1,13 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useLayoutEffect } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import './GallerySection.css';
 import analytics1 from '../../../assets/analytics/analytics.png';
 import analytics2 from '../../../assets/analytics/analytics2.png';
 import analytics3 from '../../../assets/analytics/analytics3.png';
 import analytics4 from '../../../assets/analytics/analytics4.png';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const ChevronLeft = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -119,6 +123,98 @@ function GallerySection() {
     setCurrentIndex((prev) => (prev - 1 + slides.length) % slides.length);
   };
 
+  // Animate title wrapper from bottom to top on scroll
+  useLayoutEffect(() => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isMobileStatic = typeof window !== 'undefined' && window.innerWidth < 768;
+    
+    // Desktop: animate floating title wrapper
+    const floatingTitle = document.querySelector('.gallery-floating-title');
+    if (floatingTitle && !isMobileStatic) {
+      if (prefersReducedMotion) {
+        gsap.set(floatingTitle, { opacity: 1, y: 0 });
+        return;
+      }
+
+      gsap.set(floatingTitle, {
+        opacity: 1, // Always same opacity
+        y: 40, // Start from below
+        willChange: 'transform'
+      });
+
+      gsap.to(floatingTitle, {
+        y: 0,
+        duration: 0.8,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: floatingTitle.closest('.gallery-section'),
+          start: 'top 85%',
+          toggleActions: 'play none none reverse',
+          once: true,
+        },
+        onComplete: () => {
+          gsap.set(floatingTitle, { willChange: 'auto' });
+        },
+      });
+    }
+
+    // Mobile: animate mobile header wrapper
+    const mobileHeader = document.querySelector('.gallery-header-mobile');
+    if (mobileHeader && isMobileStatic) {
+      if (prefersReducedMotion) {
+        gsap.set(mobileHeader, { opacity: 1, y: 0 });
+        return;
+      }
+
+      gsap.set(mobileHeader, {
+        opacity: 1, // Always same opacity
+        y: 40,
+        willChange: 'transform'
+      });
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              gsap.to(entry.target, {
+                y: 0,
+                duration: 0.6,
+                ease: 'power2.out',
+                onComplete: () => {
+                  gsap.set(entry.target, { willChange: 'auto' });
+                },
+              });
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.1, rootMargin: '0px 0px -10% 0px' }
+      );
+      observer.observe(mobileHeader);
+
+      return () => {
+        observer.disconnect();
+        if (floatingTitle) {
+          ScrollTrigger.getAll().forEach(trigger => {
+            if (trigger.trigger === floatingTitle.closest('.gallery-section')) {
+              trigger.kill();
+            }
+          });
+        }
+      };
+    }
+
+    return () => {
+      if (floatingTitle) {
+        ScrollTrigger.getAll().forEach(trigger => {
+          if (trigger.trigger === floatingTitle.closest('.gallery-section')) {
+            trigger.kill();
+          }
+        });
+      }
+    };
+  }, []);
+
   return (
     <section className="gallery-section">
       <div className="gallery-section-container">
@@ -126,7 +222,7 @@ function GallerySection() {
           {/* Floating title overlay - desktop only */}
           <div className="gallery-floating-title">
             <div className="gallery-title-pill">
-              <h2 className="gallery-title" data-animate-title>
+              <h2 className="gallery-title">
                 Wat we <span className="text-blue">bereikt</span> hebben
               </h2>
             </div>
@@ -134,7 +230,7 @@ function GallerySection() {
 
           {/* Title inside card on mobile */}
           <div className="gallery-header-mobile">
-            <h2 className="gallery-title" data-animate-title>
+            <h2 className="gallery-title">
               Wat we <span className="text-blue">bereikt</span> hebben
             </h2>
           </div>
