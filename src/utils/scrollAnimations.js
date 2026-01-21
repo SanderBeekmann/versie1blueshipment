@@ -62,6 +62,15 @@ export const initScrollAnimations = () => {
       // Set initial state
       gsap.set(section, { opacity: 0, y: variant.y || 0, x: variant.x || 0, scale: variant.scale || 1 });
 
+      // Special handling for ProcessSection: start animation much earlier
+      // Check if this wrapper contains ProcessSection by looking for .process-section class
+      const isProcessSection = section.querySelector('.process-section') !== null;
+      // Positive bottom margin means observer looks further down, triggering earlier
+      // 50% means animation starts when section is 50% below viewport (much earlier)
+      const rootMargin = isProcessSection 
+        ? '0px 0px 50% 0px' // Start much earlier - when section is still 50% below viewport
+        : '0px 0px -10% 0px'; // Default for other sections
+
       // Use IntersectionObserver for smooth, performant animations on mobile
       const observer = new IntersectionObserver(
         (entries) => {
@@ -79,7 +88,7 @@ export const initScrollAnimations = () => {
             }
           });
         },
-        { threshold: 0.1, rootMargin: '0px 0px -10% 0px' }
+        { threshold: 0.1, rootMargin }
       );
 
       observer.observe(section);

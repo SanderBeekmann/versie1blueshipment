@@ -141,6 +141,7 @@
 
   .result-section-grid {
     gap: var(--gap-medium);
+    padding-left: 0; /* Neutralize desktop offset for perfect centering on mobile */
   }
 
   .result-section-subtitle {

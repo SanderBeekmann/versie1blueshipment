@@ -63,11 +63,16 @@ function ResultSection() {
       ease: 'power3.out',
     }, 0.3); // 0.3s delay after title starts
 
+    // Get the title container (parent of title)
+    const titleContainer = title.parentElement;
+    const triggerElement = titleContainer || title;
+
     // Create ScrollTrigger with callbacks for forward/reverse behavior
+    // Start when bottom of title container reaches bottom of viewport
     const scrollTrigger = ScrollTrigger.create({
-      trigger: section,
-      start: 'top 80%',
-      end: 'top 60%',
+      trigger: triggerElement,
+      start: 'bottom bottom',
+      end: 'bottom 60%',
       onEnter: () => {
         // Play forward when entering from bottom
         tl.play();

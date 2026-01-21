@@ -97,10 +97,10 @@ function Hero() {
           
           <div className="hero-title-section">
             <h1 className="hero-title hero-title-desktop" data-animate-title>
-              Jouw <span className="hero-all-in">ALL-IN</span><br />bol.com partner
+              Jouw <span className="hero-all-in">all-in</span><br />bol.com partner
             </h1>
             <h1 className="hero-title hero-title-mobile" data-animate-title>
-              Jouw <span className="hero-all-in">ALL-IN</span><br />bol.com<br />partner
+              Jouw <span className="hero-all-in">all-in</span><br />bol.com<br />partner
             </h1>
             <p className="hero-subtitle">
               Probeer nu: Krijg een totaalpakket t.w.v. 499 euro<br />helemaal gratis!
