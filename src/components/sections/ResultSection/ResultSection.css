@@ -19,8 +19,9 @@
 .result-section-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: clamp(64px, 6vw, 96px);
+  gap: clamp(96px, 6vw, 128px);
   align-items: center;
+  padding-left: 32px;
 }
 
 /* Left: Title */

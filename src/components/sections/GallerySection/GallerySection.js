@@ -293,12 +293,6 @@ function GallerySection() {
                         <p className="gallery-content-description">
                           {slide.description}
                         </p>
-                        <button 
-                          className="gallery-content-cta"
-                          aria-label={`Bekijk volledig verhaal: ${slide.title}`}
-                        >
-                          Bekijk volledig verhaal →
-                        </button>
                       </div>
                     </div>
                   ))}

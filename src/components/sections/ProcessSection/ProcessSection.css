@@ -75,11 +75,6 @@
   min-height: 500px;
 }
 
-.process-step.reverse .step-content-left,
-.process-step.reverse .step-content-right {
-  /* Swap content visually */
-}
-
 .step-content-left,
 .step-content-right {
   display: flex;

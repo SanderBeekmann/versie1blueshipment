@@ -216,6 +216,12 @@
   will-change: transform, opacity;
 }
 
+/* ALL-IN styling: uppercase en italic */
+.hero-all-in {
+  text-transform: uppercase;
+  font-style: italic;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hero-title .hero-letter {
     will-change: auto;

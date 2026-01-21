@@ -44,16 +44,8 @@ function ResultSection() {
       willChange: 'transform, opacity'
     });
 
-    // Create timeline with ScrollTrigger
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: section,
-        start: 'top 50%',
-        end: 'bottom 20%',
-        toggleActions: 'play none none reverse',
-        once: true,
-      }
-    });
+    // Create timeline with paused: true
+    const tl = gsap.timeline({ paused: true });
 
     // Animate title from left (aggressive)
     tl.to(title, {
@@ -71,14 +63,30 @@ function ResultSection() {
       ease: 'power3.out',
     }, 0.3); // 0.3s delay after title starts
 
+    // Create ScrollTrigger with callbacks for forward/reverse behavior
+    const scrollTrigger = ScrollTrigger.create({
+      trigger: section,
+      start: 'top 80%',
+      end: 'top 60%',
+      onEnter: () => {
+        // Play forward when entering from bottom
+        tl.play();
+      },
+      onLeaveBack: () => {
+        // Reverse when scrolling back up - starts earlier so animation is still visible
+        tl.reverse();
+      },
+      onEnterBack: () => {
+        // Play forward again when re-entering from top
+        tl.play();
+      },
+      markers: false, // Set to true temporarily for debugging
+    });
+
     // Cleanup
     return () => {
+      scrollTrigger.kill();
       tl.kill();
-      ScrollTrigger.getAll().forEach(trigger => {
-        if (trigger.trigger === section) {
-          trigger.kill();
-        }
-      });
     };
   }, []);
 
