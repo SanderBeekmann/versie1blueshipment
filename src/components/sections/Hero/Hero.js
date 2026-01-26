@@ -109,9 +109,7 @@ function Hero() {
 
           <a 
             ref={primaryBtnRef}
-            href="https://calendly.com/mouseclick2017/30min" 
-            target="_blank" 
-            rel="noopener noreferrer"
+            href="/intake"
             className="btn btn-primary hero-cta"
           >
             Boek een kennismakingsgesprek

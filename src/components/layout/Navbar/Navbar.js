@@ -301,14 +301,12 @@ function Navbar() {
         </div>
 
         <div className="navbar-actions">
-          <a 
-            href="https://calendly.com/mouseclick2017/30min" 
-            target="_blank" 
-            rel="noopener noreferrer"
+          <Link 
+            to="/intake"
             className="btn btn-primary"
           >
             Boek een kennismakingsgesprek
-          </a>
+          </Link>
         </div>
 
         <button 

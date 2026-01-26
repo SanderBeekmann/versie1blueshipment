@@ -1,4 +1,5 @@
 import React, { useState, useLayoutEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import './TrustSection.css';
@@ -238,14 +239,12 @@ const TrustSection = () => {
 
             {/* Mobile CTA - stays in normal flow */}
             <div className="trust-section__cta lg:hidden">
-              <a 
-                href="https://calendly.com/mouseclick2017/30min" 
-                target="_blank" 
-                rel="noopener noreferrer"
+              <Link 
+                to="/intake"
                 className="btn btn-primary trust-section__cta-button"
               >
                 Start uw aanvraag
-              </a>
+              </Link>
             </div>
           </div>
 
@@ -293,14 +292,12 @@ const TrustSection = () => {
 
             {/* Desktop CTA - absolutely positioned in right column whitespace */}
             <div className="trust-section__cta-desktop-wrapper hidden lg:block lg:absolute lg:left-1/2 lg:top-[calc(650px+min(150px,20%))] lg:-translate-x-1/2 lg:z-[15]">
-              <a 
-                href="https://calendly.com/mouseclick2017/30min" 
-                target="_blank" 
-                rel="noopener noreferrer"
+              <Link 
+                to="/intake"
                 className="btn btn-primary trust-section__cta-button"
               >
                 Start uw aanvraag
-              </a>
+              </Link>
             </div>
           </div>
 

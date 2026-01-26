@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import './CTASection.css';
 
 function CTASection() {
@@ -11,14 +12,12 @@ function CTASection() {
           <p className="cta-description">
             Ga met ons in gesprek en ontdek wat we voor je kunnen betekenen. Geen verplichtingen.
           </p>
-          <a 
-            href="https://calendly.com/mouseclick2017/30min" 
-            target="_blank" 
-            rel="noopener noreferrer"
+          <Link 
+            to="/intake"
             className="btn btn-secondary"
           >
             Boek een kennismakingsgesprek
-          </a>
+          </Link>
         </div>
       </div>
     </section>

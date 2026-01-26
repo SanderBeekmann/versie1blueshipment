@@ -1,4 +1,5 @@
 import React, { useLayoutEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import './ResultSection.css';
@@ -116,11 +117,12 @@ function ResultSection() {
               Dit resulteerd in goede reviews en meer verkoop.
             </p>
             <div className="result-section-actions">
-              <button 
+              <Link 
+                to="/intake"
                 className="btn btn-primary"
               >
                 Ervaar het zelf!
-              </button>
+              </Link>
             </div>
           </div>
         </div>

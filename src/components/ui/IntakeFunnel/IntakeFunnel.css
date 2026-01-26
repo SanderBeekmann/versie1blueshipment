@@ -1,0 +1,561 @@
+/* Intake Funnel Styles */
+.intake-funnel {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--gap-medium) var(--page-padding);
+  background-color: var(--color-white);
+  border-radius: var(--radius-large);
+  box-shadow: var(--shadow-xsmall);
+  position: relative;
+  z-index: 10;
+}
+
+/* Remove shadow and border-radius when used on full page */
+.intake-page .intake-funnel {
+  box-shadow: none;
+  border-radius: 0;
+  background-color: transparent;
+  z-index: 10;
+}
+
+/* Progress Indicator */
+.funnel-progress {
+  position: relative;
+  margin-bottom: calc(var(--gap-small) + 64px);
+  margin-top: -64px;
+  height: 32px; /* Match circle height for proper alignment */
+}
+
+/* Horizontal lines - absolutely positioned and centered vertically */
+.funnel-progress-line {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  height: 4px;
+  transform: translateY(-50%);
+  border-radius: 2px;
+}
+
+.funnel-progress-line--background {
+  width: 100%;
+  background-color: var(--color-blue-ribbon-lightest);
+  z-index: 0;
+}
+
+.funnel-progress-line--fill {
+  background-color: var(--color-blue-ribbon);
+  z-index: 1;
+  transition: width 250ms ease-out;
+}
+
+/* Disable animation if user prefers reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .funnel-progress-line--fill {
+    transition: none;
+  }
+}
+
+/* Step circles - flex row above the lines */
+.funnel-progress-steps {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 2; /* Above the lines */
+}
+
+.funnel-progress-step {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--color-blue-ribbon-lightest);
+  color: var(--color-neutral-darkest);
+  font-family: var(--font-primary);
+  font-size: var(--text-small);
+  font-weight: var(--font-semibold);
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.funnel-progress-step.active {
+  background-color: var(--color-blue-ribbon);
+  color: var(--color-white);
+}
+
+.funnel-progress-step.current {
+  transform: scale(1.1);
+  box-shadow: 0 0 0 4px var(--color-blue-ribbon-lightest);
+}
+
+.funnel-progress-step-number {
+  display: block;
+}
+
+/* Step Content */
+.funnel-content {
+  min-height: 400px;
+  position: relative;
+}
+
+.funnel-step-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.funnel-step {
+  animation: slideIn 0.3s ease-out;
+}
+
+.funnel-step-container {
+  position: relative;
+}
+
+.funnel-step {
+  position: relative;
+}
+
+/* Slide animation for step transitions */
+.funnel-step-enter {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+.funnel-step-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+
+.funnel-step-exit {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.funnel-step-exit-active {
+  opacity: 0;
+  transform: translateX(-30px);
+  transition: opacity 0.2s ease-in, transform 0.2s ease-in;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Subtle selection animation */
+.funnel-option-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.funnel-option-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 100%
+  );
+  transition: left 0.5s ease;
+}
+
+.funnel-option-card.selected::before {
+  left: 100%;
+}
+
+.funnel-question {
+  font-family: var(--font-primary);
+  font-size: var(--heading-3);
+  font-weight: var(--font-bold);
+  line-height: var(--line-tight);
+  color: var(--color-neutral-darkest);
+  margin-bottom: var(--gap-small);
+  text-align: center;
+}
+
+.funnel-subtitle {
+  font-family: var(--font-primary);
+  font-size: var(--text-medium);
+  font-weight: var(--font-regular);
+  color: var(--color-neutral-darkest);
+  opacity: 0.7;
+  text-align: center;
+  margin-bottom: var(--gap-medium);
+}
+
+/* Options Grid */
+.funnel-options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--gap-small);
+  margin-bottom: var(--gap-medium);
+}
+
+.funnel-options-grid--compact {
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+}
+
+/* Option Cards */
+.funnel-option-card {
+  padding: var(--gap-small);
+  background-color: var(--color-card-white);
+  border: 2px solid transparent;
+  border-radius: var(--radius-medium);
+  font-family: var(--font-primary);
+  font-size: var(--text-regular);
+  font-weight: var(--font-medium);
+  color: var(--color-neutral-darkest);
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.funnel-option-card:hover {
+  border-color: var(--color-blue-ribbon);
+  background-color: var(--color-blue-ribbon-lightest);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-xsmall);
+}
+
+.funnel-option-card.selected {
+  background-color: var(--color-blue-ribbon);
+  color: var(--color-white);
+  border-color: var(--color-blue-ribbon);
+  box-shadow: var(--shadow-small);
+}
+
+.funnel-option-card--multi {
+  text-align: left;
+  justify-content: flex-start;
+  padding-left: var(--gap-small);
+  gap: var(--gap-xxsmall);
+}
+
+.funnel-option-card--compact {
+  padding: var(--gap-xxsmall) var(--gap-small);
+  min-height: 48px;
+  font-size: var(--text-small);
+}
+
+.funnel-option-checkbox {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--color-blue-ribbon);
+  border-radius: var(--radius-small);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.funnel-option-card.selected .funnel-option-checkbox {
+  background-color: var(--color-white);
+  color: var(--color-blue-ribbon);
+}
+
+/* Form Inputs */
+.funnel-input-group {
+  margin-bottom: var(--gap-xxsmall);
+}
+
+.funnel-input-group--full {
+  grid-column: 1 / -1;
+}
+
+/* Website URL and Submit button side by side on desktop */
+@media (min-width: 769px) {
+  .funnel-input-group--website {
+    grid-column: 1 / 1.5;
+  }
+
+  .funnel-input-group--submit-desktop {
+    grid-column: 1.5 / 3;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-left: var(--gap-small);
+  }
+
+  .funnel-label--hidden {
+    visibility: hidden;
+    height: 0;
+    margin: 0;
+  }
+
+  .funnel-btn--submit-inline {
+    width: 100%;
+    margin: 0;
+    height: fit-content;
+  }
+
+  .funnel-btn--submit-mobile {
+    display: none;
+  }
+}
+
+/* Mobile: website URL full width, hide desktop submit button */
+@media (max-width: 768px) {
+  .funnel-input-group--website {
+    grid-column: 1 / -1;
+  }
+
+  .funnel-input-group--submit-desktop {
+    display: none;
+  }
+
+  .funnel-btn--submit-mobile {
+    display: block;
+  }
+}
+
+.funnel-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--gap-xxsmall);
+}
+
+.funnel-label {
+  display: block;
+  font-family: var(--font-primary);
+  font-size: var(--text-regular);
+  font-weight: var(--font-semibold);
+  color: var(--color-neutral-darkest);
+  margin-bottom: var(--gap-xxsmall);
+}
+
+.funnel-label-optional {
+  font-weight: var(--font-regular);
+  opacity: 0.6;
+}
+
+.funnel-input,
+.funnel-textarea {
+  width: 100%;
+  padding: 12px 16px;
+  font-family: var(--font-primary);
+  font-size: var(--text-regular);
+  color: var(--color-neutral-darkest);
+  background-color: var(--color-card-white);
+  border: 2px solid transparent;
+  border-radius: var(--radius-medium);
+  transition: all 0.2s ease;
+}
+
+.funnel-input:focus,
+.funnel-textarea:focus {
+  outline: none;
+  border-color: var(--color-blue-ribbon);
+  background-color: var(--color-white);
+  box-shadow: 0 0 0 3px var(--color-blue-ribbon-lightest);
+}
+
+.funnel-input.error,
+.funnel-textarea.error {
+  border-color: var(--color-blaze-orange);
+}
+
+.funnel-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.funnel-error,
+.funnel-error-text {
+  color: var(--color-blaze-orange);
+  font-family: var(--font-primary);
+  font-size: var(--text-small);
+  margin-top: var(--gap-xxsmall);
+}
+
+.funnel-error {
+  text-align: center;
+}
+
+/* Navigation */
+.funnel-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--gap-small);
+  margin-top: var(--gap-large);
+  padding-top: var(--gap-medium);
+  border-top: 1px solid var(--color-border-light);
+}
+
+.funnel-btn {
+  padding: 12px 24px;
+  font-family: var(--font-primary);
+  font-size: var(--text-regular);
+  font-weight: var(--font-medium);
+  border-radius: var(--radius-button);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 1;
+  max-width: 200px;
+}
+
+.funnel-btn--primary {
+  background-color: var(--color-blue-ribbon);
+  color: var(--color-white);
+  margin-left: auto;
+}
+
+.funnel-btn--primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-small);
+}
+
+.funnel-btn--primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.funnel-btn--secondary {
+  background-color: var(--color-card-white);
+  color: var(--color-neutral-darkest);
+  border: 2px solid var(--color-border-light);
+}
+
+.funnel-btn--secondary:hover {
+  background-color: var(--color-white);
+  border-color: var(--color-blue-ribbon);
+}
+
+/* Arrow Navigation */
+.funnel-arrow {
+  position: absolute;
+  top: 200px; /* Fixed position - same height for all slides */
+  transform: translateY(-50%);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: var(--color-white);
+  border: 2px solid var(--color-blue-ribbon);
+  color: var(--color-blue-ribbon);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 5;
+  box-shadow: var(--shadow-small);
+}
+
+.funnel-arrow:hover:not(:disabled) {
+  background-color: var(--color-blue-ribbon);
+  color: var(--color-white);
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: var(--shadow-medium);
+}
+
+.funnel-arrow:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.funnel-arrow--left {
+  left: -128px;
+}
+
+.funnel-arrow--right {
+  right: -128px;
+}
+
+.funnel-arrow svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* Tablet Responsive */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .funnel-arrow--left {
+    left: -80px;
+  }
+
+  .funnel-arrow--right {
+    right: -80px;
+  }
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .intake-funnel {
+    padding: var(--gap-small) var(--gap-small);
+    border-radius: var(--radius-medium);
+  }
+
+  .funnel-arrow {
+    width: 40px;
+    height: 40px;
+    top: 200px; /* Fixed position - same height for all slides */
+  }
+
+  .funnel-arrow--left {
+    left: -50px;
+  }
+
+  .funnel-arrow--right {
+    right: -50px;
+  }
+
+  .funnel-arrow svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .funnel-question {
+    font-size: var(--heading-4);
+    margin-bottom: var(--gap-small);
+  }
+
+  .funnel-options-grid {
+    grid-template-columns: 1fr;
+    gap: var(--gap-xxsmall);
+  }
+
+  .funnel-options-grid--compact {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .funnel-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .funnel-navigation {
+    flex-direction: column-reverse;
+  }
+
+  .funnel-btn {
+    width: 100%;
+    max-width: none;
+  }
+
+  .funnel-btn--primary {
+    margin-left: 0;
+  }
+}

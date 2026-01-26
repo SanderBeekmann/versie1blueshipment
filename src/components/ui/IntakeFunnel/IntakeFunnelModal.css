@@ -1,0 +1,112 @@
+/* Intake Funnel Modal Styles */
+.intake-funnel-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(13, 6, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--gap-small);
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.intake-funnel-modal {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+  background-color: var(--color-white);
+  border-radius: var(--radius-large);
+  box-shadow: var(--shadow-large);
+  overflow-y: auto;
+  animation: slideUp 0.3s ease-out;
+  margin: auto;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.intake-funnel-modal-close {
+  position: absolute;
+  top: var(--gap-small);
+  right: var(--gap-small);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-card-white);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--color-neutral-darkest);
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.intake-funnel-modal-close:hover {
+  background-color: var(--color-blue-ribbon-lightest);
+  color: var(--color-blue-ribbon);
+  transform: rotate(90deg);
+}
+
+.intake-funnel-modal .intake-funnel {
+  box-shadow: none;
+  padding: var(--gap-large) var(--gap-medium);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .intake-funnel-modal-backdrop {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .intake-funnel-modal {
+    max-height: 95vh;
+    border-radius: var(--radius-large) var(--radius-large) 0 0;
+    animation: slideUpMobile 0.3s ease-out;
+  }
+
+  @keyframes slideUpMobile {
+    from {
+      opacity: 0;
+      transform: translateY(100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .intake-funnel-modal-close {
+    top: var(--gap-xxsmall);
+    right: var(--gap-xxsmall);
+  }
+
+  .intake-funnel-modal .intake-funnel {
+    padding: var(--gap-medium) var(--gap-small);
+  }
+}

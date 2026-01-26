@@ -58,6 +58,7 @@ function DienstenPage() {
     };
   }, []);
 
+
   useLayoutEffect(() => {
     // FIX 3: Detect mobile once - disable ScrollTrigger on mobile to prevent scroll conflicts
     // Mobile doesn't need ScrollTrigger - it causes scroll conflicts
@@ -650,7 +651,7 @@ function DienstenPage() {
                           className="diensten-card__button"
                           onClick={() => {
                             if (service.action === 'calendly') {
-                              window.open('https://calendly.com/mouseclick2017/30min', '_blank', 'noopener,noreferrer');
+                              window.location.href = '/intake';
                             } else if (service.sectionId) {
                               scrollToSection(service.sectionId);
                             }
@@ -766,7 +767,7 @@ function DienstenPage() {
                             if (button.action === 'whatsapp') {
                               openWhatsApp(button.message || 'Hallo! Ik heb een vraag over deze dienst.');
                             } else if (button.action === 'calendly') {
-                              window.open('https://calendly.com/mouseclick2017/30min', '_blank', 'noopener,noreferrer');
+                              window.location.href = '/intake';
                             } else if (button.action === 'pricing') {
                               setIsPricingModalOpen(true);
                             } else if (button.action === 'scroll' && button.target) {

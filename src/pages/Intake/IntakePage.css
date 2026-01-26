@@ -1,0 +1,15 @@
+/* Intake Page Styles */
+.intake-page {
+  min-height: calc(100vh - 200px);
+  padding: var(--gap-large) var(--page-padding);
+  background-color: var(--color-background);
+  position: relative;
+  z-index: 10;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .intake-page {
+    padding: var(--gap-medium) var(--gap-small);
+  }
+}
