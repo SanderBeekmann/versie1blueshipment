@@ -57,7 +57,7 @@ const formatAnswer = (text) => {
   return { lead: sentences[0].trim(), rest: sentences.slice(1).join(' ') };
 };
 
-function FAQSection({ faqs: customFaqs }) {
+function FAQSection({ faqs: customFaqs, noTopPadding = false }) {
   const [openIndex, setOpenIndex] = useState(-1);
 
   const defaultFaqs = [
@@ -101,7 +101,7 @@ function FAQSection({ faqs: customFaqs }) {
   };
 
   return (
-    <section id="faq" className={`faq-section ${customFaqs ? 'faq-section--no-top-padding' : ''}`}>
+    <section id="faq" className={`faq-section ${noTopPadding ? 'faq-section--no-top-padding' : ''}`}>
       <div className="faq-container">
         <h2 className="faq-title" data-animate-title>Vragen</h2>
         <div className="faq-content">

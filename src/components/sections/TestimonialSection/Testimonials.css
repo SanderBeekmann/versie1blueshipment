@@ -258,19 +258,14 @@
     min-height: 300px;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
-    overflow: visible;
+    align-items: center;
   }
 
   .testimonial-card {
-    position: absolute;
+    position: relative;
     width: 100%;
     max-width: 100%;
-    left: 50%;
-    top: 0;
-    transform: translate3d(-50%, 0, 0) scale(1);
-    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform;
+    margin: 0 auto;
     opacity: 1;
     padding: 24px;
     /* Ensure consistent card structure */
@@ -279,45 +274,11 @@
     box-sizing: border-box;
   }
 
-  /* Top card (active) - fully visible, on top */
-  .testimonial-card--top {
-    transform: translate3d(-50%, 0, 0) scale(1);
-    z-index: 3;
-    pointer-events: auto;
-  }
-
-  /* Entering animation - card flies in from the side and lands smoothly */
-  .testimonial-card--top.testimonial-card--entering {
-    animation: testimonialCardEnterFromSide 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-    opacity: 1;
-  }
-
-  @keyframes testimonialCardEnterFromSide {
-    0% {
-      transform: translate3d(calc(-50% + 100vw), 8px, 0) scale(0.95);
-      z-index: 4;
-    }
-    60% {
-      transform: translate3d(calc(-50% + 8px), 2px, 0) scale(0.98);
-    }
-    100% {
-      transform: translate3d(-50%, 0, 0) scale(1);
-      z-index: 3;
-    }
-  }
-
-  /* Second card in stack - previous top card, now behind */
-  .testimonial-card--second {
-    transform: translate3d(-50%, 12px, 0) scale(0.98);
-    z-index: 2;
-    pointer-events: none;
-  }
-
-  /* Third card in stack - card before previous, further behind */
-  .testimonial-card--third {
-    transform: translate3d(-50%, 24px, 0) scale(0.96);
+  /* Active card - simple slideshow */
+  .testimonial-card--active {
+    position: relative;
     z-index: 1;
-    pointer-events: none;
+    pointer-events: auto;
   }
 
   .testimonial-rating {

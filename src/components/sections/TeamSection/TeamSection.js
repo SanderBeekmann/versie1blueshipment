@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState, useLayoutEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import MobileCardSlider from '../../ui/MobileCardSlider/MobileCardSlider';
 import './TeamSection.css';
 import timoImg from '../../../assets/timo.jpg';
 import reitzeImg from '../../../assets/reitze.jpg';
@@ -18,11 +19,8 @@ const BlueDot = () => (
 
 function TeamSection() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [cardHeight, setCardHeight] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
   const timoCardRef = useRef(null);
-  const viewportRef = useRef(null);
-  const prevActiveIndexRef = useRef(0);
   const sectionRef = useRef(null);
   const cardRefs = useRef([]);
   const teamMembers = [
@@ -69,107 +67,18 @@ function TeamSection() {
     return () => mediaQuery.removeEventListener('change', checkMobile);
   }, []);
 
-  // Measure Timo's card height on mobile and apply to all cards
-  useEffect(() => {
-    const measureCardHeight = () => {
-      const isMobileCheck = window.matchMedia('(max-width: 768px)').matches;
-      if (!isMobileCheck) {
-        setCardHeight(null);
-        return;
-      }
-
-      if (!timoCardRef.current) return;
-
-      const card = timoCardRef.current;
-      const cardElement = card.querySelector('.team-card');
-      if (!cardElement) return;
-
-      // Temporarily make card measurable
-      const originalStyles = {
-        position: card.style.position,
-        opacity: card.style.opacity,
-        visibility: card.style.visibility,
-        transform: card.style.transform,
-        height: card.style.height
-      };
-
-      // Make card visible and static for measurement
-      card.style.position = 'relative';
-      card.style.opacity = '1';
-      card.style.visibility = 'visible';
-      card.style.transform = 'none';
-      card.style.height = 'auto';
-
-      // Wait for layout to calculate
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          // Measure the actual card element height
-          const height = cardElement.offsetHeight;
-
-          // Restore original styles
-          Object.keys(originalStyles).forEach(key => {
-            card.style[key] = originalStyles[key] || '';
-          });
-
-          if (height > 0) {
-            setCardHeight(height + 24);
-          }
-        });
-      });
-    };
-
-    // Measure after initial render
-    const timeoutId = setTimeout(measureCardHeight, 300);
-
-    // Re-measure on resize
-    let resizeTimeout;
-    const handleResize = () => {
-      clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(measureCardHeight, 200);
-    };
-    
-    const mediaQuery = window.matchMedia('(max-width: 768px)');
-    mediaQuery.addEventListener('change', handleResize);
-    window.addEventListener('resize', handleResize);
-
-    // Measure when images load
-    const images = document.querySelectorAll('.member-photo');
-    const imageLoadPromises = Array.from(images).map(img => {
-      if (img.complete) {
-        return Promise.resolve();
-      }
-      return new Promise(resolve => {
-        img.addEventListener('load', resolve, { once: true });
-        img.addEventListener('error', resolve, { once: true });
-      });
-    });
-
-    Promise.all(imageLoadPromises).then(() => {
-      setTimeout(measureCardHeight, 100);
-    });
-
-    return () => {
-      clearTimeout(timeoutId);
-      clearTimeout(resizeTimeout);
-      mediaQuery.removeEventListener('change', handleResize);
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
-
-  // Autoplay slider on mobile only
-  useEffect(() => {
-    const isMobile = window.matchMedia('(max-width: 768px)').matches;
-    if (!isMobile) return;
-
-    const interval = setInterval(() => {
-      setActiveIndex((prevIndex) => {
-        prevActiveIndexRef.current = prevIndex;
-        return (prevIndex + 1) % teamMembers.length;
-      });
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [teamMembers.length]);
+  // Render function for team card
+  const renderTeamCard = (member, index) => {
+    const isFirstCard = index === 0;
+    return (
+      <div 
+        ref={isFirstCard ? timoCardRef : null}
+        className="card-scale max-w-[352px] w-full"
+      >
+        <TeamCard member={member} />
+      </div>
+    );
+  };
 
   // Staggered entrance animation for team avatars
   useLayoutEffect(() => {
@@ -263,58 +172,6 @@ function TeamSection() {
     };
   }, [teamMembers.length]);
 
-  // MOBILE: Simple from-below animation
-  useLayoutEffect(() => {
-    if (!isMobile) return;
-
-    const section = sectionRef.current;
-    if (!section) return;
-
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReducedMotion) return;
-
-    // On mobile, cards are in a slider, so we animate the viewport container
-    const viewport = viewportRef.current;
-    if (!viewport) return;
-
-    // Get the first visible card (top card in deck)
-    const topCard = viewport.querySelector('.team-slider-card--top');
-    if (!topCard) return;
-
-    // Set initial state
-    gsap.set(topCard, {
-      opacity: 0,
-      y: 12,
-      willChange: 'transform, opacity',
-    });
-
-    // Use IntersectionObserver for mobile
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            gsap.to(entry.target, {
-              opacity: 1,
-              y: 0,
-              duration: 0.5,
-              ease: 'power2.out',
-              onComplete: () => {
-                gsap.set(entry.target, { willChange: 'auto' });
-              },
-            });
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.1, rootMargin: '0px 0px -10% 0px' }
-    );
-
-    observer.observe(topCard);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [isMobile, activeIndex]);
 
   return (
     <section ref={sectionRef} className="team-section">
@@ -334,63 +191,34 @@ function TeamSection() {
 
           <div className="team-grid">
             {/* Progress Indicator - Mobile Only */}
-            <div className="team-deck-indicator" aria-hidden="true">
-              {teamMembers.map((member, index) => (
-                <div
-                  key={`indicator-${member.id}`}
-                  className={`team-indicator-bar ${index === activeIndex ? 'team-indicator-bar--active' : ''}`}
-                  aria-label={`Card ${index + 1} of ${teamMembers.length}`}
-                />
-              ))}
-            </div>
+            {isMobile && (
+              <div className="team-deck-indicator" aria-hidden="true">
+                {teamMembers.map((member, index) => (
+                  <div
+                    key={`indicator-${member.id}`}
+                    className={`team-indicator-bar ${index === activeIndex ? 'team-indicator-bar--active' : ''}`}
+                    aria-label={`Card ${index + 1} of ${teamMembers.length}`}
+                  />
+                ))}
+              </div>
+            )}
 
-            <div 
-              ref={viewportRef}
-              className="team-slider-viewport team-deck"
-              style={isMobile && cardHeight ? { height: `${cardHeight + 40}px` } : {}}
-            >
-              {isMobile ? (() => {
-                // DECK MODEL: Only render 3 cards maximum on mobile
-                // topCard = cards[activeIndex]
-                // secondCard = cards[(activeIndex - 1 + N) % N] (previous card)
-                // thirdCard = cards[(activeIndex - 2 + N) % N] (card before previous)
-                const N = teamMembers.length;
-                const topIndex = activeIndex;
-                const secondIndex = (activeIndex - 1 + N) % N;
-                const thirdIndex = (activeIndex - 2 + N) % N;
-                
-                // Determine if top card is entering (wasn't in previous deck)
-                const prevTopIndex = prevActiveIndexRef.current;
-                const prevSecondIndex = (prevTopIndex - 1 + N) % N;
-                const prevThirdIndex = (prevTopIndex - 2 + N) % N;
-                const isTopEntering = topIndex !== prevTopIndex && 
-                                      topIndex !== prevSecondIndex && 
-                                      topIndex !== prevThirdIndex;
-                
-                const deckCards = [
-                  { index: topIndex, role: 'top', isEntering: isTopEntering },
-                  { index: secondIndex, role: 'second', isEntering: false },
-                  { index: thirdIndex, role: 'third', isEntering: false }
-                ];
-                
-                return deckCards.map(({ index, role, isEntering }) => {
-                  const member = teamMembers[index];
-                  return (
-                    <div 
-                      key={`${member.id}-${role}-${activeIndex}`}
-                      ref={index === 0 && role === 'top' ? timoCardRef : null}
-                      className={`card-scale max-w-[352px] w-full team-slider-card team-slider-card--${role} ${isEntering ? 'team-slider-card--entering' : ''}`}
-                      style={{
-                        ...(cardHeight ? { height: `${cardHeight}px` } : {})
-                      }}
-                    >
-                      <TeamCard member={member} />
-                    </div>
-                  );
-                });
-              })() : (
-                // DESKTOP: Render all cards in grid
-                teamMembers.map((member, index) => (
+            {/* Mobile: Use slider */}
+            {isMobile ? (
+              <div className="team-slider-viewport team-deck">
+                <MobileCardSlider
+                  items={teamMembers}
+                  renderItem={renderTeamCard}
+                  intervalMs={5000}
+                  transitionMs={550}
+                  onIndexChange={setActiveIndex}
+                  getKey={(item, index) => `team-${item.id}-${index}`}
+                />
+              </div>
+            ) : (
+              /* DESKTOP: Render all cards in grid */
+              <div className="team-slider-viewport">
+                {teamMembers.map((member, index) => (
                   <div 
                     key={member.id}
                     ref={(el) => {
@@ -402,9 +230,9 @@ function TeamSection() {
                   >
                     <TeamCard member={member} />
                   </div>
-                ))
-              )}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* CTA Button Container - Outside grid, centered */}

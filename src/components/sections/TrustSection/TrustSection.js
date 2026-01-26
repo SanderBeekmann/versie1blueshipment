@@ -72,44 +72,32 @@ const TrustSection = () => {
 
   // Icon mapping helper
   const iconMap = {
-    'Snel': ZapIcon,
-    'Efficiënt': SettingsIcon,
-    'Volledig': LayersIcon,
-    'Krachtig': CpuIcon,
-    'Persoonlijk': MessageCircleIcon,
-    'Groeigericht': TrendingUpIcon
+    'Win-win samenwerking': TrendingUpIcon,
+    'Bewezen resultaat': CheckCircle2Icon,
+    'Persoonlijke aanpak': MessageCircleIcon,
+    'Gericht op groei': ZapIcon
   };
 
   const features = [
     {
-      title: "Snel",
-      description: "Reactie binnen 30 minuten, orders dezelfde dag verzonden. Geen wachttijden, geen vertragingen.",
-      iconKey: 'Snel'
+      title: "Win-win samenwerking",
+      description: "Doordat wij het volledige proces aanbieden, zijn onze belangen direct gekoppeld aan het succes van jouw winkel. Hoe beter jouw prestaties, hoe sterker de samenwerking. Zo creëren we een duurzaam model waarin beide partijen winnen.",
+      iconKey: 'Win-win samenwerking'
     },
     {
-      title: "Efficiënt",
-      description: "Geautomatiseerde processen die tijd besparen en fouten voorkomen. Focus op wat echt belangrijk is.",
-      iconKey: 'Efficiënt'
+      title: "Bewezen resultaat",
+      description: "Wij hebben tientallen winkels begeleid van de startfase naar omzetten van tienduizenden euro's. Deze ervaring passen wij toe voor iedere ondernemer die serieus wil bouwen aan een succesvolle bol.com-winkel.",
+      iconKey: 'Bewezen resultaat'
     },
     {
-      title: "Volledig",
-      description: "Van productlistings tot fulfilment en van software tot coaching. Alles voor je business op één plek.",
-      iconKey: 'Volledig'
+      title: "Persoonlijke aanpak",
+      description: "Bij ons is alles persoonlijk. Geen standaardoplossingen, maar begeleiding afgestemd op jouw situatie. Of je nu wilt opschalen, optimaliseren of strategische keuzes wilt maken — wij denken actief met je mee en handelen snel.",
+      iconKey: 'Persoonlijke aanpak'
     },
     {
-      title: "Krachtig",
-      description: "Geavanceerde tools en technologie die meeschalen met je groei en altijd up-to-date blijven.",
-      iconKey: 'Krachtig'
-    },
-    {
-      title: "Persoonlijk",
-      description: "Geen chatbots. Je spreekt altijd met een echt persoon die je business kent en met je meedenkt.",
-      iconKey: 'Persoonlijk'
-    },
-    {
-      title: "Groeigericht",
-      description: "Van strategische coaching tot schaalbare oplossingen. We helpen je nu, morgen en overmorgen.",
-      iconKey: 'Groeigericht'
+      title: "Gericht op groei",
+      description: "Wij focussen continu op groei voor de ondernemers die bij ons zijn aangesloten. Met schaalbare oplossingen, data-gedreven beslissingen en langdurige samenwerking bouwen we samen aan structureel succes.",
+      iconKey: 'Gericht op groei'
     }
   ];
 

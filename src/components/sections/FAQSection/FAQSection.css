@@ -1,7 +1,7 @@
 /* FAQ Section */
 .faq-section {
   width: 100%;
-  padding: 64px var(--section-padding-medium) var(--section-padding-large);
+  padding: 128px var(--section-padding-medium) var(--section-padding-large);
   background-color: var(--color-background);
   border: none;
   outline: none;
@@ -20,7 +20,7 @@
   padding: var(--gap-medium);
   display: flex;
   flex-direction: column;
-  gap: var(--gap-large);
+  gap: 0;
   border: none;
   outline: none;
   box-shadow: none;

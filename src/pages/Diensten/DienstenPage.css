@@ -1004,6 +1004,7 @@
   grid-template-columns: 0.9fr 1.1fr;
 }
 
+.diensten-detail-block--reverse .diensten-detail-image-wrapper,
 .diensten-detail-block--reverse .diensten-detail-media {
   order: 2;
 }
@@ -1021,6 +1022,55 @@
   border-radius: var(--radius-large);
   box-shadow: var(--shadow-xsmall);
   border: 1px solid rgba(13, 6, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.diensten-detail-image-wrapper {
+  display: inline-block;
+  line-height: 0;
+  border-radius: var(--radius-large);
+  overflow: hidden;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.diensten-detail-image-wrapper--half-size {
+  width: 50%;
+  max-width: 50%;
+}
+
+.diensten-detail-image-wrapper--half-size .diensten-detail-image {
+  width: 100%;
+  height: auto;
+}
+
+.diensten-detail-image-wrapper--scale-80 {
+  width: 80%;
+  max-width: 80%;
+}
+
+.diensten-detail-image-wrapper--scale-80 .diensten-detail-image {
+  width: 100%;
+  height: auto;
+}
+
+.diensten-detail-image-wrapper--scale-60 {
+  width: 60%;
+  max-width: 60%;
+}
+
+.diensten-detail-image-wrapper--scale-60 .diensten-detail-image {
+  width: 100%;
+  height: auto;
+}
+
+.diensten-detail-image {
+  display: block;
+  max-width: 100%;
+  height: auto;
 }
 
 .diensten-detail-content {
@@ -1092,6 +1142,22 @@
 
 .diensten-detail-media-mobile {
   display: none;
+  width: 100%;
+  margin: var(--gap-small) 0;
+}
+
+.diensten-detail-media-mobile .diensten-detail-image-wrapper {
+  display: inline-block;
+  line-height: 0;
+  border-radius: var(--radius-large);
+  overflow: hidden;
+  max-width: 100%;
+}
+
+.diensten-detail-media-mobile .diensten-detail-image {
+  display: block;
+  max-width: 100%;
+  height: auto;
 }
 
 .diensten-detail-ctas {
@@ -1341,7 +1407,9 @@
   }
 
   .diensten-detail-block .diensten-detail-media,
-  .diensten-detail-block--reverse .diensten-detail-media {
+  .diensten-detail-block--reverse .diensten-detail-media,
+  .diensten-detail-block .diensten-detail-image-wrapper,
+  .diensten-detail-block--reverse .diensten-detail-image-wrapper {
     display: none;
   }
 
@@ -1351,14 +1419,11 @@
   }
 
   .diensten-detail-media-mobile {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
-    aspect-ratio: 1;
     margin: var(--gap-medium) 0;
-    background-color: var(--color-card-white);
-    border-radius: var(--radius-large);
-    box-shadow: var(--shadow-xsmall);
-    border: 1px solid rgba(13, 6, 0, 0.08);
   }
 
   .diensten-detail-ctas {

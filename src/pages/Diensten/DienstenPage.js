@@ -8,11 +8,16 @@ import DienstenSteps from '../../components/sections/Diensten/DienstenSteps';
 import DienstenDetailsSection from '../../components/sections/Diensten/DienstenDetailsSection';
 import Footer from '../../components/layout/Footer/Footer';
 import InfiniteGridOverlay from '../../components/ui/the-infinite-grid/InfiniteGridOverlay';
+import PricingModal from '../../components/ui/PricingModal/PricingModal';
 import { initScrollAnimations, initTitleAnimations, initHeroTitleAnimation, initLogoRevealAnimation, cleanupScrollAnimations } from '../../utils/scrollAnimations';
 import { openWhatsApp } from '../../utils/whatsapp';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { WatermarkIcon } from '../../utils/bentoCardIcons';
+import listingsImage from '../../assets/listings.webp';
+import automatiseringImage from '../../assets/automatisering.webp';
+import fulfilmentImage from '../../assets/fulfilment.webp';
+import softwareImage from '../../assets/software.webp';
 
 // Icon components for visual elements
 const CheckIcon = () => (
@@ -26,6 +31,7 @@ function DienstenPage() {
   const cardRefs = useRef([]);
   const location = useLocation();
   const hasScrolledToHashRef = useRef(false);
+  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
 
   // MOBILE OPTIMIZATION: Don't render InfiniteGridOverlay on mobile
   const [isMobile, setIsMobile] = useState(false);
@@ -120,9 +126,69 @@ function DienstenPage() {
     const refreshTimeout = setTimeout(() => {
       ScrollTrigger.refresh(true);
     }, 150);
+
+    // Animate detail section images
+    const animateDetailImages = () => {
+      const imageWrappers = document.querySelectorAll('[data-animate-image]');
+      if (imageWrappers.length === 0) return;
+
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const isMobileDevice = window.innerWidth < 768;
+
+      imageWrappers.forEach((wrapper, index) => {
+        const animationType = wrapper.getAttribute('data-animate-image');
+        
+        // Set initial state based on animation type (opacity always 1)
+        if (animationType === 'fadeLeft') {
+          gsap.set(wrapper, { opacity: 1, x: -40, scale: 0.95 });
+        } else if (animationType === 'fadeRight') {
+          gsap.set(wrapper, { opacity: 1, x: 40, scale: 0.95 });
+        } else if (animationType === 'fadeUp') {
+          gsap.set(wrapper, { opacity: 1, y: 40, scale: 0.95 });
+        } else {
+          gsap.set(wrapper, { opacity: 1, scale: 0.9 });
+        }
+
+        // Skip animation on mobile or reduced motion
+        if (isMobileDevice || prefersReducedMotion) {
+          gsap.set(wrapper, { opacity: 1, x: 0, y: 0, scale: 1 });
+          return;
+        }
+
+        // Animate with ScrollTrigger (opacity stays at 1)
+        const animationProps = {
+          opacity: 1,
+          scale: 1,
+          duration: 0.8,
+          ease: 'power2.out',
+          delay: index * 0.1,
+          scrollTrigger: {
+            trigger: wrapper,
+            start: 'top 85%',
+            once: true,
+            invalidateOnRefresh: true,
+          },
+        };
+
+        // Add x or y based on animation type
+        if (animationType === 'fadeLeft' || animationType === 'fadeRight') {
+          animationProps.x = 0;
+        } else if (animationType === 'fadeUp') {
+          animationProps.y = 0;
+        }
+
+        gsap.to(wrapper, animationProps);
+      });
+    };
+
+    // Wait for images to load and then animate
+    const imageAnimationTimeout = setTimeout(() => {
+      animateDetailImages();
+    }, 200);
     
     return () => {
       clearTimeout(refreshTimeout);
+      clearTimeout(imageAnimationTimeout);
       cleanupScrollAnimations();
     };
   }, []);
@@ -300,31 +366,35 @@ function DienstenPage() {
   const serviceDetails = [
     {
       id: 'productlistings',
-      label: 'Direct',
-      title: 'Productlistings geautomatiseerd, zonder kosten',
+      label: 'Productlistings',
+      title: 'Productlistings die écht verkopen',
       titleHighlight: 'Productlistings',
-      intro: 'Gebruik onze software om je producten direct op bol te zetten. Geen instellingskosten, geen maandelijkse vergoeding.',
-      description: 'Onze software integreert naadloos met je bestaande systemen en zorgt ervoor dat je producten automatisch worden gesynchroniseerd. Dit betekent dat je geen tijd meer hoeft te besteden aan handmatig invoeren of bijwerken van je listings. Alles gebeurt automatisch, zodat jij je kunt focussen op groei en verkoop.',
+      intro: 'Productlistings zijn de advertenties waarmee jouw producten zichtbaar worden op bol.com. Ze bepalen of bezoekers klikken, vertrouwen krijgen en uiteindelijk kopen.',
+      description: 'Productlistings zijn de advertenties waarmee jouw producten zichtbaar worden op bol.com. Ze bepalen of bezoekers klikken, vertrouwen krijgen en uiteindelijk kopen. Wij maken deze listings volledig voor je: geoptimaliseerd op zoekgedrag, conversie en bol.com-richtlijnen. Zo hoef jij niet handmatig honderden listings aan te maken en kun je direct zorgeloos verkopen. Blueshipment is het all-in platform dat productcreatie, logistiek en verkoop samenbrengt in één schaalbaar businessmodel.',
+      image: listingsImage,
       bullets: [
         'Automatische synchronisatie met je bronnen',
         'Prijzen en voorraad altijd up-to-date',
         'Bulk uploaden in minuten, niet uren'
       ],
       buttons: [
-        { text: 'Contact via WhatsApp', type: 'primary', action: 'whatsapp', message: 'Hallo! Ik wil graag meer weten over productlistings.' }
+        { text: 'Bekijk tarieven', type: 'primary', action: 'pricing' }
       ]
     },
     {
       id: 'automatiseren',
-      label: 'Efficiënt',
-      title: 'Automatiseer je processen en bespaar tijd',
+      label: 'Automatiseren',
+      title: 'Slim automatiseren, meer tijd voor groei',
       titleHighlight: 'Automatiseren',
-      intro: 'Laat technologie het werk voor je doen. Automatiseer repetitieve taken en focus op wat echt belangrijk is.',
-      description: 'Met onze automatiseringstools kun je je dagelijkse processen stroomlijnen. Van orderverwerking tot voorraadbeheer, alles draait automatisch op de achtergrond. Dit geeft je de tijd en ruimte om te groeien en te focussen op strategische beslissingen.',
+      intro: 'Bestellingen, klantvragen, retouren en winstberekeningen worden automatisch verwerkt.',
+      description: 'Bestellingen, klantvragen, retouren en winstberekeningen worden automatisch verwerkt. Dit wordt mogelijk gemaakt door een combinatie van ons ervaren team en slimme A.I.-software, zodat processen sneller, foutloos en schaalbaar verlopen.',
+      image: automatiseringImage,
       bullets: [
-        'Automatische orderverwerking',
-        'Geïntegreerde workflows',
-        'Tijd besparen op repetitieve taken'
+        'Automatiseer jouw',
+        'Bestellingen',
+        'Klantvragen',
+        'Retouren',
+        'Winstberekeningen'
       ],
       buttons: [
         { text: 'Vraag een demo aan', type: 'primary', action: 'whatsapp', message: 'Hallo! Ik wil graag een demo van de automatiseringstools.' }
@@ -332,15 +402,17 @@ function DienstenPage() {
     },
     {
       id: 'fulfilment',
-      label: 'Volledig',
-      title: 'Volledige fulfilment service voor je orders',
-      titleHighlight: 'Fulfilment',
-      intro: 'Van opslag tot verzending, wij regelen alles. Je producten liggen veilig en orders worden snel verwerkt.',
-      description: 'Onze fulfilment service omvat alles wat je nodig hebt: opslag, picking, verpakking en verzending. Je voorraad staat veilig bij ons en we verzenden snel en zorgvuldig. Geen gedoe, geen zorgen - wij zorgen ervoor dat je klanten tevreden zijn.',
+      label: 'Fulfilment',
+      title: 'Stuur je bestellingen naar het BlueShipment Fulfilment Center',
+      titleHighlight: 'Blue',
+      intro: 'Onze fulfillment service omvat alles wat je nodig hebt: opslag, picking, verpakking en verzending. Je voorraad staat veilig bij ons en we verzenden snel en zorgvuldig. Geen gedoe, geen zorgen. Wij zorgen ervoor dat je klanten tevreden zijn.',
+      description: 'Onze fulfillment service omvat alles wat je nodig hebt: opslag, picking, verpakking en verzending. Je voorraad staat veilig bij ons en we verzenden snel en zorgvuldig. Geen gedoe, geen zorgen. Wij zorgen ervoor dat je klanten tevreden zijn.',
+      image: fulfilmentImage,
       bullets: [
-        'Opslag zonder extra kosten',
-        'Snelle orderverwerking',
-        'Zorgvuldige verpakking en verzending'
+        'All-in tarieven, geen onverwachte kosten',
+        'Snelle levering',
+        'Zorgvuldige verpakking en verzending',
+        'We denken met je mee en zijn altijd bereikbaar'
       ],
       buttons: [
         { text: 'Start met fulfilment', type: 'primary', action: 'whatsapp', message: 'Hallo! Ik wil graag starten met fulfilment voor mijn bol.com shop.' }
@@ -348,11 +420,12 @@ function DienstenPage() {
     },
     {
       id: 'software',
-      label: 'Krachtig',
-      title: 'Krachtige software tools voor je bol.com business',
+      label: 'Software',
+      title: 'Alles-in-één software voor groei',
       titleHighlight: 'Software',
-      intro: 'Gebruik onze software om je business te optimaliseren. Alles wat je nodig hebt in één platform.',
-      description: 'Onze software suite biedt alle tools die je nodig hebt om je bol.com business succesvol te runnen. Van voorraadbeheer tot analytics, alles is geïntegreerd en werkt naadloos samen. Geen losse systemen meer, alles op één plek.',
+      intro: 'Beheer je voorraad, optimaliseer je listings, analyseer data en schaal je bol.com-winkel vanuit één omgeving.',
+      description: 'Beheer je voorraad, optimaliseer je listings, analyseer data en schaal je bol.com-winkel vanuit één omgeving. Onze software is gebouwd voor controle, inzicht en groei - zonder losse tools of handmatig werk.',
+      image: softwareImage,
       bullets: [
         'Geïntegreerd platform',
         'Real-time synchronisatie',
@@ -363,12 +436,12 @@ function DienstenPage() {
       ]
     },
     {
-      id: 'coaching',
-      label: 'Persoonlijk',
-      title: 'Persoonlijke begeleiding om je business te laten groeien',
-      titleHighlight: 'Coaching',
-      intro: 'Krijg persoonlijke begeleiding van experts die weten hoe je een succesvolle bol.com business opbouwt.',
-      description: 'Onze coaching service helpt je om je business naar het volgende niveau te tillen. We delen onze kennis en ervaring en begeleiden je stap voor stap. Van strategie tot uitvoering, we staan naast je om je te helpen groeien.',
+      id: 'consulting',
+      label: 'Consulting',
+      title: 'Strategisch advies dat resultaat oplevert',
+      titleHighlight: 'strategisch advies',
+      intro: 'Met onze expertise en praktijkervaring op bol.com helpen wij je onderneming gericht vooruit.',
+      description: 'Met onze expertise en praktijkervaring op bol.com helpen wij je onderneming gericht vooruit. Onze consultants en partners hebben bewezen ervaring in het optimaliseren van winkels voor meer omzet, betere marges en duurzame groei.',
       bullets: [
         'Persoonlijke begeleiding',
         'Strategisch advies',
@@ -456,13 +529,13 @@ function DienstenPage() {
       sectionId: 'software'
     },
     {
-      kicker: 'Coaching',
-      title: 'Coaching',
+      kicker: 'Consulting',
+      title: 'Consulting',
       description: 'Persoonlijke begeleiding om je business te laten groeien.',
       cta: 'Meer',
-      href: '/diensten/coaching',
+      href: '/diensten#consulting',
       area: 'e',
-      sectionId: 'coaching'
+      sectionId: 'consulting'
     },
     {
       kicker: 'Kennismaken?',
@@ -479,6 +552,18 @@ function DienstenPage() {
   // FAQ data for this page
   const faqs = [
     {
+      question: 'Voor wie is Blueshipment geschikt?',
+      answer: 'Blueshipment is geschikt voor zowel startende als groeiende bol.com-verkopers die hun operatie willen uitbesteden en professioneel willen opschalen, zonder afhankelijk te zijn van losse tools of externe partijen.'
+    },
+    {
+      question: 'Hoe kan ik contact opnemen bij vragen of ondersteuning?',
+      answer: 'Je hebt direct contact met ons team via e-mail, WhatsApp of een vast aanspreekpunt. Geen ticketsystemen of lange wachttijden, maar korte lijnen en snelle ondersteuning.'
+    },
+    {
+      question: 'Waarom kiezen klanten voor Blueshipment?',
+      answer: 'Omdat wij listings, software, automatisering en fulfilment combineren onder één dak. Eén partner, één strategie en volledige focus op groei en rendement.'
+    },
+    {
       question: 'Hoe snel verzenden jullie?',
       answer: 'Orders die binnenkomen worden dezelfde dag ingepakt en verzonden. Geen wachten, geen gedoe. Je klanten krijgen hun pakket snel en jij krijgt goede reviews.'
     },
@@ -493,10 +578,6 @@ function DienstenPage() {
     {
       question: 'Hoe werkt de listing-software?',
       answer: 'Je kunt gratis productlijsten bij ons afnemen die klaar zijn voor gebruik. Geen gedoe met handmatig invoeren. Alles is al ingesteld en je kunt direct beginnen met verkopen.'
-    },
-    {
-      question: 'Hoe bereik ik jullie als ik vragen heb?',
-      answer: 'Via WhatsApp. We reageren binnen dertig minuten op je bericht. Geen wachtrijen, geen e-mails die verdwijnen. Je spreekt ons rechtstreeks en krijgt antwoord als je ons nodig hebt.'
     }
   ];
 
@@ -560,7 +641,7 @@ function DienstenPage() {
                     
                     return (
                       <article 
-                        key={index} 
+                        key={service.area || index} 
                         ref={(el) => (cardRefs.current[index] = el)}
                         className={cardClass}
                         data-area={service.area}
@@ -616,7 +697,21 @@ function DienstenPage() {
                 
                 return (
                   <div key={index} id={detail.id} className={blockClass} tabIndex="-1">
-                    <div className="diensten-detail-media"></div>
+                    {detail.image ? (
+                      <div className={`diensten-detail-image-wrapper ${
+                        detail.id === 'productlistings'
+                          ? 'diensten-detail-image-wrapper--half-size' 
+                          : detail.id === 'fulfilment' || detail.id === 'software'
+                          ? 'diensten-detail-image-wrapper--scale-60'
+                          : detail.id === 'automatiseren' 
+                          ? 'diensten-detail-image-wrapper--scale-80' 
+                          : ''
+                      }`} data-animate-image={isReverse ? 'fadeLeft' : 'fadeRight'}>
+                        <img src={detail.image} alt={detail.title} className="diensten-detail-image" />
+                      </div>
+                    ) : (
+                      <div className="diensten-detail-media"></div>
+                    )}
                     <div className="diensten-detail-content">
                       <p className="diensten-detail-label">{detail.label}</p>
                       <h2 className="diensten-detail-title" data-animate-title>
@@ -648,7 +743,21 @@ function DienstenPage() {
                           ))}
                         </ul>
                       )}
-                      <div className="diensten-detail-media-mobile"></div>
+                      <div className="diensten-detail-media-mobile">
+                        {detail.image && (
+                          <div className={`diensten-detail-image-wrapper ${
+                            detail.id === 'productlistings'
+                              ? 'diensten-detail-image-wrapper--half-size' 
+                              : detail.id === 'fulfilment' || detail.id === 'software'
+                              ? 'diensten-detail-image-wrapper--scale-60'
+                              : detail.id === 'automatiseren' 
+                              ? 'diensten-detail-image-wrapper--scale-80' 
+                              : ''
+                          }`} data-animate-image="fadeUp">
+                            <img src={detail.image} alt={detail.title} className="diensten-detail-image" />
+                          </div>
+                        )}
+                      </div>
                       <div className="diensten-detail-ctas">
                         {detail.buttons.map((button, buttonIndex) => {
                           const handleClick = (e) => {
@@ -658,6 +767,8 @@ function DienstenPage() {
                               openWhatsApp(button.message || 'Hallo! Ik heb een vraag over deze dienst.');
                             } else if (button.action === 'calendly') {
                               window.open('https://calendly.com/mouseclick2017/30min', '_blank', 'noopener,noreferrer');
+                            } else if (button.action === 'pricing') {
+                              setIsPricingModalOpen(true);
                             } else if (button.action === 'scroll' && button.target) {
                               scrollToSection(button.target);
                             }
@@ -698,11 +809,17 @@ function DienstenPage() {
 
       {/* FAQ Section - Reusing existing component */}
       <div data-animate="fadeUp">
-        <FAQSection faqs={faqs} />
+        <FAQSection faqs={faqs} noTopPadding={true} />
       </div>
       </div>
       {/* Footer - Outside page-content to ensure correct z-index stacking */}
       <Footer />
+      
+      {/* Pricing Modal */}
+      <PricingModal 
+        isOpen={isPricingModalOpen} 
+        onClose={() => setIsPricingModalOpen(false)} 
+      />
     </div>
   );
 }

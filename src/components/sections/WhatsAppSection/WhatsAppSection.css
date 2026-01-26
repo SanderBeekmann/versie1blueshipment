@@ -235,7 +235,8 @@
 
   .whatsapp-portrait-image {
     transform: rotate(0deg);
-    max-width: 100%;
+    max-width: 50%;
+    width: 50%;
   }
 
   .whatsapp-image-column {

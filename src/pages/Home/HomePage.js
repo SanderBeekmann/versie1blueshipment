@@ -65,13 +65,13 @@ function HomePage() {
       sectionId: 'software'
     },
     {
-      kicker: 'Coaching',
-      title: 'Coaching',
+      kicker: 'Consulting',
+      title: 'Consulting',
       description: 'Persoonlijke begeleiding om je business te laten groeien.',
       cta: 'Meer',
-      href: '/diensten#coaching',
+      href: '/diensten#consulting',
       area: 'e',
-      sectionId: 'coaching'
+      sectionId: 'consulting'
     },
     {
       kicker: 'Kennismaken?',
@@ -82,6 +82,38 @@ function HomePage() {
       area: 'f',
       sectionId: null,
       action: 'calendly'
+    }
+  ];
+
+  // FAQ data - same as DienstenPage
+  const faqs = [
+    {
+      question: 'Voor wie is Blueshipment geschikt?',
+      answer: 'Blueshipment is geschikt voor zowel startende als groeiende bol.com-verkopers die hun operatie willen uitbesteden en professioneel willen opschalen, zonder afhankelijk te zijn van losse tools of externe partijen.'
+    },
+    {
+      question: 'Hoe kan ik contact opnemen bij vragen of ondersteuning?',
+      answer: 'Je hebt direct contact met ons team via e-mail, WhatsApp of een vast aanspreekpunt. Geen ticketsystemen of lange wachttijden, maar korte lijnen en snelle ondersteuning.'
+    },
+    {
+      question: 'Waarom kiezen klanten voor Blueshipment?',
+      answer: 'Omdat wij listings, software, automatisering en fulfilment combineren onder één dak. Eén partner, één strategie en volledige focus op groei en rendement.'
+    },
+    {
+      question: 'Hoe snel verzenden jullie?',
+      answer: 'Orders die binnenkomen worden dezelfde dag ingepakt en verzonden. Geen wachten, geen gedoe. Je klanten krijgen hun pakket snel en jij krijgt goede reviews.'
+    },
+    {
+      question: 'Wat gebeurt er met retouren?',
+      answer: 'Retouren worden door ons verwerkt en je ontvangt een volledige rapportage. We handelen alles af zodat jij je op nieuwe orders kunt concentreren. Dat kost je slechts €1,50 per retour.'
+    },
+    {
+      question: 'Zijn er opslagkosten?',
+      answer: 'Nee. Je voorraad staat veilig bij ons zonder aparte opslagkosten. Je betaalt alleen voor wat je verzend. Dat scheelt je honderden euro\'s per maand vergeleken met andere fulfilmentcentra.'
+    },
+    {
+      question: 'Hoe werkt de listing-software?',
+      answer: 'Je kunt gratis productlijsten bij ons afnemen die klaar zijn voor gebruik. Geen gedoe met handmatig invoeren. Alles is al ingesteld en je kunt direct beginnen met verkopen.'
     }
   ];
 
@@ -307,7 +339,7 @@ function HomePage() {
                   
                   return (
                     <article 
-                      key={index} 
+                      key={service.area || index} 
                       ref={(el) => (cardRefs.current[index] = el)}
                       className={cardClass}
                       data-area={service.area}
@@ -376,7 +408,7 @@ function HomePage() {
       </div>
       <CTASection />
       <div data-animate="fadeUp">
-        <FAQSection />
+        <FAQSection faqs={faqs} />
       </div>
       <div data-animate="fadeLeft">
         <LogoSection />

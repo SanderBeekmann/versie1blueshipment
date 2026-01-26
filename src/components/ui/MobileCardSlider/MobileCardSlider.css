@@ -1,0 +1,51 @@
+/* Mobile Card Slider */
+.mobile-card-slider {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mobile-card-slider__track {
+  position: relative;
+  width: 100%;
+  min-height: inherit;
+  overflow: hidden;
+}
+
+.mobile-card-slider__slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  will-change: transform;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Initial states */
+.mobile-card-slider__slide--current {
+  transform: translate3d(0, 0, 0);
+  z-index: 2;
+}
+
+.mobile-card-slider__slide--next {
+  transform: translate3d(-110%, 0, 0);
+  z-index: 1;
+}
+
+/* Prevent horizontal scroll */
+.mobile-card-slider,
+.mobile-card-slider__track {
+  overflow: hidden;
+}
+
+/* Ensure no layout shift */
+.mobile-card-slider__slide {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-style: preserve-3d;
+}

@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
+import MobileCardSlider from '../../ui/MobileCardSlider/MobileCardSlider';
 import './Testimonials.css';
 
 function Testimonials() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const prevActiveIndexRef = useRef(0);
+  const [isMobile, setIsMobile] = useState(false);
   
   const testimonials = [
     {
@@ -32,20 +33,55 @@ function Testimonials() {
     }
   ];
 
-  // Autoplay slider on mobile only
+  // Check if mobile
   useEffect(() => {
-    const isMobile = window.matchMedia('(max-width: 768px)').matches;
-    if (!isMobile) return;
+    const checkMobile = () => {
+      setIsMobile(window.matchMedia('(max-width: 768px)').matches);
+    };
+    
+    checkMobile();
+    const mediaQuery = window.matchMedia('(max-width: 768px)');
+    mediaQuery.addEventListener('change', checkMobile);
+    
+    return () => mediaQuery.removeEventListener('change', checkMobile);
+  }, []);
 
-    const interval = setInterval(() => {
-      setActiveIndex((prevIndex) => {
-        prevActiveIndexRef.current = prevIndex;
-        return (prevIndex + 1) % testimonials.length;
-      });
-    }, 5000);
+  // Render function for testimonial card
+  const renderTestimonialCard = (testimonial, index) => (
+    <article className="testimonial-card">
+      <div className="testimonial-rating">
+        {[...Array(5)].map((_, i) => (
+          <svg
+            key={i}
+            className="testimonial-star"
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M8 0L10.163 5.528L16 6.112L11.82 9.944L12.944 16L8 12.944L3.056 16L4.18 9.944L0 6.112L5.837 5.528L8 0Z"
+              fill="currentColor"
+            />
+          </svg>
+        ))}
+      </div>
+      <p className="testimonial-quote">
+        "{testimonial.quote}"
+      </p>
 
-    return () => clearInterval(interval);
-  }, [testimonials.length]);
+      <div className="testimonial-author">
+        <div className="testimonial-avatar">
+          {testimonial.initials}
+        </div>
+        <div>
+          <p className="testimonial-name">{testimonial.name}</p>
+          <p className="testimonial-role">{testimonial.role}</p>
+        </div>
+      </div>
+    </article>
+  );
 
   return (
     <section className="testimonials-section">
@@ -62,6 +98,7 @@ function Testimonials() {
 
         <div className="testimonials-grid">
           {/* Progress Indicator - Mobile Only */}
+          {isMobile && (
           <div className="testimonials-deck-indicator" aria-hidden="true">
             {testimonials.map((testimonial, index) => (
               <div
@@ -71,35 +108,27 @@ function Testimonials() {
               />
             ))}
           </div>
+          )}
 
+          {/* Mobile: Use slider */}
+          {isMobile ? (
+            <div className="testimonials-deck-viewport">
+              <MobileCardSlider
+                items={testimonials}
+                renderItem={renderTestimonialCard}
+                intervalMs={5000}
+                transitionMs={550}
+                onIndexChange={setActiveIndex}
+                getKey={(item, index) => `testimonial-${index}`}
+              />
+            </div>
+          ) : (
+            /* Desktop: show all cards in grid */
           <div className="testimonials-deck-viewport">
-            {(() => {
-              // DECK MODEL: Only render 3 cards maximum
-              const N = testimonials.length;
-              const topIndex = activeIndex;
-              const secondIndex = (activeIndex - 1 + N) % N;
-              const thirdIndex = (activeIndex - 2 + N) % N;
-              
-              // Determine if top card is entering
-              const prevTopIndex = prevActiveIndexRef.current;
-              const prevSecondIndex = (prevTopIndex - 1 + N) % N;
-              const prevThirdIndex = (prevTopIndex - 2 + N) % N;
-              const isTopEntering = topIndex !== prevTopIndex && 
-                                    topIndex !== prevSecondIndex && 
-                                    topIndex !== prevThirdIndex;
-              
-              const deckCards = [
-                { index: topIndex, role: 'top', isEntering: isTopEntering },
-                { index: secondIndex, role: 'second', isEntering: false },
-                { index: thirdIndex, role: 'third', isEntering: false }
-              ];
-              
-              return deckCards.map(({ index, role, isEntering }) => {
-                const testimonial = testimonials[index];
-                return (
+              {testimonials.map((testimonial, index) => (
                   <article 
-                    key={`${index}-${role}-${activeIndex}`}
-                    className={`testimonial-card testimonial-card--${role} ${isEntering ? 'testimonial-card--entering' : ''}`}
+                  key={index}
+                  className="testimonial-card"
                   >
                     <div className="testimonial-rating">
                       {[...Array(5)].map((_, i) => (
@@ -133,10 +162,9 @@ function Testimonials() {
                       </div>
                     </div>
                   </article>
-                );
-              });
-            })()}
+              ))}
           </div>
+          )}
         </div>
       </div>
 

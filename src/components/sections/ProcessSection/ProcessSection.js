@@ -1,4 +1,5 @@
 import React, { useLayoutEffect, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './ProcessSection.css';
 import GlassTagline from '../GlassTagline/GlassTagline';
 import { initTimelineAnimations, cleanupTimelineAnimations } from '../../../utils/scrollAnimations';
@@ -15,9 +16,82 @@ const ChevronRight = () => (
 );
 
 function ProcessSection() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const processStepsRef = useRef(null);
   const processContainerRef = useRef(null);
   const step6Ref = useRef(null);
+
+  // Helper function to scroll to section with navbar offset
+  const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (!element) return;
+
+    // Get navbar height or use fallback
+    const navbar = document.querySelector('.navbar');
+    const navbarHeight = navbar?.offsetHeight || 110;
+    const offset = navbarHeight + 20; // Extra 20px spacing
+
+    const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+    const offsetPosition = elementPosition - offset;
+
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: 'smooth'
+    });
+  };
+
+  // Handle button click for step 1 (Ontdek listings)
+  const handleListingsClick = () => {
+    if (location.pathname === '/diensten') {
+      // Already on diensten page, scroll to section
+      setTimeout(() => {
+        scrollToSection('productlistings');
+      }, 100);
+    } else {
+      // Navigate to diensten page with hash
+      navigate('/diensten#productlistings');
+    }
+  };
+
+  // Handle button click for step 2 (Voorraadcheck uitleg)
+  const handleSoftwareClick = () => {
+    if (location.pathname === '/diensten') {
+      // Already on diensten page, scroll to section
+      setTimeout(() => {
+        scrollToSection('software');
+      }, 100);
+    } else {
+      // Navigate to diensten page with hash
+      navigate('/diensten#software');
+    }
+  };
+
+  // Handle button click for step 4 (Fulfilment)
+  const handleFulfilmentClick = () => {
+    if (location.pathname === '/diensten') {
+      // Already on diensten page, scroll to section
+      setTimeout(() => {
+        scrollToSection('fulfilment');
+      }, 100);
+    } else {
+      // Navigate to diensten page with hash
+      navigate('/diensten#fulfilment');
+    }
+  };
+
+  // Handle button click for step 5 (Bekijk resultaten - Gallery)
+  const handleGalleryClick = () => {
+    if (location.pathname === '/') {
+      // Already on home page, scroll to section
+      setTimeout(() => {
+        scrollToSection('gallery');
+      }, 100);
+    } else {
+      // Navigate to home page with hash
+      navigate('/#gallery');
+    }
+  };
 
   useLayoutEffect(() => {
     if (processStepsRef.current && processContainerRef.current) {
@@ -44,14 +118,14 @@ function ProcessSection() {
     {
       number: 2,
       title: 'Houd je voorraad up-to-date door middel van onze Stock Controle Software',
-      description: 'Ons team voert een grondige kwaliteitscheck uit. Alles klopt voordat het de verzending in gaat.',
-      buttonText: 'Lees meer',
+      description: 'Zorg ervoor dat de voorraad van jouw aanbod altijd up-to-date is met onze voorraadcheck software',
+      buttonText: 'Voorraadcheck uitleg',
       align: 'right',
       image: stap2Img
     },
     {
       number: 3,
-      title: 'Binnen 1 week je eerste bestelling binnen',
+      title: 'Krijg gegarandeerd binnen 7 dagen je eerste bestelling',
       description: 'We zetten je account in en automatiseren alles. Jij zit achterover en wij doen het werk.',
       buttonText: 'Lees meer',
       align: 'left',
@@ -60,7 +134,7 @@ function ProcessSection() {
     {
       number: 4,
       title: 'Verstuur je bestelling naar het BlueShipment Fulfilment Center',
-      description: 'Wanneer de kwaliteit in orde is en mogelijke automatiseringen zijn doorgevoerd, ontvangen we je artikelen.',
+      description: 'Wij ontvangen jouw bestelling, controleren deze op kwaliteit & herpakken het indien nodig',
       buttonText: 'Lees meer',
       align: 'right',
       image: stap4Img
@@ -114,7 +188,16 @@ function ProcessSection() {
                           <img src={step.image} alt={`Stap ${step.number}`} className="step-image" />
                         </div>
                       </div>
-                      <button className="btn btn-secondary btn-icon">
+                      <button 
+                        className="btn btn-secondary btn-icon"
+                        onClick={
+                          step.number === 1 ? handleListingsClick : 
+                          step.number === 2 ? handleSoftwareClick : 
+                          step.number === 4 ? handleFulfilmentClick :
+                          step.number === 5 ? handleGalleryClick :
+                          undefined
+                        }
+                      >
                         {step.buttonText}
                         <ChevronRight />
                       </button>
@@ -143,7 +226,16 @@ function ProcessSection() {
                           <img src={step.image} alt={`Stap ${step.number}`} className="step-image" />
                         </div>
                       </div>
-                      <button className="btn btn-secondary btn-icon">
+                      <button 
+                        className="btn btn-secondary btn-icon"
+                        onClick={
+                          step.number === 1 ? handleListingsClick : 
+                          step.number === 2 ? handleSoftwareClick : 
+                          step.number === 4 ? handleFulfilmentClick :
+                          step.number === 5 ? handleGalleryClick :
+                          undefined
+                        }
+                      >
                         {step.buttonText}
                         <ChevronRight />
                       </button>
@@ -163,7 +255,10 @@ function ProcessSection() {
                       <img src={step.image} alt={`Stap ${step.number}`} className="step-image" />
                     </div>
                   </div>
-                  <button className="btn btn-secondary btn-icon">
+                  <button 
+                    className="btn btn-secondary btn-icon"
+                    onClick={step.number === 1 ? handleListingsClick : undefined}
+                  >
                     {step.buttonText}
                     <ChevronRight />
                   </button>

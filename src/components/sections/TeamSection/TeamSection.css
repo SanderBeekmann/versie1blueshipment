@@ -247,63 +247,23 @@
     min-height: 400px;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
-    overflow: visible;
+    align-items: center;
     z-index: 10;
   }
 
   .team-slider-card {
-    position: absolute;
+    position: relative;
     width: 100%;
     max-width: 352px;
-    left: 50%;
-    top: 0;
-    /* All cards must use translateX(-50%) for consistent centering */
-    transform: translate3d(-50%, 0, 0) scale(1);
-    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform;
+    margin: 0 auto;
     opacity: 1;
   }
 
-  /* Top card (active) - fully visible, on top */
-  .team-slider-card--top {
-    transform: translate3d(-50%, 0, 0) scale(1);
-    z-index: 13;
+  /* Active card - simple slideshow */
+  .team-slider-card--active {
+    position: relative;
+    z-index: 1;
     pointer-events: auto;
-  }
-
-  /* Entering animation - card flies in from the side and lands smoothly */
-  .team-slider-card--top.team-slider-card--entering {
-    animation: cardEnterFromSide 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-    opacity: 1;
-  }
-
-  @keyframes cardEnterFromSide {
-    0% {
-      transform: translate3d(calc(-50% + 100vw), 8px, 0) scale(0.95);
-      z-index: 14;
-    }
-    60% {
-      transform: translate3d(calc(-50% + 8px), 2px, 0) scale(0.98);
-    }
-    100% {
-      transform: translate3d(-50%, 0, 0) scale(1);
-      z-index: 13;
-    }
-  }
-
-  /* Second card in stack - previous top card, now behind */
-  .team-slider-card--second {
-    transform: translate3d(-50%, 14px, 0) scale(0.98);
-    z-index: 12;
-    pointer-events: none;
-  }
-
-  /* Third card in stack - card before previous, further behind */
-  .team-slider-card--third {
-    transform: translate3d(-50%, 28px, 0) scale(0.96);
-    z-index: 11;
-    pointer-events: none;
   }
 
   .team-slider-card .card-scale {

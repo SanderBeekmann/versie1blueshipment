@@ -141,11 +141,11 @@ function Navbar() {
                   Fulfilment
                 </Link>
                 <Link 
-                  to="/diensten#coaching" 
+                  to="/diensten#consulting" 
                   className="nav-dropdown-link"
                   onClick={() => setIsDienstenDropdownOpen(false)}
                 >
-                  Coaching
+                  Consulting
                 </Link>
                 <Link 
                   to="/diensten#software" 
@@ -153,13 +153,6 @@ function Navbar() {
                   onClick={() => setIsDienstenDropdownOpen(false)}
                 >
                   Software
-                </Link>
-                <Link 
-                  to="/diensten#scaling" 
-                  className="nav-dropdown-link"
-                  onClick={() => setIsDienstenDropdownOpen(false)}
-                >
-                  Scaling
                 </Link>
               </div>
             </div>
@@ -267,14 +260,14 @@ function Navbar() {
                       Fulfilment
                     </Link>
                     <Link 
-                      to="/diensten#coaching" 
+                      to="/diensten#consulting" 
                       className="nav-dropdown-link"
                       onClick={() => {
                         setIsDienstenDropdownOpen(false);
                         setIsMenuOpen(false);
                       }}
                     >
-                      Coaching
+                      Consulting
                     </Link>
                     <Link 
                       to="/diensten#software" 
@@ -285,16 +278,6 @@ function Navbar() {
                       }}
                     >
                       Software
-                    </Link>
-                    <Link 
-                      to="/diensten#scaling" 
-                      className="nav-dropdown-link"
-                      onClick={() => {
-                        setIsDienstenDropdownOpen(false);
-                        setIsMenuOpen(false);
-                      }}
-                    >
-                      Scaling
                     </Link>
                   </div>
                 )}

@@ -10,10 +10,17 @@ ScrollTrigger.config({
   ignoreMobileResize: true, // Prevent refresh on mobile resize events
 });
 
-const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+// Helper function to check prefers-reduced-motion with SSR guard
+const getPrefersReducedMotion = () => {
+  if (typeof window === 'undefined') return false;
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+};
 
 // Mobile detection helper - consistent across codebase
 const isMobile = () => typeof window !== 'undefined' && window.innerWidth < 768;
+
+// Track all IntersectionObservers for cleanup
+const activeObservers = new Set();
 
 const animationVariants = {
   fadeUp: {
@@ -66,11 +73,12 @@ export const initScrollAnimations = () => {
         variant = animationVariants.fadeDown;
       }
 
-      // Special case: FAQ section on DienstenPage should animate from top to bottom (fadeDown instead of fadeUp)
+      // Special case: FAQ section - skip animation, show immediately
       const isFAQSection = section.querySelector('.faq-section') !== null || section.querySelector('.faq-container') !== null;
-      if (isFAQSection && variantName === 'fadeUp') {
-        // Use fadeDown variant for FAQ section (animates from top to bottom)
-        variant = animationVariants.fadeDown;
+      if (isFAQSection) {
+        // FAQ section should be visible immediately without animation
+        gsap.set(section, { opacity: 1, y: 0, x: 0, scale: 1 });
+        return; // Skip animation for FAQ section
       }
 
       // Set initial state
@@ -99,12 +107,14 @@ export const initScrollAnimations = () => {
                 ease: 'power2.out',
               });
               observer.unobserve(entry.target);
+              activeObservers.delete(observer);
             }
           });
         },
         { threshold: 0.1, rootMargin }
       );
 
+      activeObservers.add(observer);
       observer.observe(section);
     });
     return; // Early return - no ScrollTrigger on mobile
@@ -126,14 +136,15 @@ export const initScrollAnimations = () => {
       variant = animationVariants.fadeDown;
     }
 
-    // Special case: FAQ section on DienstenPage should animate from top to bottom (fadeDown instead of fadeUp)
+    // Special case: FAQ section - skip animation, show immediately
     const isFAQSection = section.querySelector('.faq-section') !== null || section.querySelector('.faq-container') !== null;
-    if (isFAQSection && variantName === 'fadeUp') {
-      // Use fadeDown variant for FAQ section (animates from top to bottom)
-      variant = animationVariants.fadeDown;
+    if (isFAQSection) {
+      // FAQ section should be visible immediately without animation
+      gsap.set(section, { opacity: 1, y: 0, x: 0, scale: 1 });
+      return; // Skip animation for FAQ section
     }
 
-    if (prefersReducedMotion) {
+    if (getPrefersReducedMotion()) {
       gsap.set(section, { opacity: 0 });
       gsap.to(section, {
         opacity: 1,
@@ -222,11 +233,13 @@ export const initTitleAnimations = () => {
                 ease: 'power2.out',
               });
               observer.unobserve(entry.target);
+              activeObservers.delete(observer);
             }
           });
         },
         { threshold: 0.1, rootMargin: '0px 0px -10% 0px' }
       );
+      activeObservers.add(observer);
       observer.observe(title);
     });
     return; // Early return - no ScrollTrigger on mobile
@@ -285,7 +298,7 @@ export const initTitleAnimations = () => {
       gsap.set(buttonItems, { opacity: 0, y: 15, willChange: 'transform, opacity' });
     }
 
-    if (prefersReducedMotion) {
+    if (getPrefersReducedMotion()) {
       gsap.set(title, { opacity: 1, y: 0 });
       if (media) gsap.set(media, { opacity: 1, x: 0 });
       if (label) gsap.set(label, { opacity: 1, y: 0 });
@@ -428,7 +441,7 @@ export const initTitleAnimations = () => {
       subtitle = title.nextElementSibling;
     }
 
-    if (prefersReducedMotion) {
+    if (getPrefersReducedMotion()) {
       gsap.set(title, { opacity: 1, y: 0 });
       if (subtitle) {
         gsap.set(subtitle, { opacity: 1, y: 0 });
@@ -595,7 +608,7 @@ export const initHeroTitleAnimation = () => {
     // Do NOT animate buttons here to prevent flash on navigation
 
     // Reduced motion: show text immediately
-    if (prefersReducedMotion) {
+    if (getPrefersReducedMotion()) {
       gsap.set(heroTitle, { opacity: 1 });
       if (heroSubtitle) {
         gsap.set(heroSubtitle, { opacity: 1, y: 0 });
@@ -713,7 +726,7 @@ export const initLogoRevealAnimation = (delay = 1000) => {
     if (logoElements.length === 0) return;
 
     // Reduced motion: show logo immediately
-    if (prefersReducedMotion) {
+    if (getPrefersReducedMotion()) {
       logoElements.forEach(logoEl => {
         gsap.set(logoEl, { opacity: 1, y: 0 });
         const img = logoEl.querySelector('img');
@@ -1165,9 +1178,7 @@ export const initFeaturesSectionBurst = ({ sectionEl, logoEl, featureEls }) => {
     return () => {};
   }
 
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  if (prefersReducedMotion) {
+  if (getPrefersReducedMotion()) {
     gsap.set(featureEls, { opacity: 1, x: 0, y: 0, scale: 1 });
     return () => {};
   }
@@ -1406,8 +1417,6 @@ export const cleanupTimelineAnimations = () => {
 export const initTeamCardsDotAccentAnimation = (containerEl) => {
   if (!containerEl) return;
 
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
   // MOBILE OPTIMIZATION: Use IntersectionObserver on mobile instead of ScrollTrigger
   if (isMobile()) {
     const teamCards = containerEl.querySelectorAll('.team-card');
@@ -1445,12 +1454,17 @@ export const initTeamCardsDotAccentAnimation = (containerEl) => {
             }
             
             observer.unobserve(card);
+            // Check if all cards are unobserved
+            if (Array.from(teamCards).every(c => !observer.takeRecords().some(r => r.target === c))) {
+              activeObservers.delete(observer);
+            }
           }
         });
       },
       { threshold: 0.1, rootMargin: '0px 0px -10% 0px' }
     );
     
+    activeObservers.add(observer);
     teamCards.forEach((card, index) => {
       const dot = Array.from(dots)[index];
       if (dot) dot.setAttribute('data-card-index', index);
@@ -1467,7 +1481,7 @@ export const initTeamCardsDotAccentAnimation = (containerEl) => {
 
   if (teamCards.length === 0 || dots.length === 0) return;
 
-  if (prefersReducedMotion) {
+  if (getPrefersReducedMotion()) {
     // Reduced motion: show everything immediately
     gsap.set(teamCards, { opacity: 1, y: 0, scale: 1 });
     gsap.set(dots, { opacity: 1, scale: 1 });
@@ -1546,9 +1560,7 @@ export const initTeamCardsDotAccentAnimation = (containerEl) => {
 export const initTestimonialsScrollExperience = (rootEl) => {
   if (!rootEl) return () => {};
 
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  if (prefersReducedMotion) {
+  if (getPrefersReducedMotion()) {
     return () => {};
   }
 
@@ -1779,8 +1791,6 @@ export const initTestimonialsScrollExperience = (rootEl) => {
  * Numbers count from 0 to their final values when section comes into view
  */
 export const initStatsCountUp = () => {
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  
   // Find the stats section
   const statsSection = document.querySelector('.about-results');
   if (!statsSection) return;
@@ -1790,7 +1800,7 @@ export const initStatsCountUp = () => {
   if (statValues.length === 0) return;
   
   // Reduced motion: show final values immediately
-  if (prefersReducedMotion) {
+  if (getPrefersReducedMotion()) {
     statValues.forEach((el) => {
       const text = el.textContent.trim();
       // Keep original text (already has final values)
@@ -1817,14 +1827,29 @@ export const initStatsCountUp = () => {
     
     // More robust parsing: check for K+ first (case-insensitive)
     if (originalText.toUpperCase().includes('K+')) {
-      // "10K+" or "10k+" -> targetValue: 10, suffix: "K+"
+      // "100K+" or "100k+" -> targetValue: 100, suffix: "K+"
       const match = originalText.match(/(\d+)/);
       if (match) {
         targetValue = parseInt(match[1], 10);
         suffix = 'K+';
       }
-    } else if (originalText.toLowerCase().includes('m')) {
-      // "30m" -> targetValue: 30, suffix: "m"
+    } else if (originalText.toUpperCase().includes('M') && !originalText.toLowerCase().includes('m+')) {
+      // "2M" -> targetValue: 2, suffix: "M" (miljoen)
+      // Check for uppercase M first to distinguish from lowercase m (minutes)
+      const match = originalText.match(/(\d+)/);
+      if (match) {
+        targetValue = parseInt(match[1], 10);
+        suffix = 'M';
+      }
+    } else if (originalText.includes('+') && !originalText.toUpperCase().includes('K+')) {
+      // "75+" -> targetValue: 75, suffix: "+" (only if not K+)
+      const match = originalText.match(/(\d+)/);
+      if (match) {
+        targetValue = parseInt(match[1], 10);
+        suffix = '+';
+      }
+    } else if (originalText.toLowerCase().includes('m') && !originalText.toUpperCase().includes('M')) {
+      // "30m" -> targetValue: 30, suffix: "m" (minutes, only if not uppercase M)
       const match = originalText.match(/(\d+)/);
       if (match) {
         targetValue = parseInt(match[1], 10);
@@ -1857,11 +1882,17 @@ export const initStatsCountUp = () => {
   
   if (animations.length === 0) return;
   
+  // Set initial state: all values start at 0
+  animations.forEach((anim) => {
+    const initialSuffix = anim.suffix;
+    anim.element.textContent = `0${initialSuffix}`;
+  });
+  
   // Create timeline with single ScrollTrigger
   const tl = gsap.timeline({
     scrollTrigger: {
       trigger: statsSection,
-      start: 'top 70%',
+      start: 'center bottom',
       once: true,
       invalidateOnRefresh: true,
     },
@@ -1887,5 +1918,12 @@ export const initStatsCountUp = () => {
 };
 
 export const cleanupScrollAnimations = () => {
+  // Cleanup all ScrollTriggers
   ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+  
+  // Cleanup all IntersectionObservers
+  activeObservers.forEach(observer => {
+    observer.disconnect();
+  });
+  activeObservers.clear();
 };

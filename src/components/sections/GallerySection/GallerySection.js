@@ -216,7 +216,7 @@ function GallerySection() {
   }, []);
 
   return (
-    <section className="gallery-section">
+    <section id="gallery" className="gallery-section">
       <div className="gallery-section-container">
         <div className="gallery-card-wrapper">
           {/* Floating title overlay - desktop only */}
