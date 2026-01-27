@@ -272,14 +272,9 @@ function ContactPage() {
                   </div>
                   <h3 className="contact-method-title">Email</h3>
                   <p className="contact-method-description">
-                    Stuur een email naar ons team
+                    Neem contact met ons op via email
                   </p>
-                  <a 
-                    href="mailto:info@blueshipment.nl" 
-                    className="btn btn-primary"
-                  >
-                    Stuur een email
-                  </a>
+                  <p className="contact-method-email">info@blueshipment.nl</p>
                 </div>
               </div>
             </div>
@@ -416,7 +411,7 @@ function ContactPage() {
                   </div>
                   <h3 className="contact-info-label">Email</h3>
                   <p className="contact-info-value">
-                    <a href="mailto:info@blueshipment.nl">info@blueshipment.nl</a>
+                    info@blueshipment.nl
                   </p>
                 </div>
               </div>

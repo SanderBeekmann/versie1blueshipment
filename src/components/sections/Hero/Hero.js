@@ -103,7 +103,7 @@ function Hero() {
               Jouw <span className="hero-all-in">all-in</span><br />bol.com<br />partner
             </h1>
             <p className="hero-subtitle">
-              Probeer nu: Krijg een totaalpakket t.w.v 499 euro helemaal gratis! Binnen 7 dagen je eerste bestelling.
+              Probeer nu: Krijg een totaalpakket t.w.v 499 euro helemaal gratis!<br className="hero-subtitle-break" /> Binnen 7 dagen je eerste bestelling.
             </p>
           </div>
 

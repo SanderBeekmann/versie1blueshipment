@@ -6,6 +6,12 @@
   flex-direction: column;
 }
 
+/* Ensure full height background when intake page is present */
+.app .intake-page {
+  flex: 1;
+  min-height: 100vh;
+}
+
 /* Page Content Wrapper - Scrolls over footer, covers footer during scroll */
 /* FIX 4: Force stable scroll container - prevent horizontal scroll and ensure stable stacking */
 .page-content {

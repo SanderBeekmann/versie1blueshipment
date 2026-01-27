@@ -105,45 +105,34 @@ const IntakeFunnel = ({ onComplete }) => {
   };
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isEditingShipmentVolume, setIsEditingShipmentVolume] = useState(false);
+  const [shipmentVolumeInputValue, setShipmentVolumeInputValue] = useState('');
 
   const handleSubmit = async () => {
     if (validateStep(4)) {
       setIsSubmitting(true);
       
-      try {
-        // Send email first
-        const emailResult = await sendFunnelEmail(formData);
-        
-        if (emailResult.success) {
-          // Then redirect to Calendly
-          const calendlyUrl = 'https://calendly.com/mouseclick2017/30min';
-          window.open(calendlyUrl, '_blank');
-          
-          if (onComplete) {
-            onComplete(formData);
-          }
-        } else {
-          // If email fails, still redirect to Calendly but show error
-          console.error('Email sending failed:', emailResult.error);
-          const calendlyUrl = 'https://calendly.com/mouseclick2017/30min';
-          window.open(calendlyUrl, '_blank');
-          
-          if (onComplete) {
-            onComplete(formData);
-          }
-        }
-      } catch (error) {
-        console.error('Error in form submission:', error);
-        // Still redirect to Calendly even if email fails
+      // Show success state immediately
+      setIsSuccess(true);
+      
+      // Make background API call (non-blocking)
+      sendFunnelEmail(formData).catch(error => {
+        console.error('Error sending email (background):', error);
+        // Don't show error to user - continue flow
+      });
+      
+      // Open Calendly in new tab after a short delay for UX
+      setTimeout(() => {
         const calendlyUrl = 'https://calendly.com/mouseclick2017/30min';
         window.open(calendlyUrl, '_blank');
         
         if (onComplete) {
           onComplete(formData);
         }
-      } finally {
-        setIsSubmitting(false);
-      }
+      }, 500);
+      
+      setIsSubmitting(false);
     }
   };
 
@@ -235,19 +224,66 @@ const IntakeFunnel = ({ onComplete }) => {
         
         {/* Step circles above the lines */}
         <div className="funnel-progress-steps">
-          {Array.from({ length: totalSteps }, (_, i) => i + 1).map((step) => (
-            <div
-              key={step}
-              className={`funnel-progress-step ${step <= currentStep ? 'active' : ''} ${step === currentStep ? 'current' : ''}`}
-            >
-              <span className="funnel-progress-step-number">{step}</span>
-            </div>
-          ))}
+          {Array.from({ length: totalSteps }, (_, i) => i + 1).map((step) => {
+            // Allow navigation to completed steps or next step (if current step is valid)
+            const isCompletedStep = step < currentStep;
+            const isNextStep = step === currentStep + 1;
+            // Check if current step is valid without setting errors
+            const isCurrentStepValid = canProceed();
+            const canNavigateToStep = isCompletedStep || (isNextStep && isCurrentStepValid);
+            const isClickable = canNavigateToStep && step !== currentStep;
+            
+            const handleStepClick = () => {
+              if (isClickable) {
+                // If navigating to next step, validate first
+                if (isNextStep) {
+                  if (validateStep(currentStep)) {
+                    setCurrentStep(step);
+                  }
+                } else {
+                  // Navigating to completed step - always allowed
+                  setCurrentStep(step);
+                }
+              }
+            };
+            
+            return (
+              <button
+                key={step}
+                type="button"
+                className={`funnel-progress-step ${step <= currentStep ? 'active' : ''} ${step === currentStep ? 'current' : ''} ${!isClickable ? 'disabled' : ''}`}
+                onClick={handleStepClick}
+                disabled={!isClickable}
+                aria-label={isClickable ? `Ga naar stap ${step}` : step === currentStep ? `Huidige stap ${step}` : 'Voltooi eerst de huidige stap'}
+                title={isClickable ? `Ga naar stap ${step}` : step === currentStep ? `Huidige stap ${step}` : 'Voltooi eerst de huidige stap'}
+              >
+                <span className="funnel-progress-step-number">{step}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
       {/* Step Content */}
       <div className="funnel-content">
+        {/* Success State */}
+        {isSuccess && (
+          <div className="funnel-success">
+            <div className="funnel-success-content">
+              <div className="funnel-success-icon">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <h2 className="funnel-success-title">Bedankt!</h2>
+              <p className="funnel-success-message">
+                Je gegevens zijn verzonden. We openen nu Calendly zodat je een kennismakingsgesprek kunt plannen.
+              </p>
+            </div>
+          </div>
+        )}
+        
+        {!isSuccess && (
         <div className="funnel-step-container">
           {/* Step 1: Verkoopkanaal */}
           {currentStep === 1 && (
@@ -377,13 +413,57 @@ const IntakeFunnel = ({ onComplete }) => {
                 {errors.diensten && (
                   <p className="funnel-error">{errors.diensten}</p>
                 )}
+                {/* Desktop Navigation buttons */}
+                <div className="funnel-step-nav">
+                  {currentStep > 1 && (
+                    <button
+                      type="button"
+                      className="funnel-btn funnel-btn--secondary funnel-btn-nav-back"
+                      onClick={handleBack}
+                    >
+                      Terug
+                    </button>
+                  )}
+                  {currentStep < totalSteps && currentStep !== 1 && (
+                    <button
+                      type="button"
+                      className="funnel-btn funnel-btn--primary funnel-btn-nav-next"
+                      onClick={handleNext}
+                      disabled={!canProceed() || isSubmitting}
+                    >
+                      Volgende
+                    </button>
+                  )}
+                </div>
+                {/* Mobile Navigation buttons */}
+                <div className="funnel-mobile-nav">
+                  {currentStep > 1 && (
+                    <button
+                      type="button"
+                      className="funnel-btn-mobile-back"
+                      onClick={handleBack}
+                    >
+                      Terug
+                    </button>
+                  )}
+                  {currentStep < totalSteps && currentStep !== 1 && (
+                    <button
+                      type="button"
+                      className="funnel-btn-mobile-next"
+                      onClick={handleNext}
+                      disabled={!canProceed() || isSubmitting}
+                    >
+                      Volgende
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           )}
 
           {/* Step 3: Kwalificatie */}
           {currentStep === 3 && (
-            <div className="funnel-step">
+            <div className="funnel-step funnel-step--step3">
               <div className="funnel-step-content">
                 {/* Left Arrow Navigation */}
                 {currentStep > 1 && (
@@ -417,18 +497,131 @@ const IntakeFunnel = ({ onComplete }) => {
                 
                 <div className="funnel-input-group funnel-input-group--first">
                   <label className="funnel-label">Hoeveel shipments verzend je per maand?</label>
-                  <div className="funnel-options-grid funnel-options-grid--compact">
-                    {shipmentVolumeOptions.map((volume) => (
-                      <button
-                        key={volume}
-                        type="button"
-                        className={`funnel-option-card funnel-option-card--compact ${formData.shipmentVolume === volume ? 'selected' : ''}`}
-                        onClick={() => updateFormData('shipmentVolume', volume)}
-                      >
-                        {volume}
-                      </button>
-                    ))}
+                  
+                  {/* Slider */}
+                  <div className="funnel-slider-container">
+                    <input
+                      type="range"
+                      min="0"
+                      max="10000"
+                      step="50"
+                      value={(() => {
+                        const val = formData.shipmentVolume;
+                        // If it's a number (from slider), use it
+                        if (val && !isNaN(parseInt(val)) && !shipmentVolumeOptions.includes(val)) {
+                          return parseInt(val);
+                        }
+                        // If it's one of the old options, convert to number
+                        if (val === '<50') return 25;
+                        if (val === '50–250') return 150;
+                        if (val === '250–1000') return 625;
+                        if (val === '1000+') return 5500;
+                        // Default to 0
+                        return 0;
+                      })()}
+                      onChange={(e) => updateFormData('shipmentVolume', e.target.value)}
+                      className="funnel-slider"
+                    />
+                    <div className="funnel-slider-labels">
+                      <span>0</span>
+                      {isEditingShipmentVolume ? (
+                        <div className="funnel-slider-value-input-wrapper">
+                          <input
+                            type="number"
+                            min="0"
+                            max="10000"
+                            step="50"
+                            value={shipmentVolumeInputValue}
+                            onChange={(e) => {
+                              const inputValue = e.target.value;
+                              setShipmentVolumeInputValue(inputValue);
+                              if (inputValue === '' || inputValue === '-') {
+                                return; // Allow empty or minus sign while typing
+                              }
+                              const numValue = parseInt(inputValue);
+                              if (!isNaN(numValue)) {
+                                const newValue = Math.max(0, Math.min(10000, numValue));
+                                updateFormData('shipmentVolume', newValue.toString());
+                              }
+                            }}
+                            onFocus={(e) => {
+                              // Select all text when focused
+                              e.target.select();
+                            }}
+                            onBlur={() => {
+                              // Ensure a valid value on blur
+                              const numValue = parseInt(shipmentVolumeInputValue);
+                              if (isNaN(numValue) || numValue < 0) {
+                                updateFormData('shipmentVolume', '0');
+                                setShipmentVolumeInputValue('0');
+                              } else {
+                                const clampedValue = Math.max(0, Math.min(10000, numValue));
+                                updateFormData('shipmentVolume', clampedValue.toString());
+                                setShipmentVolumeInputValue(clampedValue.toString());
+                              }
+                              setIsEditingShipmentVolume(false);
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                e.target.blur();
+                              }
+                              if (e.key === 'Escape') {
+                                setIsEditingShipmentVolume(false);
+                                setShipmentVolumeInputValue('');
+                              }
+                            }}
+                            className="funnel-slider-value-input"
+                            autoFocus
+                          />
+                          <span> shipments</span>
+                        </div>
+                      ) : (
+                        <span 
+                          className="funnel-slider-value funnel-slider-value-clickable"
+                          onClick={() => {
+                            const currentValue = (() => {
+                              const val = formData.shipmentVolume;
+                              if (val && !isNaN(parseInt(val)) && !shipmentVolumeOptions.includes(val)) {
+                                return parseInt(val).toString();
+                              }
+                              return '0';
+                            })();
+                            setShipmentVolumeInputValue(currentValue);
+                            setIsEditingShipmentVolume(true);
+                          }}
+                          role="button"
+                          tabIndex={0}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              const currentValue = (() => {
+                                const val = formData.shipmentVolume;
+                                if (val && !isNaN(parseInt(val)) && !shipmentVolumeOptions.includes(val)) {
+                                  return parseInt(val).toString();
+                                }
+                                return '0';
+                              })();
+                              setShipmentVolumeInputValue(currentValue);
+                              setIsEditingShipmentVolume(true);
+                            }
+                          }}
+                        >
+                          {(() => {
+                            const val = formData.shipmentVolume;
+                            if (val && !isNaN(parseInt(val)) && !shipmentVolumeOptions.includes(val)) {
+                              return parseInt(val).toLocaleString('nl-NL');
+                            }
+                            if (val && shipmentVolumeOptions.includes(val)) {
+                              return val;
+                            }
+                            return '0';
+                          })()} shipments
+                        </span>
+                      )}
+                      <span>10.000</span>
+                    </div>
                   </div>
+                  
                   {errors.shipmentVolume && (
                     <p className="funnel-error">{errors.shipmentVolume}</p>
                   )}
@@ -445,6 +638,50 @@ const IntakeFunnel = ({ onComplete }) => {
                     placeholder="Beschrijf je uitdaging..."
                     rows="4"
                   />
+                </div>
+                {/* Desktop Navigation buttons */}
+                <div className="funnel-step-nav">
+                  {currentStep > 1 && (
+                    <button
+                      type="button"
+                      className="funnel-btn funnel-btn--secondary funnel-btn-nav-back"
+                      onClick={handleBack}
+                    >
+                      Terug
+                    </button>
+                  )}
+                  {currentStep < totalSteps && currentStep !== 1 && (
+                    <button
+                      type="button"
+                      className="funnel-btn funnel-btn--primary funnel-btn-nav-next"
+                      onClick={handleNext}
+                      disabled={!canProceed() || isSubmitting}
+                    >
+                      Volgende
+                    </button>
+                  )}
+                </div>
+                {/* Mobile Navigation buttons */}
+                <div className="funnel-mobile-nav">
+                  {currentStep > 1 && (
+                    <button
+                      type="button"
+                      className="funnel-btn-mobile-back"
+                      onClick={handleBack}
+                    >
+                      Terug
+                    </button>
+                  )}
+                  {currentStep < totalSteps && currentStep !== 1 && (
+                    <button
+                      type="button"
+                      className="funnel-btn-mobile-next"
+                      onClick={handleNext}
+                      disabled={!canProceed() || isSubmitting}
+                    >
+                      Volgende
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -485,7 +722,7 @@ const IntakeFunnel = ({ onComplete }) => {
                 <h2 className="funnel-question">Laat je contactgegevens achter</h2>
                 
                 <div className="funnel-form-grid">
-                <div className="funnel-input-group">
+                <div className="funnel-input-group funnel-input-group--first">
                   <label className="funnel-label">Naam *</label>
                   <input
                     type="text"
@@ -496,7 +733,7 @@ const IntakeFunnel = ({ onComplete }) => {
                   />
                 </div>
 
-                <div className="funnel-input-group">
+                <div className="funnel-input-group funnel-input-group--first">
                   <label className="funnel-label">Bedrijf</label>
                   <input
                     type="text"
@@ -563,46 +800,35 @@ const IntakeFunnel = ({ onComplete }) => {
                   </div>
                 )}
                 </div>
+                {/* Mobile Navigation buttons for step 4 */}
+                {currentStep === totalSteps && (
+                  <div className="funnel-mobile-nav">
+                    {currentStep > 1 && (
+                      <button
+                        type="button"
+                        className="funnel-btn-mobile-back"
+                        onClick={handleBack}
+                      >
+                        Terug
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      className="funnel-btn-mobile-next"
+                      onClick={handleNext}
+                      disabled={!canProceed() || isSubmitting}
+                    >
+                      {isSubmitting 
+                        ? 'Verzenden...' 
+                        : 'Plan mijn kennismaking'}
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           )}
         </div>
-
-        {/* Navigation Buttons */}
-        <div className="funnel-navigation">
-          {currentStep > 1 && (
-            <button
-              type="button"
-              className="funnel-btn funnel-btn--secondary"
-              onClick={handleBack}
-            >
-              Terug
-            </button>
-          )}
-          {!(currentStep === totalSteps) && currentStep !== 1 && (
-            <button
-              type="button"
-              className="funnel-btn funnel-btn--primary"
-              onClick={handleNext}
-              disabled={!canProceed() || isSubmitting}
-            >
-              Volgende
-            </button>
-          )}
-          {/* Mobile submit button - hidden on desktop when in step 4 */}
-          {currentStep === totalSteps && (
-            <button
-              type="button"
-              className="funnel-btn funnel-btn--primary funnel-btn--submit-mobile"
-              onClick={handleNext}
-              disabled={!canProceed() || isSubmitting}
-            >
-              {isSubmitting 
-                ? 'Verzenden...' 
-                : 'Plan mijn kennismaking'}
-            </button>
-          )}
-        </div>
+        )}
       </div>
     </div>
   );

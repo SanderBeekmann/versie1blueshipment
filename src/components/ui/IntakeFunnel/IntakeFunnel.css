@@ -3,7 +3,7 @@
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: var(--gap-medium) var(--page-padding);
+  padding: 0 var(--page-padding);
   background-color: var(--color-white);
   border-radius: var(--radius-large);
   box-shadow: var(--shadow-xsmall);
@@ -31,8 +31,8 @@
 /* Progress Indicator */
 .funnel-progress {
   position: relative;
-  margin-bottom: calc(var(--gap-small) + 64px);
-  margin-top: -64px;
+  margin-bottom: calc((var(--gap-small) + 64px) / 2);
+  margin-top: calc((var(--gap-small) + 64px) / 2);
   height: 32px; /* Match circle height for proper alignment */
 }
 
@@ -91,6 +91,20 @@
   transition: all 0.3s ease;
   position: relative;
   z-index: 1;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.funnel-progress-step:hover:not(:disabled) {
+  transform: scale(1.15);
+  box-shadow: 0 0 0 3px var(--color-blue-ribbon-lightest);
+}
+
+.funnel-progress-step:disabled {
+  cursor: not-allowed;
+  background-color: var(--color-blue-ribbon-lightest);
+  color: var(--color-neutral-darkest);
 }
 
 .funnel-progress-step.active {
@@ -346,6 +360,155 @@
   margin-top: 32px;
 }
 
+/* Center align input groups in step 3 */
+.funnel-step--step3 .funnel-input-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.funnel-step--step3 .funnel-input-group .funnel-label {
+  text-align: center;
+  width: 100%;
+}
+
+.funnel-step--step3 .funnel-options-grid--compact {
+  justify-content: center;
+}
+
+/* Slider for desktop */
+.funnel-slider-container {
+  width: 100%;
+  max-width: 500px;
+  margin: var(--gap-medium) auto;
+}
+
+.funnel-slider {
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--color-blue-ribbon-lightest);
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.funnel-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--color-blue-ribbon);
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.funnel-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 112, 255, 0.4);
+}
+
+.funnel-slider::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--color-blue-ribbon);
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.funnel-slider::-moz-range-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 112, 255, 0.4);
+}
+
+.funnel-slider-labels {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: var(--gap-xxsmall);
+  font-family: var(--font-primary);
+  font-size: var(--text-small);
+  color: var(--color-neutral-darkest);
+}
+
+.funnel-slider-value {
+  font-weight: var(--font-semibold);
+  color: var(--color-blue-ribbon);
+  font-size: var(--text-medium);
+}
+
+.funnel-slider-value-clickable {
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.funnel-slider-value-clickable:hover {
+  background-color: var(--color-blue-ribbon-lightest);
+  transform: scale(1.05);
+}
+
+.funnel-slider-value-clickable:focus {
+  outline: 2px solid var(--color-blue-ribbon);
+  outline-offset: 2px;
+}
+
+.funnel-slider-value-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.funnel-slider-value-input {
+  font-family: var(--font-primary);
+  font-size: var(--text-medium);
+  font-weight: var(--font-semibold);
+  color: var(--color-blue-ribbon);
+  border: 2px solid var(--color-blue-ribbon);
+  border-radius: 4px;
+  padding: 4px 8px;
+  width: 120px;
+  text-align: center;
+  background-color: var(--color-white);
+  outline: none;
+}
+
+.funnel-slider-value-input:focus {
+  border-color: var(--color-blue-ribbon-light);
+  box-shadow: 0 0 0 3px var(--color-blue-ribbon-lightest);
+}
+
+/* Slider responsive adjustments */
+@media (max-width: 768px) {
+  .funnel-slider-container {
+    max-width: 100%;
+    margin: var(--gap-small) auto;
+  }
+  
+  .funnel-slider-labels {
+    font-size: var(--text-xsmall);
+  }
+  
+  .funnel-slider-value {
+    font-size: var(--text-small);
+  }
+}
+
+/* Add extra space between first and second input group in step 3 */
+.funnel-step--step3 .funnel-input-group--first {
+  margin-bottom: calc(var(--gap-xxsmall) + 32px);
+}
+
 .funnel-input-group--full {
   grid-column: 1 / -1;
 }
@@ -461,13 +624,37 @@
 
 /* Navigation */
 .funnel-navigation {
-  display: flex;
+  display: none; /* Hidden - navigation is now inside container */
+}
+
+/* Step navigation inside container */
+.funnel-step-nav {
+  display: none; /* Hidden by default, shown on desktop */
   justify-content: space-between;
   align-items: center;
   gap: var(--gap-small);
   margin-top: var(--gap-large);
   padding-top: var(--gap-medium);
   border-top: 1px solid var(--color-border-light);
+  width: 100%;
+}
+
+/* Show step nav on desktop */
+@media (min-width: 769px) {
+  .funnel-step-nav {
+    display: flex;
+  }
+}
+
+/* Hide mobile nav on desktop, show desktop step nav */
+.funnel-mobile-nav {
+  display: none;
+}
+
+@media (min-width: 769px) {
+  .funnel-step-nav {
+    display: flex;
+  }
 }
 
 .funnel-btn {
@@ -530,6 +717,15 @@
   box-shadow: var(--shadow-small);
 }
 
+/* Align arrows with title on desktop */
+@media (min-width: 769px) {
+  .funnel-arrow {
+    /* Align with title: match the top position of the title */
+    /* Title starts at top padding (80px), center arrow (20px) with title center */
+    top: calc(var(--gap-large) + 0.6rem);
+  }
+}
+
 .funnel-arrow:hover:not(:disabled) {
   background-color: var(--color-blue-ribbon);
   color: var(--color-white);
@@ -569,27 +765,12 @@
 /* Mobile Responsive */
 @media (max-width: 768px) {
   .intake-funnel {
-    padding: var(--gap-small) var(--gap-small);
+    padding: var(--gap-xxsmall) var(--gap-xxsmall);
     border-radius: var(--radius-medium);
   }
 
   .funnel-arrow {
-    width: 36px;
-    height: 36px;
-    top: var(--gap-small);
-  }
-
-  .funnel-arrow--left {
-    left: var(--gap-small);
-  }
-
-  .funnel-arrow--right {
-    right: var(--gap-small);
-  }
-
-  .funnel-arrow svg {
-    width: 20px;
-    height: 20px;
+    display: none;
   }
 
   .funnel-question {
@@ -602,9 +783,9 @@
     gap: var(--gap-xxsmall);
   }
 
-  /* On mobile, keep 4 columns for step 1 options */
+  /* On mobile, stack step 1 options vertically */
   .funnel-options-grid--step1 {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: 1fr;
     gap: var(--gap-xxsmall);
   }
 
@@ -617,7 +798,10 @@
   }
 
   .funnel-step-content {
-    padding: var(--gap-medium) var(--gap-small);
+    padding: var(--gap-small) var(--gap-xxsmall);
+    padding-bottom: var(--gap-medium);
+    display: flex;
+    flex-direction: column;
   }
 
   .funnel-question-hint {
@@ -631,7 +815,67 @@
   }
 
   .funnel-navigation {
-    flex-direction: column-reverse;
+    display: none;
+  }
+
+  /* Show "Volgende" button inside step content on mobile */
+  .funnel-step-content::after {
+    content: '';
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* Mobile navigation buttons container - only visible on mobile */
+  .funnel-mobile-nav {
+    display: flex;
+    gap: var(--gap-xxsmall);
+    margin-top: var(--gap-medium);
+    width: 100%;
+  }
+
+  /* Add mobile navigation button inside step content */
+  .funnel-btn-mobile-next {
+    flex: 1;
+    padding: 12px 24px;
+    font-family: var(--font-primary);
+    font-size: var(--text-regular);
+    font-weight: var(--font-medium);
+    border-radius: var(--radius-button);
+    border: none;
+    background-color: var(--color-blue-ribbon);
+    color: var(--color-white);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-small);
+  }
+
+  .funnel-btn-mobile-next:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 112, 255, 0.4);
+  }
+
+  .funnel-btn-mobile-next:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .funnel-btn-mobile-back {
+    flex: 0 0 auto;
+    padding: 12px 24px;
+    font-family: var(--font-primary);
+    font-size: var(--text-regular);
+    font-weight: var(--font-medium);
+    border-radius: var(--radius-button);
+    border: 2px solid var(--color-border-light);
+    background-color: var(--color-card-white);
+    color: var(--color-neutral-darkest);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .funnel-btn-mobile-back:hover {
+    background-color: var(--color-white);
+    border-color: var(--color-blue-ribbon);
   }
 
   .funnel-btn {
@@ -641,5 +885,82 @@
 
   .funnel-btn--primary {
     margin-left: 0;
+  }
+}
+
+/* Success State */
+.funnel-success {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  padding: var(--gap-large);
+}
+
+.funnel-success-content {
+  text-align: center;
+  max-width: 500px;
+}
+
+.funnel-success-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto var(--gap-medium);
+  border-radius: 50%;
+  background-color: rgba(4, 171, 56, 0.1);
+  color: var(--color-green-haze);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: successScale 0.5s ease-out;
+}
+
+@keyframes successScale {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.funnel-success-title {
+  font-family: var(--font-primary);
+  font-size: var(--heading-2);
+  font-weight: var(--font-bold);
+  color: var(--color-neutral-darkest);
+  margin-bottom: var(--gap-small);
+}
+
+.funnel-success-message {
+  font-family: var(--font-primary);
+  font-size: var(--text-base);
+  color: var(--color-neutral-dark);
+  line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+  .funnel-success {
+    min-height: 300px;
+    padding: var(--gap-medium);
+  }
+
+  .funnel-success-icon {
+    width: 64px;
+    height: 64px;
+    margin-bottom: var(--gap-small);
+  }
+
+  .funnel-success-title {
+    font-size: var(--heading-3);
+  }
+
+  .funnel-success-message {
+    font-size: var(--text-small);
   }
 }

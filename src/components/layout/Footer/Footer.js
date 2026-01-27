@@ -82,7 +82,7 @@ function Footer() {
                   >
                     WhatsApp support
                   </button>
-                  <a href="mailto:info@blueshipment.nl" className="contact-link">info@blueshipment.nl</a>
+                  <span className="contact-link">info@blueshipment.nl</span>
                 </div>
               </div>
             </div>

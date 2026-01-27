@@ -1,15 +1,33 @@
 /* Intake Page Styles */
 .intake-page {
-  min-height: calc(100vh - 200px);
-  padding: var(--gap-large) var(--page-padding);
+  min-height: 100vh;
+  padding: calc(var(--gap-large) - 64px) var(--page-padding) 0 var(--page-padding);
   background-color: var(--color-background);
   position: relative;
   z-index: 10;
 }
 
+/* Ensure app container has full height background for intake page */
+.app .intake-page {
+  min-height: 100vh;
+  padding-bottom: 0;
+}
+
+/* Ensure background extends beyond viewport if content is taller */
+.app:has(.intake-page) {
+  background-color: var(--color-background);
+  min-height: 100vh;
+}
+
 /* Mobile Responsive */
 @media (max-width: 768px) {
   .intake-page {
-    padding: var(--gap-medium) var(--gap-small);
+    padding: var(--gap-small) var(--gap-xxsmall);
+    min-height: 100vh;
   }
+}
+
+/* Hide footer on all screen sizes for intake page */
+.app .intake-page + footer.footer {
+  display: none !important;
 }

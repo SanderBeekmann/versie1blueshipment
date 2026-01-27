@@ -248,6 +248,17 @@
   text-align: center;
 }
 
+/* Hide line break on mobile, show on desktop */
+.hero-subtitle-break {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .hero-subtitle-break {
+    display: block;
+  }
+}
+
 .hero-cta {
   align-self: center;
   margin-top: var(--space-md);

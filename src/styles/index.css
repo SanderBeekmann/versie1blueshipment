@@ -388,6 +388,34 @@ a.btn-primary {
   overflow: hidden;
 }
 
+/* Custom Scrollbar - Passend bij website stijl */
+/* Webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-blue-ribbon);
+  border-radius: var(--radius-small);
+  border: none;
+  transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-blue-ribbon-light);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-blue-ribbon) transparent;
+}
+
 /* Responsive Padding */
 @media (max-width: 1024px) {
   :root {
