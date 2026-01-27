@@ -94,6 +94,9 @@ const IntakeFunnel = ({ onComplete }) => {
           newErrors.phone = 'Telefoonnummer is verplicht';
         }
         break;
+      default:
+        // No validation needed for unknown steps
+        break;
     }
 
     setErrors(newErrors);

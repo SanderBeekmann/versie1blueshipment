@@ -113,14 +113,17 @@ function MobileCardSlider({
 
     // Clear any existing interval
     if (intervalRef.current) {
-      clearInterval(intervalRef.current);
+      clearTimeout(intervalRef.current);
     }
 
     // Start interval for pause period
     intervalRef.current = setTimeout(() => {
-      if (phase === 'idle' && isVisible) {
-        setPhase('animating');
-      }
+      setPhase(prevPhase => {
+        if (prevPhase === 'idle' && isVisible) {
+          return 'animating';
+        }
+        return prevPhase;
+      });
     }, intervalMs);
 
     return () => {
@@ -231,22 +234,27 @@ function MobileCardSlider({
     if (isMobile && onIndexChange && items.length > 0) {
       onIndexChange(currentIndex);
     }
-  }, [isMobile]); // Only on mount or when mobile state changes
+  }, [isMobile, onIndexChange, items.length, currentIndex]);
 
   // Cleanup on unmount
   useEffect(() => {
+    const intervalRefValue = intervalRef.current;
+    const timeoutRefValue = timeoutRef.current;
+    const animationRefValue = animationRef.current;
+    const observerRefValue = observerRef.current;
+    
     return () => {
-      if (intervalRef.current) {
-        clearTimeout(intervalRef.current);
+      if (intervalRefValue) {
+        clearTimeout(intervalRefValue);
       }
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
+      if (timeoutRefValue) {
+        clearTimeout(timeoutRefValue);
       }
-      if (animationRef.current) {
-        animationRef.current.kill();
+      if (animationRefValue) {
+        animationRefValue.kill();
       }
-      if (observerRef.current) {
-        observerRef.current.disconnect();
+      if (observerRefValue) {
+        observerRefValue.disconnect();
       }
     };
   }, []);

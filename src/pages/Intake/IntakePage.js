@@ -1,11 +1,9 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import './IntakePage.css';
 import Footer from '../../components/layout/Footer/Footer';
 import IntakeFunnel from '../../components/ui/IntakeFunnel/IntakeFunnel';
 
 function IntakePage() {
-  const navigate = useNavigate();
 
   const handleFunnelComplete = (formData) => {
     console.log('Funnel completed:', formData);
