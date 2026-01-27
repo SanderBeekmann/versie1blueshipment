@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import './VideoSection.css';
 
 const PlayButton = () => (
@@ -20,9 +21,9 @@ function VideoSection() {
             <p className="video-subtitle">
               Wij leggen je uit wat ons proces zo bijzonder maakt.
             </p>
-            <button className="btn btn-primary video-cta-desktop">
+            <Link to="/intake" className="btn btn-primary video-cta-desktop">
               Ervaar het zelf!
-            </button>
+            </Link>
           </div>
           <div className="video-player">
             <div className="video-thumbnail">
@@ -32,9 +33,9 @@ function VideoSection() {
               </button>
             </div>
           </div>
-          <button className="btn btn-primary video-cta-mobile">
+          <Link to="/intake" className="btn btn-primary video-cta-mobile">
             Ervaar het zelf!
-          </button>
+          </Link>
         </div>
       </div>
     </section>

@@ -24,13 +24,14 @@ const IntakeFunnel = ({ onComplete }) => {
 
   const totalSteps = 4;
 
-  // Step 1: Verkoopkanaal options
-  const verkoopkanaalOptions = [
+  // Step 1: Verkoopkanaal options - grouped for better UX
+  const activeSellerOptions = [
     'bol.com',
     'bol.com en eigen webshop',
-    'Alleen eigen webshop',
-    'Ik ben nog aan het starten'
+    'Alleen eigen webshop'
   ];
+  
+  const startingOption = 'Ik ben nog aan het starten';
 
   // Step 2: Diensten options
   const dienstenOptions = [
@@ -147,10 +148,13 @@ const IntakeFunnel = ({ onComplete }) => {
   };
 
   const updateFormData = (field, value) => {
-    setFormData(prev => ({
-      ...prev,
+    const newFormData = {
+      ...formData,
       [field]: value
-    }));
+    };
+    
+    setFormData(newFormData);
+    
     // Clear error when user starts typing/selecting
     if (errors[field]) {
       setErrors(prev => {
@@ -158,6 +162,22 @@ const IntakeFunnel = ({ onComplete }) => {
         delete newErrors[field];
         return newErrors;
       });
+    }
+    
+    // Auto-advance to next step when selecting in step 1
+    if (field === 'verkoopkanaal' && currentStep === 1) {
+      // Validate with the new value immediately
+      const tempErrors = {};
+      if (!value) {
+        tempErrors.verkoopkanaal = 'Selecteer een verkoopkanaal';
+      }
+      
+      // If valid, advance to next step after a small delay for visual feedback
+      if (Object.keys(tempErrors).length === 0) {
+        setTimeout(() => {
+          setCurrentStep(2);
+        }, 200);
+      }
     }
   };
 
@@ -228,123 +248,204 @@ const IntakeFunnel = ({ onComplete }) => {
 
       {/* Step Content */}
       <div className="funnel-content">
-        {/* Left Arrow Navigation */}
-        {currentStep > 1 && (
-          <button
-            type="button"
-            className="funnel-arrow funnel-arrow--left"
-            onClick={handleBack}
-            aria-label="Vorige stap"
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
-        )}
-
-        {/* Right Arrow Navigation */}
-        {currentStep < totalSteps && (
-          <button
-            type="button"
-            className="funnel-arrow funnel-arrow--right"
-            onClick={handleNext}
-            disabled={!canProceed()}
-            aria-label="Volgende stap"
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
-        )}
-
         <div className="funnel-step-container">
           {/* Step 1: Verkoopkanaal */}
           {currentStep === 1 && (
-            <div className="funnel-step">
-              <h2 className="funnel-question">Waar verkoop je momenteel?</h2>
-              <div className="funnel-options-grid">
-                {verkoopkanaalOptions.map((option) => (
+            <div className="funnel-step funnel-step--step1">
+              <div className="funnel-step-content">
+                {/* Left Arrow Navigation */}
+                {currentStep > 1 && (
                   <button
-                    key={option}
                     type="button"
-                    className={`funnel-option-card ${formData.verkoopkanaal === option ? 'selected' : ''}`}
-                    onClick={() => updateFormData('verkoopkanaal', option)}
+                    className="funnel-arrow funnel-arrow--left"
+                    onClick={handleBack}
+                    aria-label="Vorige stap"
                   >
-                    {option}
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
                   </button>
-                ))}
+                )}
+
+                {/* Right Arrow Navigation */}
+                {currentStep < totalSteps && currentStep !== 1 && (
+                  <button
+                    type="button"
+                    className="funnel-arrow funnel-arrow--right"
+                    onClick={handleNext}
+                    disabled={!canProceed()}
+                    aria-label="Volgende stap"
+                  >
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </button>
+                )}
+                <h2 className="funnel-question">Waar verkoop je momenteel?</h2>
+                <p className="funnel-question-hint">
+                  Deze keuze helpt ons om het advies in de volgende stappen beter af te stemmen op jouw situatie.
+                </p>
+                
+                {/* All options in one row */}
+                <div className="funnel-options-group">
+                  <div className="funnel-options-grid funnel-options-grid--step1">
+                    {activeSellerOptions.map((option) => (
+                      <button
+                        key={option}
+                        type="button"
+                        className={`funnel-option-card ${formData.verkoopkanaal === option ? 'selected' : ''}`}
+                        onClick={() => updateFormData('verkoopkanaal', option)}
+                      >
+                        {option}
+                      </button>
+                    ))}
+                    <div className="funnel-option-wrapper--starting">
+                      <button
+                        type="button"
+                        className={`funnel-option-card funnel-option-card--starting ${formData.verkoopkanaal === startingOption ? 'selected' : ''}`}
+                        onClick={() => updateFormData('verkoopkanaal', startingOption)}
+                      >
+                        {startingOption}
+                      </button>
+                      <p className="funnel-option-reassurance">
+                        Geen probleem! We helpen je graag op weg.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
+                {errors.verkoopkanaal && (
+                  <p className="funnel-error">{errors.verkoopkanaal}</p>
+                )}
               </div>
-              {errors.verkoopkanaal && (
-                <p className="funnel-error">{errors.verkoopkanaal}</p>
-              )}
             </div>
           )}
 
           {/* Step 2: Dienstenkeuze */}
           {currentStep === 2 && (
             <div className="funnel-step">
-              <h2 className="funnel-question">Waar wil je op dit moment hulp bij?</h2>
-              <p className="funnel-subtitle">Meerdere opties mogelijk</p>
-              <div className="funnel-options-grid">
-                {dienstenOptions.map((dienst) => (
+              <div className="funnel-step-content">
+                {/* Left Arrow Navigation */}
+                {currentStep > 1 && (
                   <button
-                    key={dienst}
                     type="button"
-                    className={`funnel-option-card funnel-option-card--multi ${formData.diensten.includes(dienst) ? 'selected' : ''}`}
-                    onClick={() => toggleDienst(dienst)}
+                    className="funnel-arrow funnel-arrow--left"
+                    onClick={handleBack}
+                    aria-label="Vorige stap"
                   >
-                    <span className="funnel-option-checkbox">
-                      {formData.diensten.includes(dienst) && (
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                          <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      )}
-                    </span>
-                    {dienst}
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
                   </button>
-                ))}
+                )}
+
+                {/* Right Arrow Navigation */}
+                {currentStep < totalSteps && currentStep !== 1 && (
+                  <button
+                    type="button"
+                    className="funnel-arrow funnel-arrow--right"
+                    onClick={handleNext}
+                    disabled={!canProceed()}
+                    aria-label="Volgende stap"
+                  >
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </button>
+                )}
+                <h2 className="funnel-question">Waar wil je op dit moment hulp bij?</h2>
+                <p className="funnel-subtitle">Meerdere opties mogelijk</p>
+                <div className="funnel-options-grid">
+                  {dienstenOptions.map((dienst) => (
+                    <button
+                      key={dienst}
+                      type="button"
+                      className={`funnel-option-card funnel-option-card--multi ${formData.diensten.includes(dienst) ? 'selected' : ''}`}
+                      onClick={() => toggleDienst(dienst)}
+                    >
+                      <span className="funnel-option-checkbox">
+                        {formData.diensten.includes(dienst) && (
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        )}
+                      </span>
+                      {dienst}
+                    </button>
+                  ))}
+                </div>
+                {errors.diensten && (
+                  <p className="funnel-error">{errors.diensten}</p>
+                )}
               </div>
-              {errors.diensten && (
-                <p className="funnel-error">{errors.diensten}</p>
-              )}
             </div>
           )}
 
           {/* Step 3: Kwalificatie */}
           {currentStep === 3 && (
             <div className="funnel-step">
-              <h2 className="funnel-question">Vertel ons meer over je situatie</h2>
-              
-              <div className="funnel-input-group">
-                <label className="funnel-label">Hoeveel shipments verzend je per maand?</label>
-                <div className="funnel-options-grid funnel-options-grid--compact">
-                  {shipmentVolumeOptions.map((volume) => (
-                    <button
-                      key={volume}
-                      type="button"
-                      className={`funnel-option-card funnel-option-card--compact ${formData.shipmentVolume === volume ? 'selected' : ''}`}
-                      onClick={() => updateFormData('shipmentVolume', volume)}
-                    >
-                      {volume}
-                    </button>
-                  ))}
-                </div>
-                {errors.shipmentVolume && (
-                  <p className="funnel-error">{errors.shipmentVolume}</p>
+              <div className="funnel-step-content">
+                {/* Left Arrow Navigation */}
+                {currentStep > 1 && (
+                  <button
+                    type="button"
+                    className="funnel-arrow funnel-arrow--left"
+                    onClick={handleBack}
+                    aria-label="Vorige stap"
+                  >
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </button>
                 )}
-              </div>
 
-              <div className="funnel-input-group">
-                <label className="funnel-label">
-                  Wat is op dit moment je grootste uitdaging? <span className="funnel-label-optional">(optioneel)</span>
-                </label>
-                <textarea
-                  className="funnel-textarea"
-                  value={formData.grootsteUitdaging}
-                  onChange={(e) => updateFormData('grootsteUitdaging', e.target.value)}
-                  placeholder="Beschrijf je uitdaging..."
-                  rows="4"
-                />
+                {/* Right Arrow Navigation */}
+                {currentStep < totalSteps && currentStep !== 1 && (
+                  <button
+                    type="button"
+                    className="funnel-arrow funnel-arrow--right"
+                    onClick={handleNext}
+                    disabled={!canProceed()}
+                    aria-label="Volgende stap"
+                  >
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </button>
+                )}
+                <h2 className="funnel-question">Vertel ons meer over je situatie</h2>
+                
+                <div className="funnel-input-group funnel-input-group--first">
+                  <label className="funnel-label">Hoeveel shipments verzend je per maand?</label>
+                  <div className="funnel-options-grid funnel-options-grid--compact">
+                    {shipmentVolumeOptions.map((volume) => (
+                      <button
+                        key={volume}
+                        type="button"
+                        className={`funnel-option-card funnel-option-card--compact ${formData.shipmentVolume === volume ? 'selected' : ''}`}
+                        onClick={() => updateFormData('shipmentVolume', volume)}
+                      >
+                        {volume}
+                      </button>
+                    ))}
+                  </div>
+                  {errors.shipmentVolume && (
+                    <p className="funnel-error">{errors.shipmentVolume}</p>
+                  )}
+                </div>
+
+                <div className="funnel-input-group">
+                  <label className="funnel-label">
+                    Wat is op dit moment je grootste uitdaging? <span className="funnel-label-optional">(optioneel)</span>
+                  </label>
+                  <textarea
+                    className="funnel-textarea"
+                    value={formData.grootsteUitdaging}
+                    onChange={(e) => updateFormData('grootsteUitdaging', e.target.value)}
+                    placeholder="Beschrijf je uitdaging..."
+                    rows="4"
+                  />
+                </div>
               </div>
             </div>
           )}
@@ -352,9 +453,38 @@ const IntakeFunnel = ({ onComplete }) => {
           {/* Step 4: Contactgegevens */}
           {currentStep === 4 && (
             <div className="funnel-step">
-              <h2 className="funnel-question">Laat je contactgegevens achter</h2>
-              
-              <div className="funnel-form-grid">
+              <div className="funnel-step-content">
+                {/* Left Arrow Navigation */}
+                {currentStep > 1 && (
+                  <button
+                    type="button"
+                    className="funnel-arrow funnel-arrow--left"
+                    onClick={handleBack}
+                    aria-label="Vorige stap"
+                  >
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </button>
+                )}
+
+                {/* Right Arrow Navigation */}
+                {currentStep < totalSteps && currentStep !== 1 && (
+                  <button
+                    type="button"
+                    className="funnel-arrow funnel-arrow--right"
+                    onClick={handleNext}
+                    disabled={!canProceed()}
+                    aria-label="Volgende stap"
+                  >
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </button>
+                )}
+                <h2 className="funnel-question">Laat je contactgegevens achter</h2>
+                
+                <div className="funnel-form-grid">
                 <div className="funnel-input-group">
                   <label className="funnel-label">Naam *</label>
                   <input
@@ -432,6 +562,7 @@ const IntakeFunnel = ({ onComplete }) => {
                     </button>
                   </div>
                 )}
+                </div>
               </div>
             </div>
           )}
@@ -448,7 +579,7 @@ const IntakeFunnel = ({ onComplete }) => {
               Terug
             </button>
           )}
-          {!(currentStep === totalSteps) && (
+          {!(currentStep === totalSteps) && currentStep !== 1 && (
             <button
               type="button"
               className="funnel-btn funnel-btn--primary"

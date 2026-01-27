@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useRef, useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import './DienstenPage.css';
 import Navbar from '../../components/layout/Navbar/Navbar';
 import GlassTagline from '../../components/sections/GlassTagline/GlassTagline';
@@ -609,14 +609,12 @@ function DienstenPage() {
             </p>
 
             <div className="diensten-hero-ctas">
-              <a 
-                href="https://calendly.com/mouseclick2017/30min" 
-                target="_blank" 
-                rel="noopener noreferrer"
+              <Link 
+                to="/intake"
                 className="btn btn-primary"
               >
                 Start nu
-              </a>
+              </Link>
             </div>
           </div>
         </div>

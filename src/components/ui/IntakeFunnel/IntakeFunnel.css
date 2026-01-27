@@ -1,7 +1,7 @@
 /* Intake Funnel Styles */
 .intake-funnel {
   width: 100%;
-  max-width: 800px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: var(--gap-medium) var(--page-padding);
   background-color: var(--color-white);
@@ -17,6 +17,15 @@
   border-radius: 0;
   background-color: transparent;
   z-index: 10;
+}
+
+/* White container for all steps */
+.funnel-step-content {
+  background-color: var(--color-white);
+  border-radius: var(--radius-large);
+  padding: var(--gap-large);
+  box-shadow: var(--shadow-xsmall);
+  position: relative;
 }
 
 /* Progress Indicator */
@@ -187,8 +196,19 @@
   font-weight: var(--font-bold);
   line-height: var(--line-tight);
   color: var(--color-neutral-darkest);
-  margin-bottom: var(--gap-small);
+  margin-bottom: var(--gap-xxsmall);
   text-align: center;
+}
+
+.funnel-question-hint {
+  font-family: var(--font-primary);
+  font-size: var(--text-small);
+  font-weight: var(--font-regular);
+  color: var(--color-neutral-darkest);
+  opacity: 0.6;
+  text-align: center;
+  margin-bottom: var(--gap-medium);
+  line-height: var(--line-normal);
 }
 
 .funnel-subtitle {
@@ -201,12 +221,24 @@
   margin-bottom: var(--gap-medium);
 }
 
+/* Options Groups */
+.funnel-options-group {
+  margin-bottom: var(--gap-medium);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
 /* Options Grid */
 .funnel-options-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: var(--gap-small);
-  margin-bottom: var(--gap-medium);
+}
+
+.funnel-options-grid--step1 {
+  grid-template-columns: repeat(4, 1fr);
 }
 
 .funnel-options-grid--compact {
@@ -260,6 +292,34 @@
   font-size: var(--text-small);
 }
 
+.funnel-option-wrapper--starting {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.funnel-option-card--starting {
+  opacity: 0.9;
+  font-weight: var(--font-regular);
+  width: 100%;
+}
+
+.funnel-option-card--starting:hover {
+  opacity: 1;
+}
+
+.funnel-option-reassurance {
+  font-family: var(--font-primary);
+  font-size: var(--text-small);
+  font-weight: var(--font-regular);
+  color: var(--color-neutral-darkest);
+  opacity: 0.5;
+  text-align: center;
+  margin-top: var(--gap-xxsmall);
+  font-style: italic;
+  width: 100%;
+}
+
 .funnel-option-checkbox {
   width: 24px;
   height: 24px;
@@ -280,6 +340,10 @@
 /* Form Inputs */
 .funnel-input-group {
   margin-bottom: var(--gap-xxsmall);
+}
+
+.funnel-input-group--first {
+  margin-top: 32px;
 }
 
 .funnel-input-group--full {
@@ -449,10 +513,10 @@
 /* Arrow Navigation */
 .funnel-arrow {
   position: absolute;
-  top: 200px; /* Fixed position - same height for all slides */
-  transform: translateY(-50%);
-  width: 48px;
-  height: 48px;
+  top: var(--gap-medium);
+  transform: translateY(0);
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background-color: var(--color-white);
   border: 2px solid var(--color-blue-ribbon);
@@ -469,7 +533,7 @@
 .funnel-arrow:hover:not(:disabled) {
   background-color: var(--color-blue-ribbon);
   color: var(--color-white);
-  transform: translateY(-50%) scale(1.1);
+  transform: scale(1.1);
   box-shadow: var(--shadow-medium);
 }
 
@@ -479,11 +543,11 @@
 }
 
 .funnel-arrow--left {
-  left: -128px;
+  left: var(--gap-medium);
 }
 
 .funnel-arrow--right {
-  right: -128px;
+  right: var(--gap-medium);
 }
 
 .funnel-arrow svg {
@@ -494,11 +558,11 @@
 /* Tablet Responsive */
 @media (max-width: 1024px) and (min-width: 769px) {
   .funnel-arrow--left {
-    left: -80px;
+    left: var(--gap-small);
   }
 
   .funnel-arrow--right {
-    right: -80px;
+    right: var(--gap-small);
   }
 }
 
@@ -510,17 +574,17 @@
   }
 
   .funnel-arrow {
-    width: 40px;
-    height: 40px;
-    top: 200px; /* Fixed position - same height for all slides */
+    width: 36px;
+    height: 36px;
+    top: var(--gap-small);
   }
 
   .funnel-arrow--left {
-    left: -50px;
+    left: var(--gap-small);
   }
 
   .funnel-arrow--right {
-    right: -50px;
+    right: var(--gap-small);
   }
 
   .funnel-arrow svg {
@@ -538,9 +602,29 @@
     gap: var(--gap-xxsmall);
   }
 
+  /* On mobile, keep 4 columns for step 1 options */
+  .funnel-options-grid--step1 {
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--gap-xxsmall);
+  }
+
   .funnel-options-grid--compact {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  .funnel-options-group--starting {
+    margin-top: calc(var(--gap-small) / 2);
+  }
+
+  .funnel-step-content {
+    padding: var(--gap-medium) var(--gap-small);
+  }
+
+  .funnel-question-hint {
+    font-size: var(--text-xsmall);
+    margin-bottom: var(--gap-small);
+  }
+
 
   .funnel-form-grid {
     grid-template-columns: 1fr;
