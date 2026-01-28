@@ -635,8 +635,25 @@ function DienstenPage() {
     }
   ];
 
+  const serviceSchema = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "serviceType": "bol.com Partner Services",
+    "provider": {
+      "@type": "Organization",
+      "name": "BlueShipment"
+    },
+    "areaServed": "NL",
+    "description": "All-in bol.com partner services: productlistings, automatisering, fulfilment, software en consulting voor bol.com verkopers."
+  };
+
   return (
     <div className="app">
+      <SEO
+        title="Diensten - bol.com Partner Services"
+        description="BlueShipment biedt complete bol.com partner services: productlistings, automatisering, fulfilment, software en consulting. Alles wat je nodig hebt om je bol.com business te laten groeien."
+        structuredData={serviceSchema}
+      />
       <Navbar />
       <div className="page-content">
       {/* Hero Section - Reusing hero layout pattern */}
