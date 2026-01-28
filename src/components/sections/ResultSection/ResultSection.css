@@ -64,7 +64,7 @@
   font-weight: var(--font-regular);
   line-height: var(--text-subtitle-line-height);
   color: var(--color-neutral-darkest);
-  opacity: var(--text-subtitle-opacity);
+  opacity: 0.6;
   margin: 0;
 }
 

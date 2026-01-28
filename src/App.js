@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import HomePage from './pages/Home/HomePage';
 import AboutPage from './pages/About/AboutPage';
 import DienstenPage from './pages/Diensten/DienstenPage';
@@ -12,6 +13,7 @@ import StickyWhatsAppButton from './components/StickyWhatsAppButton';
 
 function App() {
   return (
+    <HelmetProvider>
     <Router>
       <ScrollToTop />
       <Routes>
@@ -26,6 +28,7 @@ function App() {
       </Routes>
       <StickyWhatsAppButton />
     </Router>
+    </HelmetProvider>
   );
 }
 

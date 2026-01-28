@@ -3,7 +3,9 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import './FeaturesSection.css';
 import GlassTagline from '../GlassTagline/GlassTagline';
-import logo from '../../../assets/brand/logo.png';
+import whatsappImg from '../../../assets/whatsapp.png';
+import listingImg from '../../../assets/listing.png';
+import inbegrepenImg from '../../../assets/inbegrepen.png';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -48,7 +50,6 @@ function FeaturesSection() {
   const subtitleRef = useRef(null);
   const cardsRef = useRef([]);
   const cardsGridRef = useRef(null);
-  const watermarkRef = useRef(null);
   const ctaRef = useRef(null);
 
   const features = [
@@ -56,25 +57,34 @@ function FeaturesSection() {
       id: 1,
       icon: <ListIcon />,
       title: 'Gratis listings',
-      description: 'Productlijsten klaar voor gebruik, zonder extra investering.'
+      description: 'Productlijsten klaar voor gebruik, zonder extra investering.',
+      image: listingImg,
+      gridArea: 'listings'
     },
     {
       id: 2,
       icon: <PackageIcon />,
       title: 'Alles inbegrepen',
-      description: 'Één prijs per zending. Opslag, verwerking en support zitten erin.'
+      description: 'Één prijs per zending. Opslag, verwerking en support zitten erin.',
+      image: inbegrepenImg,
+      gridArea: 'inbegrepen',
+      isLarge: true
     },
     {
       id: 3,
       icon: <ChatIcon />,
       title: 'Reactie in 30 minuten',
-      description: 'WhatsApp support die echt luistert en snel handelt.'
+      description: 'WhatsApp support die echt luistert en snel handelt.',
+      image: whatsappImg,
+      gridArea: 'reactie'
     },
     {
       id: 4,
       icon: <WalletIcon />,
       title: 'Geen verborgen kosten',
-      description: 'Je betaalt alleen per zending. Geen opslagkosten of onverwachte facturen.'
+      description: 'Je betaalt alleen per zending. Geen opslagkosten of onverwachte facturen.',
+      image: null,
+      gridArea: 'kosten'
     }
   ];
 
@@ -84,7 +94,6 @@ function FeaturesSection() {
     const titleHighlight = titleHighlightRef.current;
     const subtitle = subtitleRef.current;
     const cards = cardsRef.current.filter(Boolean);
-    const watermark = watermarkRef.current;
     const cta = ctaRef.current;
 
     if (!section || !title || !titleHighlight || !subtitle || cards.length === 0) return;
@@ -99,13 +108,6 @@ function FeaturesSection() {
         y: 0,
         willChange: 'auto'
       });
-      if (watermark) {
-        gsap.set(watermark, {
-          opacity: 0.05,
-          y: 0,
-          willChange: 'auto'
-        });
-      }
       return;
     }
 
@@ -138,14 +140,6 @@ function FeaturesSection() {
       });
     }
 
-    // Set initial state for watermark logo - start from right
-    if (watermark) {
-      gsap.set(watermark, {
-        opacity: 0,
-        x: 100,
-        willChange: 'transform, opacity'
-      });
-    }
 
     // Create ScrollTrigger context with timeline
     const ctx = gsap.context(() => {
@@ -208,18 +202,6 @@ function FeaturesSection() {
         }, 0.3 + cards.length * 0.1 + 0.2);
       }
 
-      // Watermark logo animation - fly in from right
-      if (watermark) {
-        tl.to(watermark, {
-          opacity: 0.05,
-          x: 0,
-          duration: 1.2,
-          ease: 'power2.out',
-          onComplete: () => {
-            gsap.set(watermark, { willChange: 'auto' });
-          }
-        }, 0.4);
-      }
     }, section);
 
     // Cleanup
@@ -227,100 +209,12 @@ function FeaturesSection() {
       ctx.revert();
       // Title cleanup is handled by initTitleAnimations()
       gsap.set([titleHighlight, subtitle, ...cards, cta].filter(Boolean), { willChange: 'auto' });
-      if (watermark) {
-        gsap.set(watermark, { willChange: 'auto' });
-      }
     };
   }, []);
 
-  // Parallax scroll effect (desktop only, no reduced motion)
-  useLayoutEffect(() => {
-    const section = sectionRef.current;
-    const header = headerRef.current;
-    const cards = cardsRef.current.filter(Boolean);
-    
-    if (!section || !header || cards.length === 0) return;
-
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    const mm = gsap.matchMedia();
-    mm.add(
-      { 
-        desktop: '(min-width: 768px)', 
-        motion: '(prefers-reduced-motion: no-preference)' 
-      },
-      (ctx) => {
-        // Stop als reduced motion
-        if (prefersReducedMotion) return;
-
-        // 1) Header parallax - subtiel trager dan scroll
-        gsap.fromTo(
-          header,
-          { y: 0 },
-          {
-            y: 24,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: section,
-              start: 'top bottom',
-              end: 'bottom top',
-              scrub: 0.6,
-              invalidateOnRefresh: true
-            }
-          }
-        );
-
-        // 2) Cards parallax - subtiele depth met afwisseling
-        cards.forEach((card, i) => {
-          const depth = (i % 2 === 0) ? 18 : 30; // afwisseling voor diepte
-          gsap.fromTo(
-            card,
-            { y: 0 },
-            {
-              y: -depth,
-              ease: 'none',
-              scrollTrigger: {
-                trigger: section,
-                start: 'top bottom',
-                end: 'bottom top',
-                scrub: 0.8,
-                invalidateOnRefresh: true
-              }
-            }
-          );
-        });
-
-        // 3) Subtiele watermark parallax (optioneel)
-        const watermark = watermarkRef.current;
-        if (watermark) {
-          gsap.fromTo(
-            watermark,
-            { y: -10 },
-            {
-              y: 40,
-              ease: 'none',
-              scrollTrigger: {
-                trigger: section,
-                start: 'top bottom',
-                end: 'bottom top',
-                scrub: 0.6,
-                invalidateOnRefresh: true
-              }
-            }
-          );
-        }
-      }
-    );
-
-    return () => mm.revert();
-  }, []);
 
   return (
     <section ref={sectionRef} className="features-section">
-      {/* Brand Watermark */}
-      <div className="features-section__watermark">
-        <img ref={watermarkRef} src={logo} alt="BlueShipment" className="features-section__watermark-image" />
-      </div>
 
       {/* Content Container with z-index */}
       <div className="features-section__content">
@@ -346,13 +240,21 @@ function FeaturesSection() {
                     cardsRef.current[index] = el;
                   }
                 }}
-                className="features-section__card"
+                className={`features-section__card ${feature.isLarge ? 'features-section__card--large' : ''}`}
               >
-                <div className="features-section__icon-wrapper">
-                  {feature.icon}
+                <div className="features-section__card-content-wrapper">
+                  <div className="features-section__card-text">
+                    <h3 className="features-section__card-title">{feature.title}</h3>
+                    <p className="features-section__card-description">{feature.description}</p>
+                  </div>
+                  <div className="features-section__card-image">
+                    {feature.image ? (
+                      <img src={feature.image} alt={feature.title} />
+                    ) : (
+                      <div className="features-section__image-placeholder"></div>
+                    )}
+                  </div>
                 </div>
-                <h3 className="features-section__card-title">{feature.title}</h3>
-                <p className="features-section__card-description">{feature.description}</p>
               </div>
             ))}
           </div>

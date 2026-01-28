@@ -6,6 +6,7 @@ import Navbar from '../../components/layout/Navbar/Navbar';
 import Footer from '../../components/layout/Footer/Footer';
 import GlassTagline from '../../components/sections/GlassTagline/GlassTagline';
 import InfiniteGridOverlay from '../../components/ui/the-infinite-grid/InfiniteGridOverlay';
+import SEO from '../../components/SEO/SEO';
 import { initScrollAnimations, initTitleAnimations, initHeroTitleAnimation, cleanupScrollAnimations } from '../../utils/scrollAnimations';
 import { openWhatsApp } from '../../utils/whatsapp';
 
@@ -185,8 +186,27 @@ function ContactPage() {
     }, 5000);
   };
 
+  const contactPageSchema = {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    "mainEntity": {
+      "@type": "Organization",
+      "name": "BlueShipment",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "Customer Service",
+        "email": "info@blueshipment.nl"
+      }
+    }
+  };
+
   return (
     <div className="app">
+      <SEO
+        title="Contact - Neem Contact Op"
+        description="Neem contact op met BlueShipment. Wij helpen je graag verder met vragen over onze bol.com partner services: productlistings, automatisering, fulfilment, software en consulting."
+        structuredData={contactPageSchema}
+      />
       <Navbar />
       <div className="page-content">
         {/* Hero Section */}

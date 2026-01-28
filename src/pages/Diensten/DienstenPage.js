@@ -9,6 +9,7 @@ import DienstenDetailsSection from '../../components/sections/Diensten/DienstenD
 import Footer from '../../components/layout/Footer/Footer';
 import InfiniteGridOverlay from '../../components/ui/the-infinite-grid/InfiniteGridOverlay';
 import PricingModal from '../../components/ui/PricingModal/PricingModal';
+import SEO from '../../components/SEO/SEO';
 import { initScrollAnimations, initTitleAnimations, initHeroTitleAnimation, initLogoRevealAnimation, cleanupScrollAnimations } from '../../utils/scrollAnimations';
 import { openWhatsApp } from '../../utils/whatsapp';
 import { gsap } from 'gsap';
@@ -22,7 +23,13 @@ import softwareImage from '../../assets/software.webp';
 // Icon components for visual elements
 const CheckIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-    <path d="M20 6L9 17L4 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <path 
+      d="M20 6L9 17L4 12" 
+      stroke="currentColor" 
+      strokeWidth="2" 
+      strokeLinecap="round" 
+      strokeLinejoin="round"
+    />
   </svg>
 );
 
@@ -192,6 +199,52 @@ function DienstenPage() {
       clearTimeout(imageAnimationTimeout);
       cleanupScrollAnimations();
     };
+  }, []);
+
+  // GSAP animation for bullet checkmarks
+  useLayoutEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const ctx = gsap.context(() => {
+      const bulletLists = document.querySelectorAll('[data-bullet-list]');
+      
+      bulletLists.forEach((list) => {
+        const bullets = list.querySelectorAll('.diensten-detail-bullet');
+        if (bullets.length === 0) return;
+
+        const lastBullet = bullets[bullets.length - 1];
+        const paths = Array.from(bullets).map(bullet => 
+          bullet.querySelector('svg path')
+        ).filter(Boolean);
+
+        if (paths.length === 0) return;
+
+        // Calculate path length for each path and set initial state
+        paths.forEach(path => {
+          const pathLength = path.getTotalLength();
+          gsap.set(path, {
+            strokeDasharray: pathLength,
+            strokeDashoffset: pathLength
+          });
+        });
+
+        ScrollTrigger.create({
+          trigger: lastBullet,
+          start: 'top 75%',
+          once: true,
+          onEnter: () => {
+            gsap.to(paths, {
+              strokeDashoffset: 0,
+              duration: 0.6,
+              ease: 'power2.out',
+              stagger: 0.1
+            });
+          }
+        });
+      });
+    });
+
+    return () => ctx.revert();
   }, []);
 
   // GSAP Bento Grid Animation
@@ -706,7 +759,7 @@ function DienstenPage() {
                           ? 'diensten-detail-image-wrapper--scale-80' 
                           : ''
                       }`} data-animate-image={isReverse ? 'fadeLeft' : 'fadeRight'}>
-                        <img src={detail.image} alt={detail.title} className="diensten-detail-image" />
+                        <img src={detail.image} alt={detail.title || detail.label} className="diensten-detail-image" loading="lazy" />
                       </div>
                     ) : (
                       <div className="diensten-detail-media"></div>
@@ -733,7 +786,7 @@ function DienstenPage() {
                         <p className="diensten-detail-description">{detail.description}</p>
                       )}
                       {detail.bullets && detail.bullets.length > 0 && (
-                        <ul className="diensten-detail-bullets">
+                        <ul className="diensten-detail-bullets" data-bullet-list={detail.id}>
                           {detail.bullets.map((bullet, bulletIndex) => (
                             <li key={bulletIndex} className="diensten-detail-bullet">
                               <CheckIcon />
@@ -753,7 +806,7 @@ function DienstenPage() {
                               ? 'diensten-detail-image-wrapper--scale-80' 
                               : ''
                           }`} data-animate-image="fadeUp">
-                            <img src={detail.image} alt={detail.title} className="diensten-detail-image" />
+                            <img src={detail.image} alt={detail.title || detail.label} className="diensten-detail-image" loading="lazy" />
                           </div>
                         )}
                       </div>

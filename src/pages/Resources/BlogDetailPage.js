@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import './BlogDetailPage.css';
 import Navbar from '../../components/layout/Navbar/Navbar';
 import Footer from '../../components/layout/Footer/Footer';
+import SEO from '../../components/SEO/SEO';
 import { openWhatsApp } from '../../utils/whatsapp';
 
 // Blog posts data - in de toekomst kan dit uit een CMS of API komen
@@ -209,25 +210,31 @@ function BlogDetailPage() {
   const { slug } = useParams();
   const post = blogPosts[slug];
 
-  useEffect(() => {
-    if (post) {
-      // SEO: Set document title and meta description
-      document.title = post.metaTitle + " | BlueShipment";
-      const meta = document.querySelector('meta[name="description"]');
-      if (meta) {
-        meta.setAttribute("content", post.metaDescription);
-      } else {
-        const metaDescription = document.createElement('meta');
-        metaDescription.name = 'description';
-        metaDescription.content = post.metaDescription;
-        document.getElementsByTagName('head')[0].appendChild(metaDescription);
+  const articleSchema = post ? {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": post.metaTitle,
+    "description": post.metaDescription,
+    "author": {
+      "@type": "Organization",
+      "name": "BlueShipment"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "BlueShipment",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://blueshipment.nl/logo.png"
       }
-    }
-  }, [post]);
+    },
+    "datePublished": post.date || "2025-01-15",
+    "dateModified": post.date || "2025-01-15"
+  } : null;
 
   if (!post) {
     return (
       <div className="app">
+        <SEO title="Artikel niet gevonden" />
         <Navbar />
         <main className="page-content blog-detail-page">
           <div className="blog-not-found">
@@ -254,6 +261,14 @@ function BlogDetailPage() {
 
   return (
     <div className="app">
+      {post && (
+        <SEO
+          title={post.metaTitle}
+          description={post.metaDescription}
+          type="article"
+          structuredData={articleSchema}
+        />
+      )}
       <Navbar />
       <main className="page-content blog-detail-page">
         <article className="blog-article">

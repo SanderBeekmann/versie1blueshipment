@@ -4,7 +4,13 @@ module.exports = {
     "./src/**/*.{js,jsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        foreground: "var(--color-neutral-darkest)",
+        "muted-foreground": "rgba(0, 0, 0, 0.6)",
+        secondary: "rgba(0, 0, 0, 0.05)",
+      },
+    },
   },
   plugins: [],
 }

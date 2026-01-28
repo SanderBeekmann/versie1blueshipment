@@ -1,29 +1,30 @@
-/* Team Section */
-.team-section {
-  width: 100%;
-  padding: var(--page-padding) calc(var(--section-padding-small) / 2);
-  background-color: var(--color-blue-ribbon);
+/* Team Hero Section - Slider Layout */
+.team-hero-section {
+  width: 100vw;
+  padding: var(--section-padding-large) 0 0 0;
+  background-color: var(--color-background);
   position: relative;
   overflow: visible;
   z-index: 2;
-  margin-bottom: 48px;
+  margin-bottom: 0;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
 }
 
-.team-container {
-  position: relative;
+.team-hero-container {
+  max-width: 100%;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--page-padding);
-  padding: var(--section-padding-small) calc(var(--page-padding) / 2) var(--gap-medium) calc(var(--page-padding) / 2);
-  background-color: var(--color-background);
-  border-radius: var(--radius-large);
-  box-shadow: var(--shadow-medium);
-  overflow: visible;
-  z-index: 1;
+  gap: var(--gap-large);
+  padding: 0 var(--page-padding);
 }
 
-.team-header {
+/* Header */
+.team-hero-header {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -32,346 +33,193 @@
   max-width: var(--container-medium);
 }
 
-.team-tagline {
-  font-family: var(--font-primary);
-  font-size: var(--text-regular);
-  font-weight: var(--font-semibold);
-  line-height: 1.5;
-  color: var(--color-neutral-darkest);
-}
-
-.team-title {
+.team-hero-title {
   font-family: var(--font-primary);
   font-size: var(--heading-2);
   font-weight: var(--font-bold);
   line-height: var(--line-tight);
   letter-spacing: var(--tracking-h2);
   color: var(--color-neutral-darkest);
+  margin: 0;
 }
 
-.team-subtitle {
+.team-hero-subtitle {
   font-family: var(--font-primary);
   font-size: var(--text-subtitle-size);
   font-weight: var(--font-regular);
   line-height: var(--text-subtitle-line-height);
   color: var(--text-subtitle-color);
-  max-width: 440px;
-  opacity: 0.8;
   margin: 0;
 }
 
-.team-grid {
-  width: 100%;
-  padding-top: var(--section-padding-small);
-  padding-bottom: 0;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--gap-small);
-  justify-items: center;
+/* Ribbon Wrapper - Allows overflow for person image */
+.team-hero-ribbon-wrapper {
+  width: 100vw;
   position: relative;
+  overflow: visible;
+}
+
+/* Blue Ribbon - Main container */
+.team-hero-ribbon {
+  position: relative;
+  width: 100vw;
+  min-height: 320px;
+  height: 320px;
+  background-color: var(--color-blue-ribbon);
+  border-radius: 0;
+  box-shadow: inset 0 -20px 32px rgba(0, 0, 0, 0.25);
+  overflow: visible;
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+/* Slide Container */
+.team-hero-slide {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  position: relative;
+  min-height: 320px;
+  padding: 0;
+  max-width: var(--container-large);
+  margin: 0 auto;
+}
+
+/* Person Image - Links, uitstekend boven ribbon */
+.team-hero-person {
+  position: absolute;
+  left: var(--gap-medium);
+  bottom: 0;
+  height: 384px;
+  display: flex;
+  align-items: flex-end;
+  z-index: 2;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.team-hero-person-image {
+  height: 384px;
+  width: auto;
+  max-width: 420px;
+  object-fit: contain;
+  object-position: bottom;
+  transform: translateY(0);
+  transform-origin: bottom center;
+  filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.2));
+}
+
+.team-hero-person-image[src*="Reitze"] {
+  transform: scale(1.15) translateY(0);
+  transform-origin: bottom center;
+}
+
+.team-hero-person-image[src*="COLIN"],
+.team-hero-person-image[src*="colin"] {
+  transform: scale(1.25) translateY(0);
+  transform-origin: bottom center;
+}
+
+.team-hero-person-image[src*="david"] {
+  transform: scale(1.25) translateY(0);
+  transform-origin: bottom center;
+}
+
+/* Content - Rechts op ribbon */
+.team-hero-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding-left: 380px;
+  padding-right: var(--gap-large);
+  padding-top: var(--gap-medium);
+  padding-bottom: var(--gap-medium);
+  min-height: 320px;
+  z-index: 1;
+}
+
+.team-hero-name {
+  font-family: var(--font-primary);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: var(--font-bold);
+  line-height: 1.1;
+  color: var(--color-white);
+  margin: 0 0 var(--gap-xxsmall) 0;
+  letter-spacing: -0.02em;
+}
+
+.team-hero-role {
+  font-family: var(--font-primary);
+  font-size: clamp(1rem, 1.5vw, 1.25rem);
+  font-weight: var(--font-medium);
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+}
+
+/* Navigation Dots */
+.team-hero-dots {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  padding: 0;
   z-index: 10;
 }
 
-@media (max-width: 1200px) {
-  .team-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--gap-small);
-  }
-}
-
-@media (max-width: 768px) {
-  .team-grid {
-    grid-template-columns: 1fr;
-    gap: 0;
-    padding: var(--section-padding-small) 0;
-  }
-}
-
-.card-scale {
-  transform-origin: center;
-  height: 100%;
-  display: flex;
-}
-
-@media (max-width: 1200px) {
-  .card-scale {
-    transform: scale(0.96);
-  }
-}
-
-@media (max-width: 1024px) {
-  .card-scale {
-    transform: scale(0.92);
-  }
-}
-
-.team-card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  max-width: 352px;
-  height: 100%;
-  padding: calc(var(--gap-small) / 2);
-  background-color: #f2f2f2;
-  border-radius: var(--radius-large);
-  box-shadow: var(--shadow-xsmall);
-  overflow: hidden;
+.team-hero-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.4);
+  border: 2px solid transparent;
   cursor: pointer;
-  transition: box-shadow 0.3s ease;
+  transition: all 0.3s ease;
+  padding: 0;
+  outline: none;
 }
 
-.team-card:hover {
-  box-shadow: var(--shadow-soft-hover);
+.team-hero-dot:hover,
+.team-hero-dot:focus {
+  background-color: rgba(255, 255, 255, 0.6);
+  transform: scale(1.2);
+  outline: 2px solid rgba(255, 255, 255, 0.8);
+  outline-offset: 2px;
 }
 
-.card-dot {
-  position: absolute;
-  top: 32px;
-  left: 32px;
-  z-index: 2;
+.team-hero-dot--active {
+  background-color: rgba(255, 255, 255, 0.9);
+  width: 24px;
+  border-radius: 4px;
 }
 
-.card-image {
-  width: 100%;
-  border-radius: 144px var(--radius-large) 0 0;
-  border-top: 1px solid var(--color-blue-ribbon);
-  overflow: hidden;
-  position: relative;
-}
-
-.card-image .image-placeholder {
-  width: 100%;
-  aspect-ratio: 1;
-  background-color: var(--color-white);
-}
-
-.card-image::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.3);
-  z-index: 1;
-  pointer-events: none;
-}
-
-.card-image .member-photo {
-  width: 100%;
-  height: 100%;
-  aspect-ratio: 1;
-  object-fit: cover;
-  display: block;
-  position: relative;
-  z-index: 0;
-}
-
-.card-content {
-  display: flex;
-  flex-direction: column;
-  gap: var(--gap-xxsmall);
-  padding: var(--gap-small) var(--gap-xxsmall);
-  background-color: var(--color-white);
-  border-bottom: 3px solid var(--color-blue-ribbon);
-  border-radius: 0 0 var(--radius-medium) var(--radius-medium);
-  width: 100%;
-  flex: 1;
-  min-height: 0;
-}
-
-.card-title {
-  display: flex;
-  flex-direction: column;
-}
-
-.member-name {
-  font-family: var(--font-primary);
-  font-size: var(--text-large);
-  font-weight: var(--font-semibold);
-  line-height: 1.5;
-  color: var(--color-blue-ribbon);
-}
-
-.member-role {
-  font-family: var(--font-primary);
-  font-size: var(--text-medium);
-  font-weight: var(--font-semibold);
-  line-height: 1.5;
-  color: var(--color-neutral-darkest);
-}
-
-.member-description {
-  font-family: var(--font-primary);
-  font-size: var(--text-subtext-size);
-  font-weight: var(--font-regular);
-  line-height: var(--text-subtext-line-height);
-  color: var(--text-subtext-color);
-}
-
-/* Mobile Slider Styles */
-.team-slider-viewport {
-  position: relative;
-  width: 100%;
-  overflow: hidden;
+/* CTA Button */
+.team-hero-cta {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-@media (min-width: 769px) {
-  .team-slider-viewport {
-    display: contents;
-  }
-  
-  .team-slider-card {
-    /* Reset slider styles on desktop */
-    position: static;
-    opacity: 1;
-    pointer-events: auto;
-    transform: none;
-  }
-}
-
-.team-slider-card {
-  will-change: opacity, transform;
-}
-
-@media (max-width: 768px) {
-  .team-slider-viewport.team-deck {
-    width: 100%;
-    padding: var(--gap-small) 0 0 0;
-    position: relative;
-    min-height: 400px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 10;
-  }
-
-  .team-slider-card {
-    position: relative;
-    width: 100%;
-    max-width: 352px;
-    margin: 0 auto;
-    opacity: 1;
-  }
-
-  /* Active card - simple slideshow */
-  .team-slider-card--active {
-    position: relative;
-    z-index: 1;
-    pointer-events: auto;
-  }
-
-  .team-slider-card .card-scale {
-    height: 100%;
-    width: 100%;
-    max-width: 352px;
-    display: flex;
-    margin: 0 auto;
-  }
-
-  .team-slider-card .team-card {
-    height: 100%;
-    width: 100%;
-    max-width: 352px;
-    display: flex;
-    flex-direction: column;
-    /* Reset GSAP rotation transforms on mobile slider cards */
-    transform: none !important;
-  }
-
-  /* Ensure consistent image sizing to prevent layout shifts */
-  .team-slider-card .card-image {
-    width: 100%;
-    aspect-ratio: 1;
-    flex-shrink: 0;
-    height: auto;
-  }
-
-  .team-slider-card .card-image .member-photo {
-    width: 100%;
-    height: 100%;
-    aspect-ratio: 1;
-    object-fit: cover;
-    display: block;
-  }
-
-  .team-slider-card .card-content {
-    flex: 1;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-    overflow: visible;
-  }
-
-  .team-slider-card .member-description {
-    overflow: visible;
-    text-overflow: clip;
-    display: block;
-  }
-
-  /* Progress Indicator - Mobile Only */
-  .team-deck-indicator {
-    --indicator-bar-width: 32px;
-    --indicator-bar-height: 4px;
-    --indicator-bar-radius: 2px;
-    --indicator-bar-gap: 6px;
-    --indicator-active-opacity: 1;
-    --indicator-inactive-opacity: 0.3;
-    
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: var(--indicator-bar-gap);
-    margin-bottom: var(--gap-small);
-    padding: calc(var(--gap-xxsmall) / 2) 0;
-    width: 100%;
-  }
-
-  .team-indicator-bar {
-    width: var(--indicator-bar-width);
-    height: var(--indicator-bar-height);
-    border-radius: var(--indicator-bar-radius);
-    background-color: var(--color-blue-ribbon);
-    opacity: var(--indicator-inactive-opacity);
-    transition: opacity 0.25s ease, transform 0.25s ease;
-    transform: scale(1);
-    flex-shrink: 0;
-  }
-
-  .team-indicator-bar--active {
-    opacity: var(--indicator-active-opacity);
-    transform: scale(1.1);
-  }
-
-}
-
-/* CTA Button - Shared styles for mobile and desktop */
-.team-deck-cta {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: auto;
-  margin-bottom: 0;
   width: 100%;
-  padding-top: 16px;
-  padding-bottom: 16px;
+  padding: var(--gap-medium) var(--page-padding);
 }
 
-.team-cta-button {
+.team-hero-cta-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 24px;
+  padding: 12px 32px;
   background-color: var(--color-blue-ribbon);
   color: var(--color-white);
   font-family: var(--font-primary);
   font-size: var(--text-regular);
-  font-weight: var(--font-medium);
+  font-weight: var(--font-semibold);
   line-height: 1.5;
   text-decoration: none;
   border-radius: var(--radius-button);
@@ -381,51 +229,164 @@
   cursor: pointer;
 }
 
-.team-cta-button:hover {
+.team-hero-cta-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0, 112, 255, 0.4);
+  background-color: #0066e6;
 }
 
-.team-cta-button:active {
+.team-hero-cta-button:active {
   transform: translateY(0);
 }
 
-/* Hide indicator on desktop/tablet, but keep CTA visible */
-@media (min-width: 769px) {
-  .team-deck-indicator {
-    display: none;
+/* Responsive */
+@media (max-width: 1024px) {
+  .team-hero-ribbon {
+    min-height: 280px;
+    height: 280px;
+  }
+
+  .team-hero-slide {
+    min-height: 280px;
+    padding: 0 calc(var(--page-padding) / 2);
+  }
+
+  .team-hero-person {
+    left: var(--gap-small);
+    height: 344px;
+  }
+
+  .team-hero-person-image {
+    max-width: 320px;
+    height: 344px;
+    transform: translateY(0);
+    transform-origin: bottom center;
+  }
+
+  .team-hero-person-image[src*="Reitze"] {
+    transform: scale(1.15) translateY(0);
+    transform-origin: bottom center;
+  }
+
+  .team-hero-person-image[src*="COLIN"],
+  .team-hero-person-image[src*="colin"] {
+    transform: scale(1.25) translateY(0);
+    transform-origin: bottom center;
+  }
+
+  .team-hero-person-image[src*="david"] {
+    transform: scale(1.25) translateY(0);
+    transform-origin: bottom center;
+  }
+
+  .team-hero-content {
+    padding-left: 280px;
+    padding-right: var(--gap-medium);
+    min-height: 280px;
+  }
+
+  .team-hero-name {
+    font-size: clamp(2rem, 4vw, 3rem);
   }
 }
-
-/* Responsive */
 
 @media (max-width: 768px) {
-  .team-section {
-    padding: var(--section-padding-small) calc(var(--gap-xsmall) / 2);
-    margin-bottom: 32px;
+  .team-hero-section {
+    padding: var(--section-padding-medium) var(--page-padding);
   }
 
-  .team-container {
-    padding: var(--gap-small) calc(var(--gap-small) / 2) var(--gap-medium) calc(var(--gap-small) / 2);
-    border-radius: var(--radius-medium);
-    display: flex;
+  .team-hero-ribbon {
+    min-height: 280px;
+    height: 280px;
+    overflow: visible;
+  }
+
+  .team-hero-slide {
+    min-height: 280px;
+    padding: var(--gap-small);
     flex-direction: column;
-  }
-  
-  .team-card {
-    max-width: 100%;
-  }
-
-  /* Disable hover rotation on mobile */
-  .team-card:hover {
-    box-shadow: var(--shadow-xsmall);
+    align-items: center;
+    justify-content: flex-end;
+    position: relative;
   }
 
-  /* CTA spacing on mobile - uses margin-top: auto for centering */
-  .team-deck-cta {
-    margin-top: auto;
-    padding-top: 12px;
-    padding-bottom: 12px;
+  .team-hero-person {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 0;
+    height: 344px;
+    margin-bottom: 0;
+    z-index: 3;
+  }
+
+  .team-hero-person-image {
+    max-width: 220px;
+    height: 344px;
+    transform: translateY(0);
+    transform-origin: bottom center;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
+  }
+
+  .team-hero-person-image[src*="Reitze"] {
+    transform: scale(1.15) translateY(0);
+    transform-origin: bottom center;
+  }
+
+  .team-hero-person-image[src*="COLIN"],
+  .team-hero-person-image[src*="colin"] {
+    transform: scale(1.25) translateY(0);
+    transform-origin: bottom center;
+  }
+
+  .team-hero-person-image[src*="david"] {
+    transform: scale(1.25) translateY(0);
+    transform-origin: bottom center;
+  }
+
+  .team-hero-content {
+    padding: var(--gap-medium) var(--gap-small);
+    padding-top: var(--gap-large);
+    align-items: center;
+    text-align: center;
+    min-height: auto;
+    width: 100%;
+    z-index: 2;
+    position: relative;
+  }
+
+  .team-hero-name {
+    font-size: clamp(1.75rem, 5vw, 2.5rem);
+    text-align: center;
+  }
+
+  .team-hero-role {
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
+    text-align: center;
+  }
+
+  .team-hero-dots {
+    margin-top: var(--gap-small);
   }
 }
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .team-hero-slide {
+    transition: none;
+  }
+
+  .team-hero-name,
+  .team-hero-role {
+    transition: none;
+  }
+}
+
+
+
+
+
+
+
+
 

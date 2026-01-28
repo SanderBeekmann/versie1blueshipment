@@ -32,7 +32,7 @@ export const sendFunnelEmail = async (formData) => {
 
     // Call Netlify Function
     const apiEndpoint = '/.netlify/functions/sendFunnelEmail';
-    
+
     const response = await fetch(apiEndpoint, {
       method: 'POST',
       headers: {

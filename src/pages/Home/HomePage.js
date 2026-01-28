@@ -19,10 +19,41 @@ import WhatsAppSection from '../../components/sections/WhatsAppSection/WhatsAppS
 import CTASection from '../../components/sections/CTASection/CTASection';
 import FAQSection from '../../components/sections/FAQSection/FAQSection';
 import Footer from '../../components/layout/Footer/Footer';
+import SEO from '../../components/SEO/SEO';
 import { initScrollAnimations, initTitleAnimations, initHeroTitleAnimation, initTeamCardsDotAccentAnimation, initLogoRevealAnimation, cleanupScrollAnimations } from '../../utils/scrollAnimations';
 import { WatermarkIcon } from '../../utils/bentoCardIcons';
 
 function HomePage() {
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "BlueShipment",
+    "url": "https://blueshipment.nl",
+    "logo": "https://blueshipment.nl/logo.png",
+    "description": "BlueShipment is jouw all-in bol.com partner. Wij helpen je met productlistings, automatisering, fulfilment, software en consulting om je bol.com business te laten groeien.",
+    "sameAs": [
+      // Add social media links if available
+    ],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "contactType": "Customer Service",
+      "email": "info@blueshipment.nl"
+    }
+  };
+
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "BlueShipment",
+    "url": "https://blueshipment.nl",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://blueshipment.nl/search?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  };
+
+  const combinedSchema = [organizationSchema, websiteSchema];
   const bentoRef = useRef(null);
   const cardRefs = useRef([]);
 
@@ -304,6 +335,11 @@ function HomePage() {
 
   return (
     <div className="app">
+      <SEO
+        title="Jouw all-in bol.com partner"
+        description="BlueShipment is jouw all-in bol.com partner. Wij helpen je met productlistings, automatisering, fulfilment, software en consulting om je bol.com business te laten groeien. Meer dan 10.000 voltooide bestellingen."
+        structuredData={combinedSchema}
+      />
       <Navbar />
       <div className="page-content">
         <Hero />

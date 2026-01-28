@@ -229,7 +229,7 @@ function AboutTeamStable() {
           <div className="team-detail-card">
             {/* Media */}
             <div className="team-detail-media">
-              <img src={member.image} alt={member.name} className="team-detail-image" />
+              <img src={member.image} alt={`${member.name}, ${member.role}`} className="team-detail-image" loading="lazy" />
             </div>
 
             {/* Content */}

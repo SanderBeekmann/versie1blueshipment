@@ -185,7 +185,7 @@ function ProcessSection() {
                       <p className="step-description timeline-text">{step.description}</p>
                       <div className="step-image-wrapper">
                         <div className="step-image-container timeline-media">
-                          <img src={step.image} alt={`Stap ${step.number}`} className="step-image" />
+                          <img src={step.image} alt={`Stap ${step.number}: ${step.title || ''}`} className="step-image" loading="lazy" />
                         </div>
                       </div>
                       <button 
@@ -223,7 +223,7 @@ function ProcessSection() {
                       <p className="step-description timeline-text">{step.description}</p>
                       <div className="step-image-wrapper">
                         <div className="step-image-container timeline-media">
-                          <img src={step.image} alt={`Stap ${step.number}`} className="step-image" />
+                          <img src={step.image} alt={`Stap ${step.number}: ${step.title || ''}`} className="step-image" loading="lazy" />
                         </div>
                       </div>
                       <button 

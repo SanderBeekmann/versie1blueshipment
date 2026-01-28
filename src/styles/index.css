@@ -1,6 +1,9 @@
+/* Tailwind CSS Directives - These are valid Tailwind directives processed by PostCSS */
+/* css-validator-disable */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/* css-validator-enable */
 
 /* CSS Reset and Base Styles */
 *, *::before, *::after {

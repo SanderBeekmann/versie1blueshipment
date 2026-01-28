@@ -132,7 +132,7 @@ const IntakeFunnel = ({ onComplete }) => {
         }
       }, 500);
       
-      setIsSubmitting(false);
+        setIsSubmitting(false);
     }
   };
 
@@ -249,15 +249,15 @@ const IntakeFunnel = ({ onComplete }) => {
             
             return (
               <button
-                key={step}
+              key={step}
                 type="button"
                 className={`funnel-progress-step ${step <= currentStep ? 'active' : ''} ${step === currentStep ? 'current' : ''} ${!isClickable ? 'disabled' : ''}`}
                 onClick={handleStepClick}
                 disabled={!isClickable}
                 aria-label={isClickable ? `Ga naar stap ${step}` : step === currentStep ? `Huidige stap ${step}` : 'Voltooi eerst de huidige stap'}
                 title={isClickable ? `Ga naar stap ${step}` : step === currentStep ? `Huidige stap ${step}` : 'Voltooi eerst de huidige stap'}
-              >
-                <span className="funnel-progress-step-number">{step}</span>
+            >
+              <span className="funnel-progress-step-number">{step}</span>
               </button>
             );
           })}
@@ -605,7 +605,7 @@ const IntakeFunnel = ({ onComplete }) => {
                               setIsEditingShipmentVolume(true);
                             }
                           }}
-                        >
+                      >
                           {(() => {
                             const val = formData.shipmentVolume;
                             if (val && !isNaN(parseInt(val)) && !shipmentVolumeOptions.includes(val)) {
@@ -803,25 +803,25 @@ const IntakeFunnel = ({ onComplete }) => {
                 {/* Mobile Navigation buttons for step 4 */}
                 {currentStep === totalSteps && (
                   <div className="funnel-mobile-nav">
-                    {currentStep > 1 && (
-                      <button
-                        type="button"
+          {currentStep > 1 && (
+            <button
+              type="button"
                         className="funnel-btn-mobile-back"
-                        onClick={handleBack}
-                      >
-                        Terug
-                      </button>
-                    )}
-                    <button
-                      type="button"
+              onClick={handleBack}
+            >
+              Terug
+            </button>
+          )}
+            <button
+              type="button"
                       className="funnel-btn-mobile-next"
-                      onClick={handleNext}
-                      disabled={!canProceed() || isSubmitting}
-                    >
-                      {isSubmitting 
-                        ? 'Verzenden...' 
-                        : 'Plan mijn kennismaking'}
-                    </button>
+              onClick={handleNext}
+              disabled={!canProceed() || isSubmitting}
+            >
+              {isSubmitting 
+                ? 'Verzenden...' 
+                : 'Plan mijn kennismaking'}
+            </button>
                   </div>
                 )}
               </div>

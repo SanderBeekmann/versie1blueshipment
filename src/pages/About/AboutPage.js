@@ -3,19 +3,16 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import './AboutPage.css';
 import Navbar from '../../components/layout/Navbar/Navbar';
-import TeamSection from '../../components/ui/TeamSection';
+import TeamSection from '../../components/sections/TeamSection/TeamSection';
 import LogoSection from '../../components/sections/LogoSection/LogoSection';
 import Footer from '../../components/layout/Footer/Footer';
 import InfiniteGridOverlay from '../../components/ui/the-infinite-grid/InfiniteGridOverlay';
 import TrustSection from '../../components/sections/TrustSection/TrustSection';
 import CTASection from '../../components/sections/CTASection/CTASection';
 import ResourcesSection from '../../components/sections/ResourcesSection/ResourcesSection';
+import SEO from '../../components/SEO/SEO';
 import { initScrollAnimations, initTitleAnimations, initHeroTitleAnimation, initLogoRevealAnimation, initStatsCountUp, cleanupScrollAnimations } from '../../utils/scrollAnimations';
 import logo from '../../assets/brand/logo.png';
-import timoImg from '../../assets/timo.jpg';
-import colinImg from '../../assets/colin.jpg';
-import reitzeImg from '../../assets/reitze.jpg';
-import davidImg from '../../assets/david.jpeg';
 
 function AboutPage() {
   // MOBILE OPTIMIZATION: Don't render InfiniteGridOverlay on mobile
@@ -116,8 +113,23 @@ function AboutPage() {
     };
   }, []);
 
+  const aboutPageSchema = {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    "mainEntity": {
+      "@type": "Organization",
+      "name": "BlueShipment",
+      "description": "BlueShipment is jouw all-in bol.com partner met meer dan 10.000 voltooide bestellingen."
+    }
+  };
+
   return (
     <div className="app">
+      <SEO
+        title="Over Ons - BlueShipment Team"
+        description="Ontdek het BlueShipment team. Wij zijn jouw all-in bol.com partner met meer dan 10.000 voltooide bestellingen. Leer meer over onze missie en het team achter BlueShipment."
+        structuredData={aboutPageSchema}
+      />
       <Navbar />
       <div className="page-content">
         {/* Hero Section */}
@@ -215,48 +227,7 @@ function AboutPage() {
 
       {/* Team Section */}
       <div data-animate="fadeUp">
-        <TeamSection
-          title={
-            <>
-              Het team achter Blueshipment
-            </>
-          }
-          groups={[
-            {
-              title: 'Team',
-              members: [
-                {
-                  id: 'timo',
-                  name: 'Timo Jansen',
-                  role: 'Back-end & software',
-                  avatar: timoImg,
-                  story: 'Als back-end developer zorg ik ervoor dat alles achter de schermen soepel verloopt. Ik ben gepassioneerd over schone code en efficiënte systemen. Mijn focus ligt op het bouwen van robuuste oplossingen die dag in dag uit betrouwbaar werken. Ik begrijp de frustraties van bol.com verkopers omdat ik zelf jarenlang in die schoenen heb gestaan. Die ervaring gebruik ik nu om software te maken die echt werkt voor jullie.'
-                },
-                {
-                  id: 'colin',
-                  name: 'Colin Frederiks',
-                  role: 'Verkoop & klantcontact',
-                  avatar: colinImg,
-                  story: 'Ik ben het eerste aanspreekpunt voor al onze klanten. Mijn achtergrond als bol.com verkoper helpt me om precies te begrijpen waar je tegenaan loopt. Ik geloof in persoonlijk contact - geen automatische antwoorden, maar echte gesprekken. Als je een vraag hebt, bel of app me gerust. Ik ken je bedrijf en help je graag verder, of het nu gaat om een technisch probleem of gewoon een vraag over je dagelijkse werkzaamheden.'
-                },
-                {
-                  id: 'reitze',
-                  name: 'Reitze Douma',
-                  role: 'Logistiek',
-                  avatar: reitzeImg,
-                  story: 'Logistiek is mijn specialiteit. Ik zorg ervoor dat elke order op tijd en correct wordt verzonden. Mijn ervaring met bol.com fulfillment heeft me geleerd wat echt belangrijk is: snelheid, nauwkeurigheid en transparantie. Ik werk dagelijks aan het optimaliseren van onze processen zodat jij je geen zorgen hoeft te maken over je verzendingen. Elke order die we verwerken, behandel ik alsof het mijn eigen bedrijf is.'
-                },
-                {
-                  id: 'david',
-                  name: 'David Karani',
-                  role: 'Social Media',
-                  avatar: davidImg,
-                  story: 'Als social media specialist zorg ik ervoor dat Blueshipment zichtbaar is op de juiste kanalen. Ik creëer content die bol.com verkopers helpt en inspireert, en zorg ervoor dat onze boodschap duidelijk overkomt. Mijn doel is om de community te verbinden en te laten zien wat Blueshipment voor jullie kan betekenen.'
-                }
-              ]
-            }
-          ]}
-        />
+        <TeamSection hideCTA={true} />
       </div>
 
       {/* Trust Section */}

@@ -1,24 +1,17 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import './ResourcesPage.css';
 import Navbar from '../../components/layout/Navbar/Navbar';
 import Footer from '../../components/layout/Footer/Footer';
+import SEO from '../../components/SEO/SEO';
 
 function ResourcesPage() {
-  // SEO: Set document title and meta description
-  useEffect(() => {
-    document.title = "Resources | BlueShipment";
-    const meta = document.querySelector('meta[name="description"]');
-    if (meta) {
-      meta.setAttribute("content", "Praktische artikelen voor bol.com verkopers over fulfilment, software en groei.");
-    } else {
-      // Create meta description if it doesn't exist
-      const metaDescription = document.createElement('meta');
-      metaDescription.name = 'description';
-      metaDescription.content = "Praktische artikelen voor bol.com verkopers over fulfilment, software en groei.";
-      document.getElementsByTagName('head')[0].appendChild(metaDescription);
-    }
-  }, []);
+  const collectionPageSchema = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Resources",
+    "description": "Praktische artikelen voor bol.com verkopers over fulfilment, software en groei."
+  };
 
   const posts = [
     {
@@ -32,6 +25,11 @@ function ResourcesPage() {
 
   return (
     <div className="app">
+      <SEO
+        title="Resources - Artikelen voor bol.com Verkopers"
+        description="Praktische artikelen voor bol.com verkopers over fulfilment, software en groei. Leer hoe je je bol.com business kunt optimaliseren en laten groeien."
+        structuredData={collectionPageSchema}
+      />
       <Navbar />
       <main className="page-content resources-page">
         <header className="resources-hero">
