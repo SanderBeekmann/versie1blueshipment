@@ -299,70 +299,92 @@
     min-height: 280px;
     height: 280px;
     overflow: visible;
+    display: flex;
+    align-items: flex-end;
   }
 
   .team-hero-slide {
     min-height: 280px;
-    padding: var(--gap-small);
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-end;
+    height: 100%;
+    padding: var(--gap-small) var(--gap-small) 0 var(--gap-small);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--gap-small);
+    align-items: stretch;
+    justify-content: space-between;
     position: relative;
+    width: 100%;
   }
 
   .team-hero-person {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+    position: relative;
+    left: auto;
+    transform: none;
     bottom: 0;
-    height: 344px;
+    height: 100%;
+    max-height: none;
     margin-bottom: 0;
+    padding-bottom: 0;
     z-index: 3;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    overflow: visible;
+    align-self: stretch;
   }
 
   .team-hero-person-image {
-    max-width: 220px;
-    height: 344px;
-    transform: translateY(0);
+    max-width: 100%;
+    max-height: 390px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    object-position: bottom;
+    transform: scale(1.5) translateY(0);
     transform-origin: bottom center;
     filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
+    display: block;
   }
 
   .team-hero-person-image[src*="Reitze"] {
-    transform: scale(1.15) translateY(0);
+    transform: scale(1.725) translateY(0);
     transform-origin: bottom center;
   }
 
   .team-hero-person-image[src*="COLIN"],
   .team-hero-person-image[src*="colin"] {
-    transform: scale(1.25) translateY(0);
+    transform: scale(2.25) translateY(0);
     transform-origin: bottom center;
   }
 
   .team-hero-person-image[src*="david"] {
-    transform: scale(1.25) translateY(0);
+    transform: scale(1.875) translateY(0);
     transform-origin: bottom center;
   }
 
   .team-hero-content {
-    padding: var(--gap-medium) var(--gap-small);
-    padding-top: var(--gap-large);
-    align-items: center;
-    text-align: center;
+    padding: var(--gap-small);
+    align-items: flex-start;
+    text-align: left;
     min-height: auto;
     width: 100%;
     z-index: 2;
     position: relative;
+    justify-content: center;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-self: center;
   }
 
   .team-hero-name {
     font-size: clamp(1.75rem, 5vw, 2.5rem);
-    text-align: center;
+    text-align: left;
   }
 
   .team-hero-role {
     font-size: clamp(0.9rem, 2vw, 1.1rem);
-    text-align: center;
+    text-align: left;
   }
 
   .team-hero-dots {
@@ -381,6 +403,7 @@
     transition: none;
   }
 }
+
 
 
 

@@ -13,7 +13,7 @@ import ProcessSection from '../../components/sections/ProcessSection/ProcessSect
 import GallerySection from '../../components/sections/GallerySection/GallerySection';
 import ResultSection from '../../components/sections/ResultSection/ResultSection';
 import TeamSection from '../../components/sections/TeamSection/TeamSection';
-import FeaturesSection from '../../components/sections/FeaturesSection/FeaturesSection';
+import TrustSection from '../../components/sections/TrustSection/TrustSection';
 import Testimonials from '../../components/sections/TestimonialSection/Testimonials';
 import WhatsAppSection from '../../components/sections/WhatsAppSection/WhatsAppSection';
 import CTASection from '../../components/sections/CTASection/CTASection';
@@ -436,7 +436,7 @@ function HomePage() {
         <TeamSection />
       </div>
       <div data-animate="fadeLeft">
-        <FeaturesSection />
+        <TrustSection />
       </div>
       <WhatsAppSection />
       <div data-animate="fadeUp">

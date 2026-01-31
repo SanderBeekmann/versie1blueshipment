@@ -47,7 +47,7 @@ function Footer() {
     { text: 'Diensten', href: '/diensten', type: 'internal' },
     { text: 'Software', href: '/diensten#software', type: 'internal' },
     { text: 'Resources', href: '/resources', type: 'internal' },
-    { text: 'Kennismakingsgesprek', href: 'https://calendly.com/mouseclick2017/30min', type: 'external' }
+    { text: 'Kennismakingsgesprek', href: '/intake', type: 'internal' }
   ];
 
   const column2Links = [

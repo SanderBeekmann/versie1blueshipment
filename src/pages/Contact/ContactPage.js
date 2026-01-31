@@ -1,4 +1,5 @@
 import React, { useLayoutEffect, useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import './ContactPage.css';
@@ -270,18 +271,16 @@ function ContactPage() {
                       <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="currentColor"/>
                     </svg>
                   </div>
-                  <h3 className="contact-method-title">Calendly</h3>
+                  <h3 className="contact-method-title">Kennismaking</h3>
                   <p className="contact-method-description">
-                    Plan een kennismakingsgesprek van 30 minuten
+                    Vul de intake in en plan een kennismakingsgesprek
                   </p>
-                  <a 
-                    href="https://calendly.com/mouseclick2017/30min" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
+                  <Link 
+                    to="/intake"
                     className="btn btn-primary"
                   >
-                    Plan een gesprek
-                  </a>
+                    Start kennismaking
+                  </Link>
                 </div>
 
                 <div ref={rightCardRef} className="contact-method-card">
@@ -292,9 +291,14 @@ function ContactPage() {
                   </div>
                   <h3 className="contact-method-title">Email</h3>
                   <p className="contact-method-description">
-                    Neem contact met ons op via email
+                    Stuur direct een email naar ons
                   </p>
-                  <p className="contact-method-email">info@blueshipment.nl</p>
+                  <a 
+                    href="mailto:info@blueshipment.nl?subject=Contact%20via%20website&body=Hallo%20BlueShipment%2C%0A%0AIk%20wil%20graag%20contact%20met%20jullie%20opnemen.%0A%0AGroet%2C"
+                    className="btn btn-primary"
+                  >
+                    Stuur een email
+                  </a>
                 </div>
               </div>
             </div>

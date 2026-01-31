@@ -157,12 +157,6 @@ function Navbar() {
               </div>
             </div>
             <Link 
-              to="/resources" 
-              className={`nav-link ${location.pathname === '/resources' ? 'active' : ''}`}
-            >
-              Resources
-            </Link>
-            <Link 
               to="/contact" 
               className={`nav-link ${location.pathname === '/contact' ? 'active' : ''}`}
             >
@@ -282,13 +276,6 @@ function Navbar() {
                   </div>
                 )}
               </div>
-              <Link 
-                to="/resources" 
-                className={`nav-link ${location.pathname === '/resources' ? 'active' : ''}`}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Resources
-              </Link>
               <Link 
                 to="/contact" 
                 className={`nav-link ${location.pathname === '/contact' ? 'active' : ''}`}

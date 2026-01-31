@@ -116,12 +116,12 @@
   justify-content: center;
   border-radius: var(--radius-small);
   transition: background-color 0.3s ease;
-  background: rgba(0, 112, 255, 0.08);
+  background: transparent;
 }
 
 .trust-section__feature-card:hover .trust-section__feature-icon-wrapper,
 .trust-section__feature-card--hovered .trust-section__feature-icon-wrapper {
-  background: rgba(0, 112, 255, 0.12);
+  background: transparent;
 }
 
 .trust-section__feature-icon-wrapper svg {
@@ -164,10 +164,6 @@
 /* CTA */
 .trust-section__cta {
   padding-top: var(--space-md);
-}
-
-.trust-section__cta-button {
-  /* Uses default btn-primary styling from index.css */
 }
 
 .trust-section__cta-icon {
@@ -401,8 +397,8 @@
     font-size: var(--heading-3);
   }
 
-  .trust-section__image {
-    height: 400px;
+  .trust-section__visuals {
+    display: none;
   }
 
   .trust-section__floating-card {
