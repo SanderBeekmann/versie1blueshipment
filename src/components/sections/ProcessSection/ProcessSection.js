@@ -7,7 +7,7 @@ import stap1Img from '../../../assets/stap1.svg';
 import stap2Img from '../../../assets/stap2.png';
 import stap3Img from '../../../assets/stap3.png';
 import stap4Img from '../../../assets/stap4.png';
-import stap5Img from '../../../assets/stap 5.png';
+import stap5Img from '../../../assets/stap5.png';
 
 const ChevronRight = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
