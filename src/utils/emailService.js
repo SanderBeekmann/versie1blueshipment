@@ -1,6 +1,6 @@
 /**
  * Email service utility
- * Sends form data via Supabase Edge Function (SMTP + Database storage)
+ * Sends form data via Supabase Edge Function (Resend API + Database storage)
  */
 
 export const sendFunnelEmail = async (formData) => {
