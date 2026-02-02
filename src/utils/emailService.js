@@ -11,8 +11,15 @@ export const sendFunnelEmail = async (formData) => {
 
     const formspreeEndpoint = process.env.REACT_APP_FORMSPREE_ENDPOINT;
 
+    console.log('Environment check:', {
+      hasEndpoint: !!formspreeEndpoint,
+      endpoint: formspreeEndpoint,
+      allEnvVars: Object.keys(process.env).filter(k => k.startsWith('REACT_APP_'))
+    });
+
     if (!formspreeEndpoint) {
       console.error('REACT_APP_FORMSPREE_ENDPOINT is not configured');
+      console.error('Available REACT_APP_ env vars:', Object.keys(process.env).filter(k => k.startsWith('REACT_APP_')));
       return { success: false, error: 'Email service not configured' };
     }
 
@@ -74,6 +81,9 @@ ${formData.grootsteUitdaging || 'Niet ingevuld'}
       }
     };
 
+    console.log('Sending to Formspree:', formspreeEndpoint);
+    console.log('Payload:', payload);
+
     const response = await fetch(formspreeEndpoint, {
       method: 'POST',
       headers: {
@@ -83,14 +93,25 @@ ${formData.grootsteUitdaging || 'Niet ingevuld'}
       body: JSON.stringify(payload)
     });
 
+    console.log('Response status:', response.status);
+    console.log('Response ok:', response.ok);
+
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
+      console.error('Error response:', errorData);
       throw new Error(errorData.error || `HTTP ${response.status}: Failed to send email`);
     }
+
+    const responseData = await response.json();
+    console.log('Success response:', responseData);
 
     return { success: true, method: 'formspree' };
   } catch (error) {
     console.error('Error sending email:', error);
+    console.error('Error details:', {
+      message: error.message,
+      stack: error.stack
+    });
     return { success: false, error: error.message };
   }
 };
