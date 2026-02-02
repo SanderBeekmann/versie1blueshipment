@@ -57,28 +57,18 @@ ${formData.grootsteUitdaging || 'Niet ingevuld'}
     `.trim();
 
     const payload = {
+      _subject: `Nieuwe Lead: ${formData.name || formData.email} - ${timestamp}`,
+      message: summary,
       name: formData.name || '',
       email: formData.email.trim(),
       phone: formData.phone || '',
       company: formData.company || '',
       website: formData.website || '',
       verkoopkanaal: formData.verkoopkanaal || '',
-      diensten: formData.diensten || [],
+      diensten: dienstenList,
       shipmentVolume: formData.shipmentVolume || '',
       grootsteUitdaging: formData.grootsteUitdaging || '',
-      timestamp: timestamp,
-      summary: summary,
-      answers: {
-        name: formData.name || '',
-        company: formData.company || '',
-        email: formData.email || '',
-        phone: formData.phone || '',
-        website: formData.website || '',
-        verkoopkanaal: formData.verkoopkanaal || '',
-        diensten: formData.diensten || [],
-        shipmentVolume: formData.shipmentVolume || '',
-        grootsteUitdaging: formData.grootsteUitdaging || ''
-      }
+      timestamp: timestamp
     };
 
     console.log('Sending to Formspree:', formspreeEndpoint);
