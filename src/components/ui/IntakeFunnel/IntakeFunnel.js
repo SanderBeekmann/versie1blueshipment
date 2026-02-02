@@ -119,27 +119,34 @@ const IntakeFunnel = ({ onComplete }) => {
   const handleSubmit = async () => {
     if (validateStep(5)) {
       setIsSubmitting(true);
-      
-      // Show success state immediately
-      setIsSuccess(true);
-      
-      // Make background API call (non-blocking)
-      sendFunnelEmail(formData).catch(error => {
-        console.error('Error sending email (background):', error);
-        // Don't show error to user - continue flow
-      });
-      
-      // Open Calendly in new tab after a short delay for UX
-      setTimeout(() => {
-        const calendlyUrl = 'https://calendly.com/mouseclick2017/30min';
-        window.open(calendlyUrl, '_blank');
-        
-        if (onComplete) {
-          onComplete(formData);
+
+      try {
+        // Send email and wait for response
+        const result = await sendFunnelEmail(formData);
+
+        if (result.success) {
+          // Show success state
+          setIsSuccess(true);
+
+          // Open Calendly in new tab after a short delay for UX
+          setTimeout(() => {
+            const calendlyUrl = 'https://calendly.com/mouseclick2017/30min';
+            window.open(calendlyUrl, '_blank');
+
+            if (onComplete) {
+              onComplete(formData);
+            }
+          }, 500);
+        } else {
+          console.error('Failed to send email:', result.error);
+          alert('Er is iets misgegaan bij het verzenden van je gegevens. Probeer het opnieuw of neem contact met ons op.');
         }
-      }, 500);
-      
+      } catch (error) {
+        console.error('Error sending email:', error);
+        alert('Er is iets misgegaan bij het verzenden van je gegevens. Probeer het opnieuw of neem contact met ons op.');
+      } finally {
         setIsSubmitting(false);
+      }
     }
   };
 

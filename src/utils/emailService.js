@@ -26,12 +26,14 @@ export const sendFunnelEmail = async (formData) => {
     };
 
     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
     const apiEndpoint = `${supabaseUrl}/functions/v1/send-funnel-email`;
 
     const response = await fetch(apiEndpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${supabaseAnonKey}`,
       },
       body: JSON.stringify(payload)
     });
