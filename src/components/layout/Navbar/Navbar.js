@@ -141,13 +141,6 @@ function Navbar() {
                   Fulfilment
                 </Link>
                 <Link 
-                  to="/diensten#consulting" 
-                  className="nav-dropdown-link"
-                  onClick={() => setIsDienstenDropdownOpen(false)}
-                >
-                  Consulting
-                </Link>
-                <Link 
                   to="/diensten#software" 
                   className="nav-dropdown-link"
                   onClick={() => setIsDienstenDropdownOpen(false)}
@@ -252,16 +245,6 @@ function Navbar() {
                       }}
                     >
                       Fulfilment
-                    </Link>
-                    <Link 
-                      to="/diensten#consulting" 
-                      className="nav-dropdown-link"
-                      onClick={() => {
-                        setIsDienstenDropdownOpen(false);
-                        setIsMenuOpen(false);
-                      }}
-                    >
-                      Consulting
                     </Link>
                     <Link 
                       to="/diensten#software" 

@@ -275,7 +275,6 @@
   grid-template-areas:
     "a a a a a a b b b b b b"
     "a a a a a a b b b b b b"
-    "c c c c d d d d e e e e"
     "c c c c d d d d f f f f"
     ". . . . cta cta cta cta . . . .";
 }
@@ -1303,7 +1302,6 @@
     grid-template-areas:
       "a a a a a a b b b b b b"
       "a a a a a a b b b b b b"
-      "c c c c d d d d e e e e"
       "c c c c d d d d f f f f"
       ". . . . cta cta cta cta . . . .";
     grid-auto-rows: minmax(clamp(110px, 9vw, 150px), auto);

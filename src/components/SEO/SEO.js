@@ -15,7 +15,7 @@ function SEO({
   const fullUrl = canonicalUrl || `${siteUrl}${location.pathname}`;
   const ogImage = image || `${siteUrl}/og-image.jpg`; // Update with actual OG image path
   const fullTitle = title ? `${title} | BlueShipment` : 'BlueShipment - Jouw bol.com Partner';
-  const fullDescription = description || 'BlueShipment is jouw all-in bol.com partner. Wij helpen je met productlistings, automatisering, fulfilment, software en consulting om je bol.com business te laten groeien.';
+  const fullDescription = description || 'BlueShipment is jouw all-in bol.com partner. Wij helpen je met productlistings, automatisering, fulfilment en software om je bol.com business te laten groeien.';
 
   return (
     <Helmet>

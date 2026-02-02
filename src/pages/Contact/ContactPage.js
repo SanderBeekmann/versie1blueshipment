@@ -205,7 +205,7 @@ function ContactPage() {
     <div className="app">
       <SEO
         title="Contact - Neem Contact Op"
-        description="Neem contact op met BlueShipment. Wij helpen je graag verder met vragen over onze bol.com partner services: productlistings, automatisering, fulfilment, software en consulting."
+        description="Neem contact op met BlueShipment. Wij helpen je graag verder met vragen over onze bol.com partner services: productlistings, automatisering, fulfilment en software."
         structuredData={contactPageSchema}
       />
       <Navbar />

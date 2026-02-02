@@ -488,22 +488,6 @@ function DienstenPage() {
       buttons: [
         { text: 'Vraag een demo aan', type: 'primary', action: 'whatsapp', message: 'Hallo! Ik wil graag een demo van de software tools.' }
       ]
-    },
-    {
-      id: 'consulting',
-      label: 'Consulting',
-      title: 'Strategisch advies dat resultaat oplevert',
-      titleHighlight: 'strategisch advies',
-      intro: 'Met onze expertise en praktijkervaring op bol.com helpen wij je onderneming gericht vooruit.',
-      description: 'Met onze expertise en praktijkervaring op bol.com helpen wij je onderneming gericht vooruit. Onze consultants en partners hebben bewezen ervaring in het optimaliseren van winkels voor meer omzet, betere marges en duurzame groei.',
-      bullets: [
-        'Persoonlijke begeleiding',
-        'Strategisch advies',
-        'Praktische tips en best practices'
-      ],
-      buttons: [
-        { text: 'Boek een gesprek', type: 'primary', action: 'calendly' }
-      ]
     }
   ];
 
@@ -581,15 +565,6 @@ function DienstenPage() {
       href: '/diensten/software',
       area: 'd',
       sectionId: 'software'
-    },
-    {
-      kicker: 'Consulting',
-      title: 'Consulting',
-      description: 'Persoonlijke begeleiding om je business te laten groeien.',
-      cta: 'Meer',
-      href: '/diensten#consulting',
-      area: 'e',
-      sectionId: 'consulting'
     },
     {
       kicker: 'Kennismaken?',

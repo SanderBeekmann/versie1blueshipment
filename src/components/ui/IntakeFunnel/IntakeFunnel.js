@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './IntakeFunnel.css';
 import { sendFunnelEmail } from '../../../utils/emailService';
+import timoImage from '../../../assets/timo.png';
 
 const IntakeFunnel = ({ onComplete }) => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -17,12 +18,14 @@ const IntakeFunnel = ({ onComplete }) => {
     company: '',
     email: '',
     phone: '',
-    website: ''
+    website: '',
+    // Step 5
+    awareOfTimeReservation: false
   });
 
   const [errors, setErrors] = useState({});
 
-  const totalSteps = 4;
+  const totalSteps = 5;
 
   // Step 1: Verkoopkanaal options - grouped for better UX
   const activeSellerOptions = [
@@ -38,8 +41,7 @@ const IntakeFunnel = ({ onComplete }) => {
     'Productlistings',
     'Automatiseren',
     'Fulfilment',
-    'Software',
-    'Consulting'
+    'Software'
   ];
 
   // Step 3: Shipment volume options
@@ -95,6 +97,11 @@ const IntakeFunnel = ({ onComplete }) => {
           newErrors.phone = 'Telefoonnummer is verplicht';
         }
         break;
+      case 5:
+        if (!formData.awareOfTimeReservation) {
+          newErrors.awareOfTimeReservation = 'Je moet akkoord gaan om door te gaan';
+        }
+        break;
       default:
         // No validation needed for unknown steps
         break;
@@ -110,7 +117,7 @@ const IntakeFunnel = ({ onComplete }) => {
   const [shipmentVolumeInputValue, setShipmentVolumeInputValue] = useState('');
 
   const handleSubmit = async () => {
-    if (validateStep(4)) {
+    if (validateStep(5)) {
       setIsSubmitting(true);
       
       // Show success state immediately
@@ -197,6 +204,8 @@ const IntakeFunnel = ({ onComplete }) => {
       case 4:
         return !!formData.email && !!formData.phone && 
                /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email);
+      case 5:
+        return formData.awareOfTimeReservation;
       default:
         return false;
     }
@@ -783,13 +792,174 @@ const IntakeFunnel = ({ onComplete }) => {
                   />
                 </div>
                 
-                {/* Submit button - only visible on desktop in step 4 */}
-                {currentStep === totalSteps && (
-                  <div className="funnel-input-group funnel-input-group--submit-desktop">
-                    <label className="funnel-label funnel-label--hidden">Submit</label>
+                </div>
+                {/* Desktop Navigation buttons */}
+                <div className="funnel-step-nav">
+                  {currentStep > 1 && (
                     <button
                       type="button"
-                      className="funnel-btn funnel-btn--primary funnel-btn--submit-inline"
+                      className="funnel-btn funnel-btn--secondary funnel-btn-nav-back"
+                      onClick={handleBack}
+                    >
+                      Terug
+                    </button>
+                  )}
+                  {currentStep < totalSteps && (
+                    <button
+                      type="button"
+                      className="funnel-btn funnel-btn--primary funnel-btn-nav-next"
+                      onClick={handleNext}
+                      disabled={!canProceed() || isSubmitting}
+                    >
+                      Volgende
+                    </button>
+                  )}
+                </div>
+                {/* Mobile Navigation buttons */}
+                <div className="funnel-mobile-nav">
+                  {currentStep > 1 && (
+                    <button
+                      type="button"
+                      className="funnel-btn-mobile-back"
+                      onClick={handleBack}
+                    >
+                      Terug
+                    </button>
+                  )}
+                  {currentStep < totalSteps && (
+                    <button
+                      type="button"
+                      className="funnel-btn-mobile-next"
+                      onClick={handleNext}
+                      disabled={!canProceed() || isSubmitting}
+                    >
+                      Volgende
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Step 5: Bewustwording en Timo introductie */}
+          {currentStep === 5 && (
+            <div className="funnel-step">
+              <div className="funnel-step-content">
+                {/* Left Arrow Navigation */}
+                {currentStep > 1 && (
+                  <button
+                    type="button"
+                    className="funnel-arrow funnel-arrow--left"
+                    onClick={handleBack}
+                    aria-label="Vorige stap"
+                  >
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </button>
+                )}
+
+                <h2 className="funnel-question">Bijna klaar!</h2>
+                
+                {/* Timo Introduction */}
+                <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+                  <div style={{ marginBottom: '20px' }}>
+                    <img 
+                      src={timoImage} 
+                      alt="Timo" 
+                      style={{ 
+                        width: '120px', 
+                        height: '120px', 
+                        borderRadius: '50%', 
+                        objectFit: 'cover',
+                        border: '3px solid #2563eb',
+                        margin: '0 auto',
+                        display: 'block'
+                      }} 
+                    />
+                  </div>
+                  <p style={{ 
+                    fontSize: '18px', 
+                    fontWeight: '600', 
+                    color: '#1f2937', 
+                    marginBottom: '8px' 
+                  }}>
+                    Je kennismakingsgesprek is met Timo
+                  </p>
+                  <p style={{ 
+                    fontSize: '14px', 
+                    color: '#6b7280', 
+                    marginBottom: '30px' 
+                  }}>
+                    Timo kijkt er naar uit om met jou in gesprek te gaan!
+                  </p>
+                </div>
+
+                {/* Checkbox */}
+                <div className="funnel-input-group" style={{ marginBottom: '30px' }}>
+                  <label 
+                    style={{ 
+                      display: 'flex', 
+                      alignItems: 'flex-start', 
+                      cursor: 'pointer',
+                      padding: '16px',
+                      border: `2px solid ${formData.awareOfTimeReservation ? '#2563eb' : '#e5e7eb'}`,
+                      borderRadius: '8px',
+                      backgroundColor: formData.awareOfTimeReservation ? '#eff6ff' : '#ffffff',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onClick={() => updateFormData('awareOfTimeReservation', !formData.awareOfTimeReservation)}
+                  >
+                    <div style={{ 
+                      width: '24px', 
+                      height: '24px', 
+                      minWidth: '24px',
+                      marginRight: '12px',
+                      border: `2px solid ${formData.awareOfTimeReservation ? '#2563eb' : '#9ca3af'}`,
+                      borderRadius: '4px',
+                      backgroundColor: formData.awareOfTimeReservation ? '#2563eb' : '#ffffff',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      transition: 'all 0.2s ease',
+                      marginTop: '2px'
+                    }}>
+                      {formData.awareOfTimeReservation && (
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                          <path d="M20 6L9 17l-5-5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      )}
+                    </div>
+                    <span style={{ 
+                      fontSize: '16px', 
+                      color: '#1f2937', 
+                      lineHeight: '1.5' 
+                    }}>
+                      Ik ben me bewust dat BlueShipment na het plannen van een kennismakingsgesprek tijd voor me reserveert.
+                    </span>
+                  </label>
+                  {errors.awareOfTimeReservation && (
+                    <p className="funnel-error-text" style={{ marginTop: '8px' }}>
+                      {errors.awareOfTimeReservation}
+                    </p>
+                  )}
+                </div>
+
+                {/* Desktop Navigation buttons */}
+                <div className="funnel-step-nav">
+                  {currentStep > 1 && (
+                    <button
+                      type="button"
+                      className="funnel-btn funnel-btn--secondary funnel-btn-nav-back"
+                      onClick={handleBack}
+                    >
+                      Terug
+                    </button>
+                  )}
+                  {currentStep === totalSteps && (
+                    <button
+                      type="button"
+                      className="funnel-btn funnel-btn--primary funnel-btn-nav-next"
                       onClick={handleNext}
                       disabled={!canProceed() || isSubmitting}
                     >
@@ -797,33 +967,32 @@ const IntakeFunnel = ({ onComplete }) => {
                         ? 'Verzenden...' 
                         : 'Plan mijn kennismaking'}
                     </button>
-                  </div>
-                )}
+                  )}
                 </div>
-                {/* Mobile Navigation buttons for step 4 */}
-                {currentStep === totalSteps && (
-                  <div className="funnel-mobile-nav">
-          {currentStep > 1 && (
-            <button
-              type="button"
-                        className="funnel-btn-mobile-back"
-              onClick={handleBack}
-            >
-              Terug
-            </button>
-          )}
-            <button
-              type="button"
+                {/* Mobile Navigation buttons */}
+                <div className="funnel-mobile-nav">
+                  {currentStep > 1 && (
+                    <button
+                      type="button"
+                      className="funnel-btn-mobile-back"
+                      onClick={handleBack}
+                    >
+                      Terug
+                    </button>
+                  )}
+                  {currentStep === totalSteps && (
+                    <button
+                      type="button"
                       className="funnel-btn-mobile-next"
-              onClick={handleNext}
-              disabled={!canProceed() || isSubmitting}
-            >
-              {isSubmitting 
-                ? 'Verzenden...' 
-                : 'Plan mijn kennismaking'}
-            </button>
-                  </div>
-                )}
+                      onClick={handleNext}
+                      disabled={!canProceed() || isSubmitting}
+                    >
+                      {isSubmitting 
+                        ? 'Verzenden...' 
+                        : 'Plan mijn kennismaking'}
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           )}

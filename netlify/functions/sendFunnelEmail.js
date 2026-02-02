@@ -128,24 +128,45 @@ exports.handler = async (event, context) => {
               </p>
               
               <p style="margin: 0 0 20px; color: #4b5563; font-size: 16px; line-height: 1.6;">
-                We hebben je aanvraag ontvangen en gaan er direct mee aan de slag. Ons team neemt binnen 30 minuten contact met je op om een kennismakingsgesprek in te plannen.
+                Bedankt voor het invullen van de intake en het contact opnemen met ons. We hebben je gegevens ontvangen en willen je graag een overzicht geven van wat je hebt ingevuld:
               </p>
               
-              <p style="margin: 0 0 30px; color: #4b5563; font-size: 16px; line-height: 1.6;">
-                In de tussentijd kun je alvast een kennismakingsgesprek plannen via onze Calendly link.
+              <!-- Summary Section -->
+              <div style="background-color: #f9fafb; border-left: 4px solid #2563eb; padding: 20px; margin: 20px 0; border-radius: 4px;">
+                ${answers.verkoopkanaal ? `
+                <p style="margin: 0 0 12px; color: #1f2937; font-size: 15px; line-height: 1.6;">
+                  <strong>Verkoopkanaal:</strong> ${answers.verkoopkanaal}
+                </p>
+                ` : ''}
+                ${answers.diensten && Array.isArray(answers.diensten) && answers.diensten.length > 0 ? `
+                <p style="margin: 0 0 12px; color: #1f2937; font-size: 15px; line-height: 1.6;">
+                  <strong>Diensten waar je hulp bij wilt:</strong> ${answers.diensten.join(', ')}
+                </p>
+                ` : ''}
+                ${answers.shipmentVolume ? `
+                <p style="margin: 0 0 12px; color: #1f2937; font-size: 15px; line-height: 1.6;">
+                  <strong>Shipment volume per maand:</strong> ${answers.shipmentVolume}
+                </p>
+                ` : ''}
+                ${answers.company ? `
+                <p style="margin: 0 0 12px; color: #1f2937; font-size: 15px; line-height: 1.6;">
+                  <strong>Bedrijf:</strong> ${answers.company}
+                </p>
+                ` : ''}
+                ${answers.grootsteUitdaging ? `
+                <p style="margin: 0; color: #1f2937; font-size: 15px; line-height: 1.6;">
+                  <strong>Grootste uitdaging:</strong> ${answers.grootsteUitdaging}
+                </p>
+                ` : ''}
+              </div>
+              
+              <p style="margin: 20px 0; color: #4b5563; font-size: 16px; line-height: 1.6;">
+                We kijken er naar uit om je beter te leren kennen.
               </p>
               
-              <!-- CTA Button -->
-              <table role="presentation" style="width: 100%; margin: 30px 0;">
-                <tr>
-                  <td align="center">
-                    <a href="https://calendly.com/mouseclick2017/30min" style="display: inline-block; padding: 14px 32px; background-color: #2563eb; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">Plan je gesprek</a>
-                  </td>
-                </tr>
-              </table>
-              
-              <p style="margin: 30px 0 0; color: #6b7280; font-size: 14px; line-height: 1.6;">
-                Heb je vragen? Neem gerust contact met ons op via WhatsApp of email.
+              <p style="margin: 30px 0 0; color: #4b5563; font-size: 16px; line-height: 1.6;">
+                Met vriendelijke groet,<br>
+                <strong>Team BlueShipment</strong>
               </p>
             </td>
           </tr>

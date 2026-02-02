@@ -4,9 +4,9 @@ import './ProcessSection.css';
 import GlassTagline from '../GlassTagline/GlassTagline';
 import { initTimelineAnimations, cleanupTimelineAnimations } from '../../../utils/scrollAnimations';
 import stap1Img from '../../../assets/stap1.svg';
-import stap2Img from '../../../assets/stap 2.png';
-import stap3Img from '../../../assets/stap 3.png';
-import stap4Img from '../../../assets/stap 4.png';
+import stap2Img from '../../../assets/stap2.png';
+import stap3Img from '../../../assets/stap3.png';
+import stap4Img from '../../../assets/stap4.png';
 import stap5Img from '../../../assets/stap 5.png';
 
 const ChevronRight = () => (
@@ -109,7 +109,7 @@ function ProcessSection() {
   const steps = [
     {
       number: 1,
-      title: 'Ontvang 2000 artikelen cadeau van BlueShipment',
+      title: 'Ontvang het listings startpakket',
       description: 'Je ontvangt artikelen van ons en profiteert van onze gratis listingservice.',
       buttonText: 'Ontdek listings',
       align: 'left',
@@ -117,7 +117,7 @@ function ProcessSection() {
     },
     {
       number: 2,
-      title: 'Houd je voorraad up-to-date door middel van onze Stock Controle Software',
+      title: 'Krijg je eigen storemanager en maak gebruik van onze software.',
       description: 'Zorg ervoor dat de voorraad van jouw aanbod altijd up-to-date is met onze voorraadcheck software',
       buttonText: 'Voorraadcheck uitleg',
       align: 'right',

@@ -98,7 +98,7 @@ export default function DienstenDetailsSection({ children }) {
     <section ref={containerRef} className="diensten-details-wrapper">
       <svg
         className="diensten-details-svg"
-        viewBox="0 0 400 4000"
+        viewBox="0 0 400 3200"
         preserveAspectRatio="none"
         xmlns="http://www.w3.org/2000/svg"
         aria-hidden="true"
@@ -114,9 +114,7 @@ export default function DienstenDetailsSection({ children }) {
              C 200, 1800, 20, 1800, 20, 2000
              C 20, 2200, 200, 2200, 200, 2400
              C 200, 2600, 380, 2600, 380, 2800
-             C 380, 3000, 200, 3000, 200, 3200
-             C 200, 3400, 200, 3600, 200, 3800
-             L 200, 4000"
+             C 380, 3000, 200, 3000, 200, 3200"
         />
       </svg>
 

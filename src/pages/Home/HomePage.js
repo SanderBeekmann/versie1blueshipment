@@ -30,7 +30,7 @@ function HomePage() {
     "name": "BlueShipment",
     "url": "https://blueshipment.nl",
     "logo": "https://blueshipment.nl/logo.png",
-    "description": "BlueShipment is jouw all-in bol.com partner. Wij helpen je met productlistings, automatisering, fulfilment, software en consulting om je bol.com business te laten groeien.",
+    "description": "BlueShipment is jouw all-in bol.com partner. Wij helpen je met productlistings, automatisering, fulfilment en software om je bol.com business te laten groeien.",
     "sameAs": [
       // Add social media links if available
     ],
@@ -94,15 +94,6 @@ function HomePage() {
       href: '/diensten#software',
       area: 'd',
       sectionId: 'software'
-    },
-    {
-      kicker: 'Consulting',
-      title: 'Consulting',
-      description: 'Persoonlijke begeleiding om je business te laten groeien.',
-      cta: 'Meer',
-      href: '/diensten#consulting',
-      area: 'e',
-      sectionId: 'consulting'
     },
     {
       kicker: 'Kennismaken?',
@@ -337,7 +328,7 @@ function HomePage() {
     <div className="app">
       <SEO
         title="Jouw all-in bol.com partner"
-        description="BlueShipment is jouw all-in bol.com partner. Wij helpen je met productlistings, automatisering, fulfilment, software en consulting om je bol.com business te laten groeien. Meer dan 10.000 voltooide bestellingen."
+        description="BlueShipment is jouw all-in bol.com partner. Wij helpen je met productlistings, automatisering, fulfilment en software om je bol.com business te laten groeien. Meer dan 10.000 voltooide bestellingen."
         structuredData={combinedSchema}
       />
       <Navbar />

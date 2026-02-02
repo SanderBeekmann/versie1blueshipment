@@ -202,23 +202,14 @@ function AboutPage() {
               <div className="about-result-card">
                 <div className="result-number stat-value">100K+</div>
                 <div className="result-label">Orders verwerkt</div>
-                <p className="result-description">
-                  Maandelijks groeien we met tientallen procenten.
-                </p>
               </div>
               <div className="about-result-card">
                 <div className="result-number stat-value">75+</div>
                 <div className="result-label">Succesvolle winkels aangesloten bij ons</div>
-                <p className="result-description">
-                  Ongekend snel en persoonlijk.
-                </p>
               </div>
               <div className="about-result-card">
                 <div className="result-number stat-value">2M</div>
                 <div className="result-label">omzet gedraaid Met onze strategie</div>
-                <p className="result-description">
-                  Omdat we luisteren en echt iets voor je betekenen.
-                </p>
               </div>
             </div>
           </div>
