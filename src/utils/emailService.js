@@ -9,10 +9,10 @@ export const sendFunnelEmail = async (formData) => {
       return { success: false, error: 'Email is required' };
     }
 
-    const formspreeEndpoint = import.meta.env.VITE_FORMSPREE_ENDPOINT;
+    const formspreeEndpoint = process.env.REACT_APP_FORMSPREE_ENDPOINT;
 
     if (!formspreeEndpoint) {
-      console.error('VITE_FORMSPREE_ENDPOINT is not configured');
+      console.error('REACT_APP_FORMSPREE_ENDPOINT is not configured');
       return { success: false, error: 'Email service not configured' };
     }
 
