@@ -406,7 +406,7 @@
 @media (max-width: 768px) {
   .gallery-section {
     padding: var(--section-padding-small) var(--page-padding);
-    background-color: var(--color-background);
+    background-color: var(--color-white);
   }
 
   .gallery-section-container {
