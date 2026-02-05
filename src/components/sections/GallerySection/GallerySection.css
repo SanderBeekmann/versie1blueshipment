@@ -2,7 +2,14 @@
 .gallery-section {
   width: 100%;
   padding: var(--section-padding-medium) var(--page-padding);
-  background-color: var(--color-background);
+  background-color: var(--color-blue-ribbon);
+}
+
+/* Desktop: extra hoogte bovenkant zodat blauwe achtergrond boven titel-pill uitsteekt */
+@media (min-width: 769px) {
+  .gallery-section {
+    padding-top: clamp(120px, 12vw, 180px);
+  }
 }
 
 .gallery-section-container {
@@ -79,7 +86,7 @@
 .gallery-card {
   background-color: var(--color-white);
   border-radius: var(--radius-large);
-  box-shadow: var(--shadow-xsmall);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 16px rgba(0, 0, 0, 0.08);
   overflow: hidden;
   position: relative;
   height: clamp(520px, 60vh, 640px);
@@ -394,6 +401,7 @@
 @media (max-width: 768px) {
   .gallery-section {
     padding: var(--section-padding-small) var(--page-padding);
+    background-color: var(--color-background);
   }
 
   .gallery-section-container {

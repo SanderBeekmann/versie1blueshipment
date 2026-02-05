@@ -152,16 +152,15 @@ function HomePage() {
       initTeamCardsDotAccentAnimation(teamGrid);
     }
 
-    // Ensure ScrollTrigger refreshes after layout is stable
-    // Use double RAF to ensure all initial states are set and layout is calculated
-    // Scroll-to-top wordt afgehandeld door ScrollToTop component bij navigatie
+    // ScrollTrigger.refresh() iets later om main-thread druk na eerste paint te verminderen (lag bovenaan)
+    // Animaties blijven identiek; alleen de herberekening van trigger-posities verschuift
     const refreshTimeout = setTimeout(() => {
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           ScrollTrigger.refresh();
         });
       });
-    }, 100);
+    }, 400);
 
     return () => {
       clearTimeout(refreshTimeout);
@@ -415,9 +414,6 @@ function HomePage() {
                     </article>
                   );
                   })}
-                <div className="diensten-services-cta" data-area="cta">
-                  <Link to="/diensten" className="btn btn-primary">Bekijk alle diensten</Link>
-                </div>
               </div>
             </div>
           </div>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import './TeamSection.css';
 import GlassTagline from '../GlassTagline/GlassTagline';
@@ -172,40 +173,40 @@ function TeamSection({ hideCTA = false }) {
               </motion.div>
             </AnimatePresence>
 
-            {/* Navigation Dots - Inside ribbon */}
-            <div className="team-hero-dots" role="tablist" aria-label="Team member navigation">
-            {teamMembers.map((member, index) => (
-              <button
-                key={member.id}
-                className={`team-hero-dot ${index === activeIndex ? 'team-hero-dot--active' : ''}`}
-                onClick={() => {
-                  setActiveIndex(index);
-                  // Reset timer on manual navigation
-                  if (autoplayIntervalRef.current) {
-                    clearInterval(autoplayIntervalRef.current);
-                  }
-                  if (!prefersReducedMotion.current) {
-                    autoplayIntervalRef.current = setInterval(() => {
-                      setActiveIndex((prev) => (prev + 1) % teamMembers.length);
-                    }, 5000);
-                  }
-                }}
-                aria-label={`Ga naar ${member.name}`}
-                aria-selected={index === activeIndex}
-                role="tab"
-                type="button"
-              />
-            ))}
+            {/* Navigation Dots - in ribbon */}
+            <div className="team-hero-dots team-hero-dots--in-ribbon" role="tablist" aria-label="Team member navigation">
+              {teamMembers.map((member, index) => (
+                <button
+                  key={member.id}
+                  className={`team-hero-dot ${index === activeIndex ? 'team-hero-dot--active' : ''}`}
+                  onClick={() => {
+                    setActiveIndex(index);
+                    if (autoplayIntervalRef.current) {
+                      clearInterval(autoplayIntervalRef.current);
+                    }
+                    if (!prefersReducedMotion.current) {
+                      autoplayIntervalRef.current = setInterval(() => {
+                        setActiveIndex((prev) => (prev + 1) % teamMembers.length);
+                      }, 5000);
+                    }
+                  }}
+                  aria-label={`Ga naar ${member.name}`}
+                  aria-selected={index === activeIndex}
+                  role="tab"
+                  type="button"
+                />
+              ))}
             </div>
           </div>
         </div>
 
-        {/* CTA Button */}
+        {/* Meer over ons link - net onder de blauwe strook, 24px ruimte */}
         {!hideCTA && (
-          <div className="team-hero-cta">
-            <a href="/over-ons" className="team-hero-cta-button">
-              Over ons
-            </a>
+          <div className="team-hero-cta-wrapper">
+            <Link to="/over-ons" className="team-hero-cta-link">
+              Meer over ons
+              <span className="team-hero-cta-arrow" aria-hidden="true">→</span>
+            </Link>
           </div>
         )}
       </div>

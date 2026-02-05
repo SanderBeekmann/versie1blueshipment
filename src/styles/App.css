@@ -36,6 +36,7 @@
 
 /* Pseudo-element covers only the content area, not the padding-bottom space */
 /* This allows footer to be visible in the padding-bottom area at the end */
+/* Schaduw op onderkant van dit element zodat schaduw meebeweegt met laatste sectie */
 .page-content::before {
   content: '';
   position: absolute;
@@ -47,6 +48,7 @@
   background-color: var(--color-background);
   z-index: -1;
   pointer-events: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.18), 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
 /* Re-enable pointer events for all direct children of page-content */

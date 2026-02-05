@@ -1,20 +1,9 @@
 /* Homepage-specific TeamSection overrides */
 /* Remove white container wrapper, reduce spacing, make CTA orange */
 
-/* Dunne blauwe divider onder teamsectie (alleen homepage), half zo breed als viewport */
 .home-team-section-wrapper {
   position: relative;
   padding-bottom: var(--gap-small);
-}
-
-.home-team-section-wrapper::after {
-  content: '';
-  display: block;
-  width: 35vw;
-  height: 0.5px;
-  background: var(--color-blue-ribbon);
-  opacity: 0.8;
-  margin: var(--gap-small) auto 0;
 }
 
 /* Add circle gradient in center (same as CTASection) */

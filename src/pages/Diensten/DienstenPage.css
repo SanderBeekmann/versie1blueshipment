@@ -1323,14 +1323,15 @@
   }
 
   /* Desktop bento grid - behoud originele layout */
+  /* CTA-rij krijgt auto hoogte om witruimte onder grid te voorkomen */
   .diensten-bento {
     grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: minmax(clamp(110px, 9vw, 150px), auto) minmax(clamp(110px, 9vw, 150px), auto) minmax(clamp(110px, 9vw, 150px), auto) auto;
     grid-template-areas:
       "a a a a a a b b b b b b"
       "a a a a a a b b b b b b"
       "c c c c d d d d f f f f"
       ". . . . cta cta cta cta . . . .";
-    grid-auto-rows: minmax(clamp(110px, 9vw, 150px), auto);
     gap: clamp(12px, 1.4vw, 18px);
   }
 

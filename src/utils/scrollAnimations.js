@@ -81,6 +81,35 @@ export const initScrollAnimations = () => {
         return; // Skip animation for FAQ section
       }
 
+      // Special case: Gallery section - achtergrond altijd zichtbaar, container (card) wel inanimeren
+      const isGallerySection = section.querySelector('.gallery-section') !== null;
+      if (isGallerySection) {
+        gsap.set(section, { opacity: 1, y: 0, x: 0, scale: 1 });
+        const card = section.querySelector('.gallery-card');
+        if (card) {
+          gsap.set(card, { opacity: 0, y: 28, scale: 0.96 });
+          const cardObserver = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                  gsap.to(card, {
+                    opacity: 1,
+                    y: 0,
+                    scale: 1,
+                    duration: 0.65,
+                    ease: 'power2.out',
+                  });
+                  cardObserver.unobserve(entry.target);
+                }
+              });
+            },
+            { threshold: 0.15 }
+          );
+          cardObserver.observe(section);
+        }
+        return;
+      }
+
       // Set initial state
       gsap.set(section, { opacity: 0, y: variant.y || 0, x: variant.x || 0, scale: variant.scale || 1 });
 
@@ -142,6 +171,30 @@ export const initScrollAnimations = () => {
       // FAQ section should be visible immediately without animation
       gsap.set(section, { opacity: 1, y: 0, x: 0, scale: 1 });
       return; // Skip animation for FAQ section
+    }
+
+    // Special case: Gallery section - achtergrond altijd zichtbaar, container (card) wel inanimeren
+    const isGallerySection = section.querySelector('.gallery-section') !== null;
+    if (isGallerySection) {
+      gsap.set(section, { opacity: 1, y: 0, x: 0, scale: 1 });
+      const card = section.querySelector('.gallery-card');
+      if (card) {
+        gsap.set(card, { opacity: 0, y: 28, scale: 0.96 });
+        gsap.to(card, {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.7,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: card,
+            start: 'top 88%',
+            once: true,
+            invalidateOnRefresh: true,
+          },
+        });
+      }
+      return;
     }
 
     if (getPrefersReducedMotion()) {

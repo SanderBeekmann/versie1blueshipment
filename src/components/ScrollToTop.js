@@ -38,32 +38,13 @@ function ScrollToTop() {
     prevPathnameRef.current = currentPathname;
   }, [location.pathname]);
 
-  // Backup: scroll NA paint voor zekerheid
+  // Backup: één late scroll-corrigeer na routewissel (minder timeouts = minder kans op stutter)
   useEffect(() => {
-    // Extra scroll na paint (als we niet op eerste render zijn en niet al op top zijn)
-    // Dit vangt layout shifts en ScrollTrigger.refresh() op
-    if (!isFirstRenderRef.current) {
-      // Als we niet op top zijn, scroll dan
-      if (window.scrollY > 5) {
-        scrollToTop();
-      }
-      
-      // Extra scroll na delays om layout shifts en ScrollTrigger.refresh() te vangen
-      const timeouts = [
-        setTimeout(() => {
-          if (window.scrollY > 5) scrollToTop();
-        }, 10),
-        setTimeout(() => {
-          if (window.scrollY > 5) scrollToTop();
-        }, 100),
-        setTimeout(() => {
-          if (window.scrollY > 5) scrollToTop();
-        }, 200)
-      ];
-      
-      return () => {
-        timeouts.forEach(clearTimeout);
-      };
+    if (!isFirstRenderRef.current && window.scrollY > 30) {
+      const t = setTimeout(() => {
+        if (window.scrollY > 30) scrollToTop();
+      }, 100);
+      return () => clearTimeout(t);
     }
   }, [location.pathname]);
 

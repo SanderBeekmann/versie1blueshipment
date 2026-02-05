@@ -21,55 +21,30 @@ if (!window.location.hash) {
   }
 }
 
-// Comprehensive scroll monitoring for debugging
-if (process.env.NODE_ENV === 'development') {
+// Scroll monitoring alleen aanzetten voor debug (voorkomt extra main-thread werk bij scroll)
+if (process.env.NODE_ENV === 'development' && process.env.REACT_APP_DEBUG_SCROLL === 'true') {
   let lastScrollY = window.scrollY;
   let scrollTimeout = null;
-  
-  // Monitor all scroll position changes
   const monitorScroll = () => {
     const currentScrollY = window.scrollY;
     const diff = currentScrollY - lastScrollY;
-    
     if (Math.abs(diff) > 10) {
-      console.warn('[ScrollMonitor] Large scroll change detected', {
-        from: lastScrollY,
-        to: currentScrollY,
-        diff,
-        timestamp: Date.now(),
-        stack: new Error().stack
-      });
+      console.warn('[ScrollMonitor] Large scroll change detected', { from: lastScrollY, to: currentScrollY, diff });
     }
-    
     lastScrollY = currentScrollY;
   };
-  
-  // Monitor scroll events
   window.addEventListener('scroll', () => {
     clearTimeout(scrollTimeout);
     scrollTimeout = setTimeout(monitorScroll, 50);
   }, { passive: true });
-  
-  // Monitor all scrollTo calls
   const originalScrollTo = window.scrollTo;
   window.scrollTo = function(...args) {
-    console.trace('[ScrollMonitor] window.scrollTo called', {
-      args,
-      currentScrollY: window.scrollY,
-      timestamp: Date.now()
-    });
+    console.trace('[ScrollMonitor] window.scrollTo called', { args, currentScrollY: window.scrollY });
     return originalScrollTo.apply(this, args);
   };
-  
-  // Monitor scrollIntoView calls
   const originalScrollIntoView = Element.prototype.scrollIntoView;
   Element.prototype.scrollIntoView = function(...args) {
-    console.trace('[ScrollMonitor] scrollIntoView called', {
-      element: this,
-      args,
-      currentScrollY: window.scrollY,
-      timestamp: Date.now()
-    });
+    console.trace('[ScrollMonitor] scrollIntoView called', { element: this, args });
     return originalScrollIntoView.apply(this, args);
   };
 }
