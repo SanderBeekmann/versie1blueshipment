@@ -8,6 +8,8 @@ function Hero() {
   const rootRef = useRef(null);
   const primaryBtnRef = useRef(null);
   const secondaryBtnRef = useRef(null);
+  const rafIdRef = useRef(null);
+  const ctxRef = useRef(null);
 
   // MOBILE OPTIMIZATION: Don't render InfiniteGridOverlay on mobile
   const [isMobile, setIsMobile] = useState(false);
@@ -35,55 +37,44 @@ function Hero() {
   }, []);
 
   useLayoutEffect(() => {
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    
-    const ctx = gsap.context(() => {
-      // Filter out null refs (voor toekomstige secondary button)
-      const buttons = [primaryBtnRef.current, secondaryBtnRef.current].filter(Boolean);
-      
-      if (buttons.length === 0) return;
+    // Eén frame uitstellen: eerste paint zonder GSAP-work in hero (minder lag), CSS houdt buttons verborgen
+    rafIdRef.current = requestAnimationFrame(() => {
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      ctxRef.current = gsap.context(() => {
+        const buttons = [primaryBtnRef.current, secondaryBtnRef.current].filter(Boolean);
+        if (buttons.length === 0) return;
 
-      if (prefersReducedMotion) {
-        // For reduced motion: show buttons immediately, no animation
+        if (prefersReducedMotion) {
+          gsap.set(buttons, { autoAlpha: 1, y: 0, scale: 1, willChange: 'auto' });
+          return;
+        }
+
         gsap.set(buttons, {
+          autoAlpha: 0,
+          y: 50,
+          scale: 0.95,
+          willChange: 'transform, opacity',
+        });
+
+        const buttonTimeline = gsap.timeline({ delay: 0.8 });
+        buttonTimeline.to(buttons, {
           autoAlpha: 1,
           y: 0,
           scale: 1,
-          willChange: 'auto',
+          duration: 0.8,
+          ease: 'power3.out',
+          stagger: 0.1,
+          onComplete: () => {
+            gsap.set(buttons, { willChange: 'auto' });
+          },
         });
-        return;
-      }
+      }, rootRef);
+    });
 
-      // CRITICAL: Set initial state SYNCHRONOUSLY in useLayoutEffect (vóór eerste paint)
-      // Dit voorkomt de flits waar buttons eerst zichtbaar zijn, dan wegvliegen
-      // CSS also sets initial hidden state as safety net (Hero.css)
-      gsap.set(buttons, {
-        autoAlpha: 0,
-        y: 50,
-        scale: 0.95,
-        willChange: 'transform, opacity',
-      });
-
-      // Button animatie starten na de subtitle animatie
-      // Timing: title animatie start na ~200ms, subtitle na ~500ms (200ms + 300ms delay)
-      // Button animatie moet starten na ~800ms (200ms + 600ms delay zoals in initHeroTitleAnimation)
-      // We gebruiken een kleine timeline die wacht en dan de buttons animeert
-      const buttonTimeline = gsap.timeline({ delay: 0.8 });
-      
-      buttonTimeline.to(buttons, {
-        autoAlpha: 1,
-        y: 0,
-        scale: 1,
-        duration: 0.8,
-        ease: 'power3.out',
-        stagger: 0.1,
-        onComplete: () => {
-          gsap.set(buttons, { willChange: 'auto' });
-        },
-      });
-    }, rootRef);
-
-    return () => ctx.revert();
+    return () => {
+      if (rafIdRef.current != null) cancelAnimationFrame(rafIdRef.current);
+      if (ctxRef.current) ctxRef.current.revert();
+    };
   }, []);
 
   return (

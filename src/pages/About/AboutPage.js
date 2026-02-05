@@ -40,74 +40,61 @@ function AboutPage() {
   }, []);
 
   useLayoutEffect(() => {
-    // Initialize all animations
-    initScrollAnimations();
-    initTitleAnimations();
-    initHeroTitleAnimation();
-    initLogoRevealAnimation(1000); // 1 second delay for hero
-    initStatsCountUp();
+    let refreshTimeout = null;
+    const rafId = requestAnimationFrame(() => {
+      initScrollAnimations();
+      initTitleAnimations();
+      initHeroTitleAnimation();
+      initLogoRevealAnimation(1000);
+      initStatsCountUp();
 
-    // Animate hero buttons (AboutPage specific)
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!prefersReducedMotion) {
-      const heroCtas = document.querySelector('.about-hero-ctas');
-      if (heroCtas) {
-        const buttons = heroCtas.querySelectorAll('button, a');
-        if (buttons.length > 0) {
-          // CRITICAL: Set initial state SYNCHRONOUSLY in useLayoutEffect (vóór eerste paint)
-          // Dit voorkomt de flits waar buttons eerst zichtbaar zijn, dan wegvliegen
-          gsap.set(buttons, {
-            autoAlpha: 0,
-            y: 50,
-            scale: 0.95,
-            willChange: 'transform, opacity',
-          });
-
-          // Button animatie starten na de subtitle animatie (same timing as Hero.js)
-          const buttonTimeline = gsap.timeline({ delay: 0.8 });
-          buttonTimeline.to(buttons, {
-            autoAlpha: 1,
-            y: 0,
-            scale: 1,
-            duration: 0.8,
-            ease: 'power3.out',
-            stagger: 0.1,
-            onComplete: () => {
-              gsap.set(buttons, { willChange: 'auto' });
-            },
-          });
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!prefersReducedMotion) {
+        const heroCtas = document.querySelector('.about-hero-ctas');
+        if (heroCtas) {
+          const buttons = heroCtas.querySelectorAll('button, a');
+          if (buttons.length > 0) {
+            gsap.set(buttons, {
+              autoAlpha: 0,
+              y: 50,
+              scale: 0.95,
+              willChange: 'transform, opacity',
+            });
+            const buttonTimeline = gsap.timeline({ delay: 0.8 });
+            buttonTimeline.to(buttons, {
+              autoAlpha: 1,
+              y: 0,
+              scale: 1,
+              duration: 0.8,
+              ease: 'power3.out',
+              stagger: 0.1,
+              onComplete: () => { gsap.set(buttons, { willChange: 'auto' }); },
+            });
+          }
+        }
+      } else {
+        const heroCtas = document.querySelector('.about-hero-ctas');
+        if (heroCtas) {
+          const buttons = heroCtas.querySelectorAll('button, a');
+          if (buttons.length > 0) {
+            gsap.set(buttons, { autoAlpha: 1, y: 0, scale: 1, willChange: 'auto' });
+          }
         }
       }
-    } else {
-      // Reduced motion: show buttons immediately
-      const heroCtas = document.querySelector('.about-hero-ctas');
-      if (heroCtas) {
-        const buttons = heroCtas.querySelectorAll('button, a');
-        if (buttons.length > 0) {
-          gsap.set(buttons, {
-            autoAlpha: 1,
-            y: 0,
-            scale: 1,
-            willChange: 'auto',
-          });
-        }
-      }
-    }
 
-    // MOBILE OPTIMIZATION: Only refresh ScrollTrigger on desktop
-    const isMobileCheck = window.innerWidth < 768;
-    const refreshTimeout = setTimeout(() => {
-      if (!isMobileCheck) {
-        requestAnimationFrame(() => {
+      const isMobileCheck = window.innerWidth < 768;
+      refreshTimeout = setTimeout(() => {
+        if (!isMobileCheck) {
           requestAnimationFrame(() => {
-            ScrollTrigger.refresh();
+            requestAnimationFrame(() => { ScrollTrigger.refresh(); });
           });
-        });
-      }
-    }, 100);
+        }
+      }, 100);
+    });
 
     return () => {
-      clearTimeout(refreshTimeout);
+      cancelAnimationFrame(rafId);
+      if (refreshTimeout) clearTimeout(refreshTimeout);
       cleanupScrollAnimations();
     };
   }, []);

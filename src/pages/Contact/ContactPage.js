@@ -49,18 +49,17 @@ function ContactPage() {
   }, []);
 
   useLayoutEffect(() => {
-    // Initialize all animations
-    initScrollAnimations();
-    initTitleAnimations();
-    initHeroTitleAnimation();
+    let refreshTimeout = null;
+    const rafId = requestAnimationFrame(() => {
+      initScrollAnimations();
+      initTitleAnimations();
+      initHeroTitleAnimation();
+      refreshTimeout = setTimeout(() => { ScrollTrigger.refresh(true); }, 150);
+    });
 
-    // ScrollTrigger refresh
-    const refreshTimeout = setTimeout(() => {
-      ScrollTrigger.refresh(true);
-    }, 150);
-    
     return () => {
-      clearTimeout(refreshTimeout);
+      cancelAnimationFrame(rafId);
+      if (refreshTimeout) clearTimeout(refreshTimeout);
       cleanupScrollAnimations();
     };
   }, []);

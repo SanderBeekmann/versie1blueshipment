@@ -140,30 +140,35 @@ function HomePage() {
   ];
 
   useLayoutEffect(() => {
-    // Initialize all animations
-    initScrollAnimations();
-    initTitleAnimations();
-    initHeroTitleAnimation();
-    initLogoRevealAnimation(1000); // 1 second delay for hero
+    // Eén frame uitstellen: eerste paint gebeurt zonder zware init, daarna animaties (voorkomt lag)
+    // CSS zet [data-animate] en titels al op opacity:0 zodat geen flits
+    let refreshTimeout = null;
+    const rafId = requestAnimationFrame(() => {
+      initScrollAnimations();
+      initTitleAnimations();
+      initHeroTitleAnimation();
+      initLogoRevealAnimation(1000);
 
-    // Initialize team cards animation
-    const teamGrid = document.querySelector('.team-grid');
-    if (teamGrid) {
-      initTeamCardsDotAccentAnimation(teamGrid);
-    }
+      const teamGrid = document.querySelector('.team-grid');
+      if (teamGrid) {
+        initTeamCardsDotAccentAnimation(teamGrid);
+      }
 
-    // ScrollTrigger.refresh() iets later om main-thread druk na eerste paint te verminderen (lag bovenaan)
-    // Animaties blijven identiek; alleen de herberekening van trigger-posities verschuift
-    const refreshTimeout = setTimeout(() => {
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          ScrollTrigger.refresh();
-        });
-      });
-    }, 400);
+      const doRefresh = () => {
+        requestAnimationFrame(() => { ScrollTrigger.refresh(); });
+      };
+      refreshTimeout = setTimeout(() => {
+        if (typeof requestIdleCallback !== 'undefined') {
+          requestIdleCallback(doRefresh, { timeout: 800 });
+        } else {
+          doRefresh();
+        }
+      }, 400);
+    });
 
     return () => {
-      clearTimeout(refreshTimeout);
+      cancelAnimationFrame(rafId);
+      if (refreshTimeout) clearTimeout(refreshTimeout);
       cleanupScrollAnimations();
     };
   }, []);

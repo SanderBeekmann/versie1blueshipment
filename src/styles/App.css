@@ -57,12 +57,33 @@
   position: relative;
 }
 
-/* Animation wrapper styling */
+/* Animation wrapper styling – start verborgen zodat init na eerste paint geen flits geeft */
 [data-animate] {
   will-change: transform, opacity;
+  opacity: 0;
+}
+
+[data-animate-title]:not(.hero-title),
+.hero-title-desktop,
+.hero-title-mobile,
+.hero-title,
+.about-hero-title,
+.diensten-hero-title,
+.contact-hero-title {
+  opacity: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {
+  [data-animate],
+  [data-animate-title]:not(.hero-title),
+  .hero-title-desktop,
+  .hero-title-mobile,
+  .hero-title,
+  .about-hero-title,
+  .diensten-hero-title,
+  .contact-hero-title {
+    opacity: 1;
+  }
   [data-animate] {
     will-change: auto;
   }

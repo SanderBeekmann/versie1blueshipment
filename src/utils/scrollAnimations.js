@@ -622,8 +622,9 @@ const splitHeroTitleIntoLetters = (element) => {
  * Subtitle animates with a small delay after the title
  */
 export const initHeroTitleAnimation = () => {
-  // Use requestAnimationFrame to ensure DOM is ready
+  // Twee frames uitstellen: vermindert lag in hero (letter-splits en GSAP in apart frame)
   requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
     // Support homepage, about page, and diensten page hero titles
     // For homepage: select the visible title (desktop or mobile based on viewport)
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
@@ -696,6 +697,9 @@ export const initHeroTitleAnimation = () => {
       willChange: 'transform, opacity',
     });
 
+    // Container weer zichtbaar maken (CSS zet .hero-title op opacity:0 tegen flits; letters animeren naar 1)
+    gsap.set(heroTitle, { opacity: 1 });
+
     // Set initial state for subtitle
     if (heroSubtitle) {
       gsap.set(heroSubtitle, {
@@ -763,6 +767,7 @@ export const initHeroTitleAnimation = () => {
       // Buttons are animated by Hero.js component's useLayoutEffect
       // Do NOT animate buttons here to prevent flash on navigation
     }, 200);
+    }); // close inner rAF (hero title één frame later = minder lag)
   });
 };
 

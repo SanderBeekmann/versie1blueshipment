@@ -1,8 +1,13 @@
-/* CTA Section */
+/* CTA Section - circular gradient (zelfde als TeamSection/GallerySection) */
 .cta-section {
   width: 100%;
   padding: var(--page-padding) 0;
-  background-color: var(--color-blue-ribbon);
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(64, 156, 255, 0.95) 0%,
+    var(--color-blue-ribbon) 45%,
+    #004799 100%
+  );
   overflow: visible;
 }
 
