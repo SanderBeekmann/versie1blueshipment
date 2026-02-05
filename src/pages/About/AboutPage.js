@@ -9,7 +9,6 @@ import Footer from '../../components/layout/Footer/Footer';
 import InfiniteGridOverlay from '../../components/ui/the-infinite-grid/InfiniteGridOverlay';
 import TrustSection from '../../components/sections/TrustSection/TrustSection';
 import CTASection from '../../components/sections/CTASection/CTASection';
-import ResourcesSection from '../../components/sections/ResourcesSection/ResourcesSection';
 import SEO from '../../components/SEO/SEO';
 import { initScrollAnimations, initTitleAnimations, initHeroTitleAnimation, initLogoRevealAnimation, initStatsCountUp, cleanupScrollAnimations } from '../../utils/scrollAnimations';
 import logo from '../../assets/brand/logo.png';
@@ -228,11 +227,6 @@ function AboutPage() {
 
       {/* Final CTA Section */}
       <CTASection />
-
-      {/* Resources Section */}
-      <div data-animate="fadeUp">
-        <ResourcesSection />
-      </div>
 
       {/* Partners Section */}
       <div data-animate="fadeLeft">

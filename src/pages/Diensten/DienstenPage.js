@@ -424,7 +424,8 @@ function DienstenPage() {
       title: 'Productlistings die écht verkopen',
       titleHighlight: 'Productlistings',
       intro: 'Productlistings zijn de advertenties waarmee jouw producten zichtbaar worden op bol.com. Ze bepalen of bezoekers klikken, vertrouwen krijgen en uiteindelijk kopen.',
-      description: 'Productlistings zijn de advertenties waarmee jouw producten zichtbaar worden op bol.com. Ze bepalen of bezoekers klikken, vertrouwen krijgen en uiteindelijk kopen. Wij maken deze listings volledig voor je: geoptimaliseerd op zoekgedrag, conversie en bol.com-richtlijnen. Zo hoef jij niet handmatig honderden listings aan te maken en kun je direct zorgeloos verkopen. Blueshipment is het all-in platform dat productcreatie, logistiek en verkoop samenbrengt in één schaalbaar businessmodel.',
+      description: 'Productlistings zijn de advertenties waarmee jouw producten zichtbaar worden op bol.com. Ze bepalen of bezoekers klikken, vertrouwen krijgen en uiteindelijk kopen. Wij maken deze listings volledig voor je: geoptimaliseerd op zoekgedrag, conversie en bol.com-richtlijnen.',
+      descriptionParagraph2: 'Zo hoef jij niet handmatig honderden listings aan te maken en kun je direct zorgeloos verkopen. Blueshipment is het all-in platform dat productcreatie, logistiek en verkoop samenbrengt in één schaalbaar businessmodel.',
       image: listingsImage,
       bullets: [
         'Automatische synchronisatie met je bronnen',
@@ -443,8 +444,8 @@ function DienstenPage() {
       intro: 'Bestellingen, klantvragen, retouren en winstberekeningen worden automatisch verwerkt.',
       description: 'Bestellingen, klantvragen, retouren en winstberekeningen worden automatisch verwerkt. Dit wordt mogelijk gemaakt door een combinatie van ons ervaren team en slimme A.I.-software, zodat processen sneller, foutloos en schaalbaar verlopen.',
       image: automatiseringImage,
+      bulletsLabel: 'Automatiseer jouw:',
       bullets: [
-        'Automatiseer jouw',
         'Bestellingen',
         'Klantvragen',
         'Retouren',
@@ -777,15 +778,32 @@ function DienstenPage() {
                       {detail.description && (
                         <p className="diensten-detail-description">{detail.description}</p>
                       )}
+                      {detail.descriptionParagraph2 && (
+                        <p className="diensten-detail-description">{detail.descriptionParagraph2}</p>
+                      )}
                       {detail.bullets && detail.bullets.length > 0 && (
-                        <ul className="diensten-detail-bullets" data-bullet-list={detail.id}>
-                          {detail.bullets.map((bullet, bulletIndex) => (
-                            <li key={bulletIndex} className="diensten-detail-bullet">
-                              <CheckIcon />
-                              <span>{bullet}</span>
-                            </li>
-                          ))}
-                        </ul>
+                        detail.bulletsLabel ? (
+                          <div className="diensten-detail-bullets-block">
+                            <p className="diensten-detail-bullets-label">{detail.bulletsLabel}</p>
+                            <ul className="diensten-detail-bullets" data-bullet-list={detail.id}>
+                              {detail.bullets.map((bullet, bulletIndex) => (
+                                <li key={bulletIndex} className="diensten-detail-bullet">
+                                  <CheckIcon />
+                                  <span>{bullet}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        ) : (
+                          <ul className="diensten-detail-bullets" data-bullet-list={detail.id}>
+                            {detail.bullets.map((bullet, bulletIndex) => (
+                              <li key={bulletIndex} className="diensten-detail-bullet">
+                                <CheckIcon />
+                                <span>{bullet}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        )
                       )}
                       <div className="diensten-detail-media-mobile">
                         {detail.image && (

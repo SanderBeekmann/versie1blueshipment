@@ -1110,6 +1110,32 @@
   margin: 0 0 var(--gap-xxsmall);
 }
 
+/* Kleine gap tussen twee opeenvolgende alinea's, marge naar vinkjes blijft gelijk */
+.diensten-detail-description:has(+ .diensten-detail-description) {
+  margin-bottom: 0.25rem;
+}
+
+.diensten-detail-bullets-block {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin: 0.25rem 0 var(--gap-xxsmall) 0;
+}
+
+.diensten-detail-bullets-block .diensten-detail-bullets {
+  margin-bottom: 0;
+}
+
+.diensten-detail-bullets-label {
+  font-family: var(--font-primary);
+  font-size: var(--text-regular);
+  font-weight: var(--font-semibold);
+  line-height: var(--line-relaxed);
+  color: var(--color-neutral-darkest);
+  margin: 0;
+  padding: 0;
+}
+
 .diensten-detail-bullets {
   display: flex;
   flex-direction: column;
@@ -1404,10 +1430,11 @@
     grid-template-columns: 1fr;
   }
 
-  .diensten-detail-block .diensten-detail-media,
-  .diensten-detail-block--reverse .diensten-detail-media,
-  .diensten-detail-block .diensten-detail-image-wrapper,
-  .diensten-detail-block--reverse .diensten-detail-image-wrapper {
+  /* Alleen de desktop-afbeelding verbergen (direct kind van block), niet de afbeelding in .diensten-detail-media-mobile */
+  .diensten-detail-block > .diensten-detail-media,
+  .diensten-detail-block--reverse > .diensten-detail-media,
+  .diensten-detail-block > .diensten-detail-image-wrapper,
+  .diensten-detail-block--reverse > .diensten-detail-image-wrapper {
     display: none;
   }
 

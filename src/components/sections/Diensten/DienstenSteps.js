@@ -366,12 +366,12 @@ function DienstenSteps() {
     {
       icon: <UserIcon />,
       title: <>Stap 1:<br />Aanmelden en account instellen</>,
-      description: 'Je gegevens in, we richten alles in. Klaar in minder dan een uur.'
+      description: 'Je vult je gegevens in en wij maken je account klaar voor gebruik in minder dan een uur.'
     },
     {
       icon: <InventoryIcon />,
       title: <>Stap 2:<br />Voorraad aanleveren</>,
-      description: 'Je producten komen aan, we scannen en registreren alles. Geen gedoe, geen wachten.'
+      description: 'Je producten komen aan, wij scannen en registreren alles.'
     },
     {
       icon: <CheckIcon />,
@@ -381,7 +381,7 @@ function DienstenSteps() {
     {
       icon: <OrderIcon />,
       title: <>Stap 4:<br />Orders lopen automatisch</>,
-      description: 'Klanten bestellen, wij verzenden. Jij hoeft niets te doen. Retourverwerking ook automatisch.'
+      description: 'Klanten bestellen, wij verzenden. Jij hoeft niets te doen. Ook retouren verzorgen wij volledig.'
     }
   ];
 

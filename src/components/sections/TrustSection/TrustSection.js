@@ -40,6 +40,8 @@ const TrustSection = () => {
   const taglineRef = useRef(null);
   const titleRef = useRef(null);
   const descriptionRef = useRef(null);
+  const featuresGridRef = useRef(null);
+  const sectionRef = useRef(null);
 
   // Icon mapping helper
   const iconMap = {
@@ -157,8 +159,49 @@ const TrustSection = () => {
     };
   }, []);
 
+  // Staggered in-animatie voor kernwaarden-cards (homepage én over ons)
+  useLayoutEffect(() => {
+    const section = sectionRef.current;
+    const grid = featuresGridRef.current;
+    if (!section || !grid) return;
+
+    const cards = grid.querySelectorAll('.trust-section__feature-card');
+    if (cards.length === 0) return;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+      gsap.set(cards, { opacity: 1, y: 0 });
+      return;
+    }
+
+    gsap.set(cards, { opacity: 0, y: 24, willChange: 'transform, opacity' });
+
+    const st = ScrollTrigger.create({
+      trigger: cards[0],
+      start: 'bottom bottom',
+      once: true,
+      invalidateOnRefresh: true,
+      onEnter: () => {
+        gsap.to(cards, {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          stagger: 0.22,
+          ease: 'power2.out',
+          onComplete: () => {
+            gsap.set(cards, { willChange: 'auto' });
+          },
+        });
+      },
+    });
+
+    return () => {
+      st.kill();
+    };
+  }, []);
+
   return (
-    <section className="trust-section">
+    <section ref={sectionRef} className="trust-section">
       <div className="trust-section__container">
         <div className="trust-section__grid">
           
@@ -179,7 +222,7 @@ const TrustSection = () => {
             </p>
 
             {/* Feature Grid */}
-            <div className="trust-section__features-grid">
+            <div ref={featuresGridRef} className="trust-section__features-grid">
               {features.map((feature, index) => {
                 const IconComponent = iconMap[feature.iconKey];
                 return (

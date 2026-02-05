@@ -345,14 +345,31 @@
   padding: var(--gap-medium) var(--gap-small);
   background-color: #ffffff;
   border-radius: var(--radius-large);
-  box-shadow: var(--shadow-xsmall);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.08);
   gap: var(--gap-xxsmall);
+  border: 1px solid var(--color-blue-ribbon);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.about-result-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 112, 255, 0.12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-result-card {
+    transition: none;
+  }
+  .about-result-card:hover {
+    transform: none;
+  }
 }
 
 .result-number {
   font-family: var(--font-primary);
   font-size: clamp(2.5rem, 1.5rem + 2vw, 4rem);
   font-weight: var(--font-bold);
+  font-style: italic;
   line-height: var(--line-tight);
   color: var(--color-blue-ribbon);
   margin-bottom: var(--gap-xxsmall);

@@ -423,7 +423,7 @@ function HomePage() {
           </div>
         </section>
       </div>
-      <div data-animate="fadeUp">
+      <div data-animate="fadeUp" className="home-team-section-wrapper">
         <TeamSection />
       </div>
       <div data-animate="fadeLeft">

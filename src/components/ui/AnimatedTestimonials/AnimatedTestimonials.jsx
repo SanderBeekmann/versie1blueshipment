@@ -97,9 +97,8 @@ export const AnimatedTestimonials = ({
                     src={typeof testimonial.src === 'string' ? testimonial.src : (testimonial.src?.default || testimonial.src)}
                     alt={testimonial.name}
                     draggable={false}
-                    className="h-full w-full rounded-3xl object-cover object-center"
+                    className="h-full w-full rounded-3xl object-cover object-center border border-[var(--color-blue-ribbon)]"
                   />
-                  <div className="absolute inset-0 rounded-3xl bg-black/20"></div>
                 </motion.div>
               ))}
             </AnimatePresence>
