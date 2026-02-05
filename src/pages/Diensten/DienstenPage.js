@@ -71,9 +71,10 @@ function DienstenPage() {
     let imageAnimationTimeout = null;
     const rafId = requestAnimationFrame(() => {
       const isMobileStatic = typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches;
+      // Altijd scroll- en titelanimaties aanroepen (ook op mobiel), anders blijven [data-animate] secties onzichtbaar
+      initScrollAnimations();
+      initTitleAnimations();
       if (!isMobileStatic) {
-        initScrollAnimations();
-        initTitleAnimations();
         initLogoRevealAnimation(1000);
       }
       initHeroTitleAnimation();

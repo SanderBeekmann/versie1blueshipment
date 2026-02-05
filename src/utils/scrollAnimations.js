@@ -268,10 +268,13 @@ const titleAnimationConfig = {
   },
 };
 
+// Hero titles die door initHeroTitleAnimation worden geanimeerd (letter-voor-letter) - niet dubbel animeren
+const heroTitleSelector = '[data-animate-title]:not(.hero-title):not(.diensten-hero-title):not(.about-hero-title):not(.contact-hero-title)';
+
 export const initTitleAnimations = () => {
   // MOBILE OPTIMIZATION: Disable ScrollTrigger on mobile
   if (isMobile()) {
-    const titles = document.querySelectorAll('[data-animate-title]:not(.hero-title)');
+    const titles = document.querySelectorAll(heroTitleSelector);
     titles.forEach((title) => {
       // Simple fade-in on mobile using IntersectionObserver
       gsap.set(title, { opacity: 0, y: 18 });
@@ -299,8 +302,8 @@ export const initTitleAnimations = () => {
   }
 
   // DESKTOP: Use ScrollTrigger for advanced animations
-  // Exclude hero title - it has its own letter-by-letter animation
-  const titles = document.querySelectorAll('[data-animate-title]:not(.hero-title)');
+  // Exclude hero titles - they have their own letter-by-letter animation via initHeroTitleAnimation
+  const titles = document.querySelectorAll(heroTitleSelector);
 
   // Separate diensten detail titles from other titles for stagger
   const dienstenDetailTitles = Array.from(titles).filter(title => 
