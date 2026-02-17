@@ -156,7 +156,7 @@ function CaseStudyModal({ isOpen, onClose, caseStudy }) {
             <div className="case-study-testimonial">
               <p className="case-study-testimonial-text">"{caseStudy.testimonial}"</p>
               {caseStudy.testimonialAuthor && (
-                <p className="case-study-testimonial-author">— {caseStudy.testimonialAuthor}</p>
+                <p className="case-study-testimonial-author">{caseStudy.testimonialAuthor}</p>
               )}
             </div>
           )}

@@ -41,7 +41,7 @@ const TrustSection = () => {
     },
     {
       title: "Persoonlijke aanpak",
-      description: "Bij ons is alles persoonlijk. Geen standaardoplossingen, maar begeleiding afgestemd op jouw situatie. Of je nu wilt opschalen, optimaliseren of strategische keuzes wilt maken — wij denken actief met je mee en handelen snel."
+      description: "Bij ons is alles persoonlijk. Geen standaardoplossingen, maar begeleiding afgestemd op jouw situatie. Of je nu wilt opschalen, optimaliseren of strategische keuzes wilt maken, wij denken actief met je mee en handelen snel."
     },
     {
       title: "Gericht op groei",
