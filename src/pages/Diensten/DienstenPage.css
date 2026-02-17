@@ -1111,7 +1111,11 @@
 
 /* Kleine gap tussen twee opeenvolgende alinea's, marge naar vinkjes blijft gelijk */
 .diensten-detail-description:has(+ .diensten-detail-description) {
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.diensten-detail-description + .diensten-detail-description {
+  margin-top: 0;
 }
 
 .diensten-detail-bullets-block {
