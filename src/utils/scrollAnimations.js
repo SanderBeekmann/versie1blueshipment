@@ -358,7 +358,7 @@ export const initTitleAnimations = () => {
       gsap.set(title, { opacity: 1, y: 0 });
       if (media) gsap.set(media, { opacity: 1, x: 0 });
       if (label) gsap.set(label, { opacity: 1, y: 0 });
-      if (description) gsap.set(description, { opacity: 1, y: 0 });
+      if (description) gsap.set(description, { opacity: 0.8, y: 0 });
       if (bullets) {
         const bulletItems = bullets.querySelectorAll('.diensten-detail-bullet');
         gsap.set(bulletItems, { opacity: 1, y: 0 });
@@ -425,7 +425,7 @@ export const initTitleAnimations = () => {
 
       if (description) {
         tl.to(description, {
-          opacity: 1,
+          opacity: 0.8,
           y: 0,
           duration: 0.7,
           ease: 'power2.out',
