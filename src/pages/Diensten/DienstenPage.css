@@ -228,10 +228,10 @@
 
 .diensten-services-title {
   font-family: var(--font-primary);
-  font-size: var(--heading-2-responsive); /* Major Third scale */
+  font-size: var(--heading-3);
   font-weight: var(--font-bold);
-  line-height: var(--line-heading-large); /* 1.1 (110%) */
-  letter-spacing: var(--tracking-h2); /* -0.02em */
+  line-height: var(--line-tight);
+  letter-spacing: var(--tracking-h3);
   color: var(--color-neutral-darkest);
   opacity: var(--text-opacity-primary); /* 100% */
   text-align: center;
@@ -1115,10 +1115,10 @@
 
 .diensten-detail-title {
   font-family: var(--font-primary);
-  font-size: clamp(1.953rem, 1.6rem + 1.5vw, 3.052rem); /* H4 to H2 (31px - 49px) */
+  font-size: var(--heading-3);
   font-weight: var(--font-bold);
-  line-height: var(--line-heading-large); /* 1.1 (110%) */
-  letter-spacing: var(--tracking-h2); /* -0.02em */
+  line-height: var(--line-tight);
+  letter-spacing: var(--tracking-h3);
   color: var(--color-neutral-darkest);
   opacity: var(--text-opacity-primary); /* 100% */
   margin: 0 0 calc(var(--gap-xxsmall) / 2);
