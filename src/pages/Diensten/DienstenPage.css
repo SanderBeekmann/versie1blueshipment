@@ -1109,9 +1109,9 @@
   margin: 0 0 var(--gap-xxsmall);
 }
 
-/* Kleine gap tussen twee opeenvolgende alinea's, marge naar vinkjes blijft gelijk */
+/* Geen gap tussen twee opeenvolgende alinea's, alleen line-height effect */
 .diensten-detail-description:has(+ .diensten-detail-description) {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0;
 }
 
 .diensten-detail-description + .diensten-detail-description {
