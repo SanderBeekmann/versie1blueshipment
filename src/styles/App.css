@@ -52,15 +52,29 @@
 }
 
 /* Re-enable pointer events for all direct children of page-content */
+/* FIX: Prevent 1px gaps between sections during animations */
 .page-content > * {
   pointer-events: auto;
   position: relative;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  isolation: isolate;
+  margin-bottom: -1px;
+}
+
+/* Remove negative margin from last child to prevent footer overlap */
+.page-content > *:last-child {
+  margin-bottom: 0;
 }
 
 /* Animation wrapper styling – start verborgen zodat init na eerste paint geen flits geeft */
 [data-animate] {
   will-change: transform, opacity;
   opacity: 0;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 [data-animate-title]:not(.hero-title),
@@ -86,6 +100,7 @@
   }
   [data-animate] {
     will-change: auto;
+    transform: none;
   }
 }
 
