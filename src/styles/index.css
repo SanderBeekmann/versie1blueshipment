@@ -187,13 +187,25 @@ ul, ol {
   --radius-medium: 32px;
   --radius-large: 40px;
   
-  /* Shadows */
-  --shadow-xsmall: 0px 1px 2px rgba(0, 0, 0, 0.06), 0px 1px 3px rgba(0, 0, 0, 0.1);
-  --shadow-small: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  --shadow-medium: 0px 6px 4px rgba(0, 0, 0, 0.25);
-  --shadow-large: 5px 8px 4px rgba(0, 0, 0, 0.25);
-  --shadow-inset: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
-  --shadow-soft-hover: 0px 6px 4px rgba(0, 0, 0, 0.25);
+  /* Shadows - High-end multi-layer shadows */
+  --shadow-xsmall:
+    0px 1px 2px rgba(0, 0, 0, 0.03),
+    0px 2px 6px rgba(0, 0, 0, 0.04),
+    0px 0px 1px rgba(0, 0, 0, 0.04);
+  --shadow-small:
+    0px 2px 4px rgba(0, 0, 0, 0.04),
+    0px 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-medium:
+    0px 4px 8px rgba(0, 0, 0, 0.06),
+    0px 8px 20px rgba(0, 0, 0, 0.08);
+  --shadow-large:
+    0px 8px 16px rgba(0, 0, 0, 0.08),
+    0px 16px 32px rgba(0, 0, 0, 0.12);
+  --shadow-soft-hover:
+    0px 8px 16px rgba(0, 112, 255, 0.04),
+    0px 16px 48px rgba(0, 0, 0, 0.08),
+    0px 0px 1px rgba(0, 0, 0, 0.04);
+  --shadow-inset: inset 0px 2px 4px rgba(0, 0, 0, 0.06);
   
   /* Containers */
   --container-large: 1280px;
