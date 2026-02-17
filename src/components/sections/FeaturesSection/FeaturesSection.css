@@ -121,42 +121,17 @@
   min-height: auto;
 }
 
-/* Inner stroke voor premium afwerking - alleen bij hover */
-.features-section__card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 18px;
-  border: 1px solid transparent;
-  pointer-events: none;
-  opacity: 0;
-  z-index: 1;
-  transition: opacity 220ms ease, border-color 220ms ease;
-}
 
 /* Bottom accent bar verwijderd - nu via border-bottom op card zelf (zoals team cards) */
 
-/* Premium hover: lift + licht "glow" zonder neon (desktop only) */
+/* Premium hover: alleen blauwe kleur (desktop only) */
 @media (hover: hover) and (pointer: fine) {
   .features-section__card {
-    transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+    transition: border-color 220ms ease;
   }
 
   .features-section__card:hover {
-    transform: translateY(-6px);
-    border-color: transparent;
-    border-bottom-color: transparent;
-    box-shadow: var(--shadow-medium);
-  }
-
-  .features-section__card:hover::after {
-    opacity: 1;
-    border-color: rgba(255, 255, 255, 0.65);
-  }
-
-  .features-section__card:hover .features-section__icon-wrapper {
-    /* Geen shadow op hover - wrapper blijft onzichtbaar */
-    box-shadow: none;
+    border-bottom-color: var(--color-blue-ribbon);
   }
 }
 
