@@ -33,11 +33,12 @@
 
 .result-section-title {
   font-family: var(--font-primary);
-  font-size: clamp(4rem, 3rem + 5vw, 7rem);
+  font-size: clamp(3.815rem, 3rem + 4vw, 6.103rem); /* H1 to beyond (61px - 98px) */
   font-weight: var(--font-bold);
-  line-height: var(--line-tight);
-  letter-spacing: var(--tracking-h2);
+  line-height: var(--line-heading-large); /* 1.1 (110%) */
+  letter-spacing: var(--tracking-tight); /* -0.025em (-2.5%) */
   color: var(--color-neutral-darkest);
+  opacity: var(--text-opacity-primary); /* 100% */
   margin: 0;
 }
 
@@ -50,21 +51,24 @@
 
 .result-section-subtitle {
   font-family: var(--font-primary);
-  font-size: clamp(0.875rem, 0.5rem + 1.25vw, 1.625rem);
+  font-size: clamp(1rem, 0.9rem + 0.5vw, 1.563rem); /* 16px to H5 (25px) */
   font-weight: var(--font-bold);
-  line-height: var(--line-tight);
-  letter-spacing: 0;
+  line-height: var(--line-heading-small); /* 1.3 (130%) */
+  letter-spacing: var(--tracking-h5); /* -0.015em */
   color: var(--color-neutral-darkest);
+  opacity: var(--text-opacity-primary); /* 100% */
   margin: 0;
 }
 
 .result-section-description {
   font-family: var(--font-primary);
-  font-size: var(--text-subtitle-size);
+  font-size: var(--text-subtitle-size); /* 1rem (16px) */
   font-weight: var(--font-regular);
-  line-height: var(--text-subtitle-line-height);
+  line-height: var(--line-relaxed); /* 1.5 (150%) */
+  letter-spacing: var(--tracking-normal); /* 0em */
   color: var(--color-neutral-darkest);
-  opacity: 0.6;
+  opacity: var(--text-opacity-secondary); /* 80% for body text */
+  max-width: var(--max-content-width); /* 65ch */
   margin: 0;
 }
 
@@ -83,13 +87,16 @@
   gap: 8px;
   text-decoration: none;
   font-family: var(--font-primary);
-  font-size: var(--text-regular);
+  font-size: var(--text-regular); /* 1rem (16px) */
   font-weight: var(--font-medium);
+  line-height: var(--line-relaxed); /* 1.5 (150%) */
+  letter-spacing: var(--tracking-normal); /* 0em */
+  opacity: var(--text-opacity-primary); /* 100% */
   transition: opacity 0.2s ease;
 }
 
 .result-section-actions .text-link:hover {
-  opacity: 0.7;
+  opacity: var(--text-opacity-secondary); /* 80% on hover */
 }
 
 /* GlassTagline styling */
