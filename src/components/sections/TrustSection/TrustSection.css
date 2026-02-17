@@ -85,7 +85,7 @@
 
 /* Feature Card */
 .trust-section__feature-card {
-  padding: var(--space-md) var(--space-md);
+  padding: var(--gap-xsmall) var(--gap-xsmall);
   border-radius: var(--radius-medium);
   transition: all 0.3s ease;
   border: 1px solid transparent;
@@ -105,7 +105,7 @@
 .trust-section__feature-card {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--gap-xxsmall);
 }
 
 .trust-section__feature-icon-wrapper {
@@ -133,7 +133,7 @@
 .trust-section__feature-content {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2xs);
+  gap: 8px;
 }
 
 .trust-section__feature-title {
@@ -163,7 +163,7 @@
 
 /* CTA */
 .trust-section__cta {
-  padding-top: var(--space-md);
+  padding-top: var(--gap-xsmall);
 }
 
 .trust-section__cta-icon {
@@ -201,7 +201,7 @@
   position: absolute;
   z-index: 20;
   background: var(--color-white);
-  padding: var(--space-md);
+  padding: var(--gap-xsmall);
   border-radius: var(--radius-medium);
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   border: 1px solid rgba(0, 0, 0, 0.05);
@@ -220,7 +220,7 @@
   top: 48px;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(12px);
-  padding: var(--space-sm);
+  padding: var(--gap-xxsmall);
   border: 1px solid rgba(0, 112, 255, 0.15);
   max-width: 240px;
   transform: rotate(3deg);
@@ -228,7 +228,7 @@
   cursor: default;
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: var(--gap-xxsmall);
 }
 
 .trust-section__floating-card--guarantee:hover {
@@ -238,11 +238,11 @@
 .trust-section__floating-card-content {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: var(--gap-xxsmall);
 }
 
 .trust-section__floating-card-icon {
-  padding: var(--space-2xs);
+  padding: 8px;
   background: rgba(0, 112, 255, 0.1);
   border-radius: 50%;
   color: var(--color-blue-ribbon);
@@ -326,7 +326,7 @@
   right: -40px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-2xs);
+  gap: 8px;
   opacity: 0.2;
   pointer-events: none;
 }

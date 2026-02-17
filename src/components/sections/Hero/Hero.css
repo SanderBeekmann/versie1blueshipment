@@ -136,13 +136,13 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: var(--space-sm);
+  gap: var(--gap-xxsmall);
   width: 100%;
   max-width: 600px;
 }
 
 .hero-text .glass-tagline {
-  margin-bottom: var(--space-2xs);
+  margin-bottom: 8px;
 }
 
 /* Vaste dot met snelle pulserende ringen die ervan af komen (hero tagline) */
@@ -200,7 +200,7 @@
 .hero-title-section {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
+  gap: 12px;
 }
 
 .hero-title {
@@ -285,7 +285,7 @@
 
 .hero-cta {
   align-self: center;
-  margin-top: var(--space-md);
+  margin-top: var(--gap-xsmall);
   /* Initial hidden state - will be animated by GSAP in Hero.js useLayoutEffect */
   /* This prevents flash on navigation before JS sets initial state */
   /* GSAP will override these values immediately in useLayoutEffect (runs before paint) */

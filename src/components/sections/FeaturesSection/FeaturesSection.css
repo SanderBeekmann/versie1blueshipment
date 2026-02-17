@@ -285,7 +285,7 @@
 }
 
 .features-section__cta-button {
-  margin-top: var(--space-xs);
+  margin-top: 12px;
 }
 
 /* Responsive Breakpoints */

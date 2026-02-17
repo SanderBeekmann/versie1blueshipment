@@ -2,7 +2,7 @@
 
 /* Hero Section - Reusing hero layout pattern */
 .diensten-hero {
-  --navbar-height: 93px;
+  --navbar-height: 96px;
   position: relative;
   overflow: hidden;
   width: 100%;
@@ -93,19 +93,19 @@
   flex-direction: column;
   align-items: flex-start;
   text-align: left;
-  gap: var(--space-sm);
+  gap: var(--gap-xxsmall);
   width: 100%;
   max-width: 600px;
 }
 
 .diensten-hero-text .glass-tagline {
-  margin-bottom: var(--space-2xs);
+  margin-bottom: 8px;
 }
 
 .diensten-hero-title-section {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
+  gap: 12px;
 }
 
 .diensten-hero-title {
@@ -170,7 +170,7 @@
   line-height: var(--line-relaxed);
   color: var(--color-neutral-darkest);
   opacity: 0.75;
-  margin: var(--space-md) 0 0;
+  margin: var(--gap-xsmall) 0 0;
   text-align: left;
   word-break: normal;
   overflow-wrap: break-word;
@@ -181,7 +181,7 @@
   flex-direction: column;
   align-items: flex-start;
   gap: var(--gap-xxsmall);
-  margin-top: var(--space-md);
+  margin-top: var(--gap-xsmall);
   width: 100%;
 }
 
