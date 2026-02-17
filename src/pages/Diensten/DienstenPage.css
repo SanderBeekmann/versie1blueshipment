@@ -1008,6 +1008,7 @@
   gap: clamp(64px, 6vw, 96px);
   align-items: center;
   outline: none;
+  min-height: 100vh;
 }
 
 .diensten-detail-block:focus {
