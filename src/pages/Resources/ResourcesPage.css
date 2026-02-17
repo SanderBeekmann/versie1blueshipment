@@ -137,10 +137,6 @@
     padding: calc(var(--navbar-height) + 32px) var(--gap-xxsmall) 32px;
   }
 
-  .resources-title {
-    font-size: clamp(1.953rem, 1.6rem + 1.5vw, 4rem); /* 31px - 64px */
-  }
-
   .resources-list {
     padding: var(--gap-small) var(--gap-xxsmall);
   }
