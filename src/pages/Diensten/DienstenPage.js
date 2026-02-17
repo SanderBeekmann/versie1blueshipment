@@ -438,15 +438,11 @@ function DienstenPage() {
       label: 'Fulfilment',
       title: 'Stuur je bestellingen naar het BlueShipment Fulfilment Center',
       titleHighlight: 'Blue',
-      intro: 'Onze fulfillment service omvat alles wat je nodig hebt: opslag, picking, verpakking en verzending. Je voorraad staat veilig bij ons en we verzenden snel en zorgvuldig. Geen gedoe, geen zorgen. Wij zorgen ervoor dat je klanten tevreden zijn.',
-      description: 'Onze fulfillment service omvat alles wat je nodig hebt: opslag, picking, verpakking en verzending. Je voorraad staat veilig bij ons en we verzenden snel en zorgvuldig. Geen gedoe, geen zorgen. Wij zorgen ervoor dat je klanten tevreden zijn.',
+      intro: 'Onze fulfillment service is ingericht om jou volledig te ontzorgen. Van opslag en voorraadbeheer tot picking, verpakking en verzending. Zodat jij overzicht houdt en kunt focussen op de groei van je business.',
+      description: 'Onze fulfillment service is ingericht om jou volledig te ontzorgen. Van opslag en voorraadbeheer tot picking, verpakking en verzending. Zodat jij overzicht houdt en kunt focussen op de groei van je business. Je producten liggen veilig opgeslagen en worden snel en zorgvuldig verzonden naar je klanten.',
+      descriptionParagraph2: 'We werken met duidelijke all-in tarieven. Geen kleine lettertjes en geen verrassingen achteraf. Iedere bestelling behandelen we met aandacht, omdat de ervaring van jouw klant net zo belangrijk is als die van ons. Betrouwbare levering en nette verpakking zijn voor ons vanzelfsprekend.',
+      descriptionParagraph3: 'Daarnaast denken we actief met je mee. Of het nu gaat om efficiënter verzenden, het optimaliseren van je voorraad of het opschalen van je fulfillment. Je kunt ons altijd bereiken en krijgt direct antwoord. Zo weet je precies waar je aan toe bent en kun je bouwen op een fulfillment partner die met je meegroeit.',
       image: fulfilmentImage,
-      bullets: [
-        'All-in tarieven, geen onverwachte kosten',
-        'Snelle levering',
-        'Zorgvuldige verpakking en verzending',
-        'We denken met je mee en zijn altijd bereikbaar'
-      ],
       buttons: [
         { text: 'Start met fulfilment', type: 'primary', action: 'whatsapp', message: 'Hallo! Ik wil graag starten met fulfilment voor mijn bol.com shop.' }
       ]
@@ -758,6 +754,9 @@ function DienstenPage() {
                       )}
                       {detail.descriptionParagraph2 && (
                         <p className="diensten-detail-description">{detail.descriptionParagraph2}</p>
+                      )}
+                      {detail.descriptionParagraph3 && (
+                        <p className="diensten-detail-description">{detail.descriptionParagraph3}</p>
                       )}
                       {detail.bullets && detail.bullets.length > 0 && (
                         detail.bulletsLabel ? (
