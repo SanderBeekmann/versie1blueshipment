@@ -193,6 +193,7 @@ ul, ol {
   --shadow-medium: 0px 6px 4px rgba(0, 0, 0, 0.25);
   --shadow-large: 5px 8px 4px rgba(0, 0, 0, 0.25);
   --shadow-inset: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
+  --shadow-soft-hover: 0px 6px 4px rgba(0, 0, 0, 0.25);
   
   /* Containers */
   --container-large: 1280px;

@@ -63,7 +63,7 @@
   border-radius: 18px;
   padding: 26px;
   border: 1px solid rgba(0, 0, 0, 0.06);
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-xsmall);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   display: flex;
   flex-direction: column;
@@ -71,7 +71,7 @@
 
 .resource-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-medium);
 }
 
 .resource-meta {

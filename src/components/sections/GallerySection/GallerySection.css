@@ -48,7 +48,7 @@
   background-color: var(--color-background);
   border-radius: var(--radius-medium);
   padding: var(--gap-small) var(--gap-medium);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-xsmall);
   display: inline-block;
 }
 
@@ -91,7 +91,7 @@
 .gallery-card {
   background-color: var(--color-white);
   border-radius: var(--radius-large);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 16px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-medium);
   overflow: hidden;
   position: relative;
   height: clamp(520px, 60vh, 640px);
