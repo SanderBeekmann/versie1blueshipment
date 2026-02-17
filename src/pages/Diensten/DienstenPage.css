@@ -1106,7 +1106,6 @@
   font-weight: var(--font-regular);
   line-height: var(--line-relaxed);
   color: var(--color-neutral-darkest);
-  opacity: 0.8;
   margin: 0 0 var(--gap-xxsmall);
 }
 
