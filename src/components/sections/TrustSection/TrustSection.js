@@ -8,23 +8,10 @@ import logo from '../../../assets/brand/logo.png';
 
 gsap.registerPlugin(ScrollTrigger);
 
-// Icon Components - matching project style
+// Icon Components - used only for floating cards
 const ZapIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
-
-const MessageCircleIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M21 11.5C21.0034 12.8199 20.6951 14.1219 20.1 15.3C19.3944 16.7118 18.3098 17.8992 16.9674 18.7293C15.6251 19.5594 14.0782 19.9994 12.5 20C11.1801 20.0035 9.87812 19.6951 8.7 19.1L3 21L4.9 15.3C4.30493 14.1219 3.99656 12.8199 4 11.5C4.00061 9.92179 4.44061 8.37488 5.27072 7.03258C6.10083 5.69028 7.28825 4.6056 8.7 3.90003C9.87812 3.30496 11.1801 2.99659 12.5 3.00003H13C15.0843 3.11502 17.053 3.99479 18.5291 5.47089C20.0052 6.94699 20.885 8.91568 21 11V11.5Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
-
-const TrendingUpIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M23 6L13.5 15.5L8.5 10.5L1 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M17 6H23V12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 );
 
@@ -43,34 +30,22 @@ const TrustSection = () => {
   const featuresGridRef = useRef(null);
   const sectionRef = useRef(null);
 
-  // Icon mapping helper
-  const iconMap = {
-    'Win-win samenwerking': TrendingUpIcon,
-    'Bewezen resultaat': CheckCircle2Icon,
-    'Persoonlijke aanpak': MessageCircleIcon,
-    'Gericht op groei': ZapIcon
-  };
-
   const features = [
     {
       title: "Win-win samenwerking",
-      description: "Doordat wij het volledige proces aanbieden, zijn onze belangen direct gekoppeld aan het succes van jouw winkel. Hoe beter jouw prestaties, hoe sterker de samenwerking. Zo creëren we een duurzaam model waarin beide partijen winnen.",
-      iconKey: 'Win-win samenwerking'
+      description: "Doordat wij het volledige proces aanbieden, zijn onze belangen direct gekoppeld aan het succes van jouw winkel. Hoe beter jouw prestaties, hoe sterker de samenwerking. Zo creëren we een duurzaam model waarin beide partijen winnen."
     },
     {
       title: "Bewezen resultaat",
-      description: "Wij hebben tientallen winkels begeleid van de startfase naar omzetten van tienduizenden euro's. Deze ervaring passen wij toe voor iedere ondernemer die serieus wil bouwen aan een succesvolle bol.com-winkel.",
-      iconKey: 'Bewezen resultaat'
+      description: "Wij hebben tientallen winkels begeleid van de startfase naar omzetten van tienduizenden euro's. Deze ervaring passen wij toe voor iedere ondernemer die serieus wil bouwen aan een succesvolle bol.com-winkel."
     },
     {
       title: "Persoonlijke aanpak",
-      description: "Bij ons is alles persoonlijk. Geen standaardoplossingen, maar begeleiding afgestemd op jouw situatie. Of je nu wilt opschalen, optimaliseren of strategische keuzes wilt maken — wij denken actief met je mee en handelen snel.",
-      iconKey: 'Persoonlijke aanpak'
+      description: "Bij ons is alles persoonlijk. Geen standaardoplossingen, maar begeleiding afgestemd op jouw situatie. Of je nu wilt opschalen, optimaliseren of strategische keuzes wilt maken — wij denken actief met je mee en handelen snel."
     },
     {
       title: "Gericht op groei",
-      description: "Wij focussen continu op groei voor de ondernemers die bij ons zijn aangesloten. Met schaalbare oplossingen, data-gedreven beslissingen en langdurige samenwerking bouwen we samen aan structureel succes.",
-      iconKey: 'Gericht op groei'
+      description: "Wij focussen continu op groei voor de ondernemers die bij ons zijn aangesloten. Met schaalbare oplossingen, data-gedreven beslissingen en langdurige samenwerking bouwen we samen aan structureel succes."
     }
   ];
 
@@ -223,31 +198,25 @@ const TrustSection = () => {
 
             {/* Feature Grid */}
             <div ref={featuresGridRef} className="trust-section__features-grid">
-              {features.map((feature, index) => {
-                const IconComponent = iconMap[feature.iconKey];
-                return (
-                  <div 
-                    key={index}
-                    onMouseEnter={() => setHoveredFeature(index)}
-                    onMouseLeave={() => setHoveredFeature(null)}
-                    className={`trust-section__feature-card ${
-                      hoveredFeature === index ? 'trust-section__feature-card--hovered' : ''
-                    }`}
-                  >
-                    <div className="trust-section__feature-icon-wrapper">
-                      {IconComponent && <IconComponent />}
-                    </div>
-                    <div className="trust-section__feature-content">
-                      <h3 className="trust-section__feature-title">
-                        {feature.title}
-                      </h3>
-                      <p className="trust-section__feature-description">
-                        {feature.description}
-                      </p>
-                    </div>
+              {features.map((feature, index) => (
+                <div
+                  key={index}
+                  onMouseEnter={() => setHoveredFeature(index)}
+                  onMouseLeave={() => setHoveredFeature(null)}
+                  className={`trust-section__feature-card ${
+                    hoveredFeature === index ? 'trust-section__feature-card--hovered' : ''
+                  }`}
+                >
+                  <div className="trust-section__feature-content">
+                    <h3 className="trust-section__feature-title">
+                      {feature.title}
+                    </h3>
+                    <p className="trust-section__feature-description">
+                      {feature.description}
+                    </p>
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
 
             {/* Mobile CTA - stays in normal flow */}
