@@ -21,7 +21,6 @@ import FAQSection from '../../components/sections/FAQSection/FAQSection';
 import Footer from '../../components/layout/Footer/Footer';
 import SEO from '../../components/SEO/SEO';
 import { initScrollAnimations, initTitleAnimations, initHeroTitleAnimation, initTeamCardsDotAccentAnimation, initLogoRevealAnimation, cleanupScrollAnimations } from '../../utils/scrollAnimations';
-import { WatermarkIcon } from '../../utils/bentoCardIcons';
 
 function HomePage() {
   const organizationSchema = {
@@ -384,7 +383,6 @@ function HomePage() {
                           aria-label={service.title}
                         >
                           <div className="diensten-card__body">
-                            <WatermarkIcon title={service.title} />
                             <h3 className="diensten-card__title">{service.title}</h3>
                             {service.description && (
                               <p className="diensten-card__text">{service.description}</p>
@@ -403,7 +401,6 @@ function HomePage() {
                           aria-label={`Bekijk ${service.title}`}
                         >
                           <div className="diensten-card__body">
-                            <WatermarkIcon title={service.title} />
                             <h3 className="diensten-card__title">{service.title}</h3>
                             {service.description && (
                               <p className="diensten-card__text">{service.description}</p>
