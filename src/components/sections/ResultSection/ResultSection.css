@@ -51,10 +51,10 @@
 
 .result-section-subtitle {
   font-family: var(--font-primary);
-  font-size: clamp(1rem, 0.9rem + 0.5vw, 1.563rem); /* 16px to H5 (25px) */
+  font-size: var(--heading-4); /* H4 (31px) */
   font-weight: var(--font-bold);
   line-height: var(--line-heading-small); /* 1.3 (130%) */
-  letter-spacing: var(--tracking-h5); /* -0.015em */
+  letter-spacing: var(--tracking-h4);
   color: var(--color-neutral-darkest);
   opacity: var(--text-opacity-primary); /* 100% */
   margin: 0;

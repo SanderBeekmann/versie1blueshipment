@@ -42,10 +42,10 @@
 
 .process-title {
   font-family: var(--font-primary);
-  font-size: var(--heading-2);
+  font-size: var(--heading-3);
   font-weight: var(--font-bold);
   line-height: var(--line-tight);
-  letter-spacing: var(--tracking-h2);
+  letter-spacing: var(--tracking-h3);
   color: var(--color-white);
 }
 
