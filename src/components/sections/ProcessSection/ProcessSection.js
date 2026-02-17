@@ -117,7 +117,7 @@ function ProcessSection() {
     },
     {
       number: 2,
-      title: 'Krijg je eigen storemanager en maak gebruik van onze software.',
+      title: 'Krijg je eigen storemanager en gebruik onze software',
       description: 'Zorg ervoor dat de voorraad van jouw aanbod altijd up-to-date is met onze voorraadcheck software',
       buttonText: 'Voorraadcheck uitleg',
       align: 'right',
@@ -125,7 +125,7 @@ function ProcessSection() {
     },
     {
       number: 3,
-      title: 'Krijg gegarandeerd binnen 7 dagen je eerste bestelling',
+      title: 'Krijg binnen 7 dagen je eerste bestelling',
       description: 'We zetten je account in en automatiseren alles. Jij zit achterover en wij doen het werk.',
       buttonText: 'Lees meer',
       align: 'left',
@@ -158,7 +158,7 @@ function ProcessSection() {
             <GlassTagline>
               <p>Ons proces</p>
             </GlassTagline>
-            <h2 className="process-title" data-animate-title>Van artikel tot blije klant in zes stappen</h2>
+            <h2 className="process-title" data-animate-title>Van artikel naar blije klant</h2>
             <p className="process-subtitle">Dit is hoe we het doen.</p>
           </div>
 
