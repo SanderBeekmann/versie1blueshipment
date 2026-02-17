@@ -167,7 +167,7 @@
 
 .diensten-hero-intro {
   font-family: var(--font-primary);
-  font-size: var(--text-regular); /* 1rem (16px) */
+  font-size: var(--text-medium); /* 1rem - 1.125rem, consistent body text */
   font-weight: var(--font-regular);
   line-height: var(--line-relaxed); /* 1.5 (150%) */
   letter-spacing: var(--tracking-normal); /* 0em */
@@ -242,12 +242,12 @@
 
 .diensten-services-subtitle {
   font-family: var(--font-primary);
-  font-size: var(--text-subtitle-size); /* 1rem (16px) */
+  font-size: var(--text-medium); /* 1rem - 1.125rem, consistent body text */
   font-weight: var(--font-regular);
   line-height: var(--line-relaxed); /* 1.5 (150%) */
   letter-spacing: var(--tracking-normal); /* 0em */
   color: var(--color-neutral-darkest);
-  opacity: var(--text-opacity-secondary); /* 80% */
+  opacity: var(--text-opacity-secondary); /* 80% for body text */
   max-width: var(--max-content-width); /* 65ch */
   text-align: center;
   margin: 0 auto;
@@ -1180,11 +1180,12 @@
   align-items: flex-start;
   gap: var(--gap-xxsmall);
   font-family: var(--font-primary);
-  font-size: var(--text-regular);
+  font-size: var(--text-medium); /* 1rem - 1.125rem, consistent met description */
   font-weight: var(--font-regular);
-  line-height: var(--line-relaxed);
+  line-height: var(--line-relaxed); /* 1.5 (150%) */
+  letter-spacing: var(--tracking-normal); /* 0em */
   color: var(--color-neutral-darkest);
-  opacity: 0.8;
+  opacity: var(--text-opacity-secondary); /* 80% for body text */
 }
 
 .diensten-detail-bullet svg {
