@@ -291,7 +291,7 @@
   background: #ffffff;
   border-radius: var(--radius-large);
   box-shadow: var(--shadow-xsmall);
-  border: 1px solid var(--color-blue-ribbon);
+  border: 1px solid transparent;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -355,7 +355,7 @@
 .diensten-card:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-soft-hover);
-  border-color: var(--color-blue-ribbon-light);
+  border-color: transparent;
   background-color: var(--color-blue-ribbon-lightest);
 }
 
@@ -384,10 +384,10 @@
 .diensten-card[data-area="c"] { grid-area: c; }
 .diensten-card[data-area="d"] { grid-area: d; }
 .diensten-card[data-area="e"] { grid-area: e; }
-.diensten-card[data-area="f"] { 
-  grid-area: f; 
+.diensten-card[data-area="f"] {
+  grid-area: f;
   background-color: var(--color-blue-ribbon);
-  border-color: var(--color-blue-ribbon);
+  border-color: transparent;
 }
 
 .diensten-card[data-area="f"] .diensten-card__title,
@@ -401,7 +401,7 @@
   transform: none;
   box-shadow: var(--shadow-xsmall);
   background-color: var(--color-blue-ribbon);
-  border-color: var(--color-blue-ribbon);
+  border-color: transparent;
 }
 
 /* Remove shimmer effect on hover */

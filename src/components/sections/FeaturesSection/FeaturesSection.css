@@ -144,8 +144,8 @@
 
   .features-section__card:hover {
     transform: translateY(-6px);
-    border-color: rgba(0, 122, 255, 0.32);
-    border-bottom-color: var(--color-blue-ribbon);
+    border-color: transparent;
+    border-bottom-color: transparent;
     box-shadow: var(--shadow-medium);
   }
 
