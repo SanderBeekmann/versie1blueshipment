@@ -20,11 +20,11 @@
 
 .testimonials-kicker {
   display: inline-block;
-  padding: 6px 14px;
+  padding: 8px 16px;
   border-radius: 999px;
   background: rgba(0, 122, 255, 0.1);
   color: var(--color-blue-ribbon);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.02em;
   text-transform: uppercase;
@@ -120,7 +120,7 @@
 /* Quote */
 .testimonial-quote {
   font-family: var(--font-primary);
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.7;
   color: rgba(0, 0, 0, 0.75);
   margin: 0 0 22px;
@@ -173,7 +173,7 @@
 
 .testimonial-role {
   font-family: var(--font-primary);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: var(--font-regular);
   color: rgba(0, 0, 0, 0.6);
   margin: 0;
@@ -306,15 +306,15 @@
   .testimonial-avatar {
     width: 36px;
     height: 36px;
-    font-size: 13px;
+    font-size: 14px;
   }
 
   .testimonial-name {
-    font-size: 13px;
+    font-size: 14px;
   }
 
   .testimonial-role {
-    font-size: 12px;
+    font-size: 14px;
   }
 }
 
@@ -366,7 +366,7 @@
 
 .testimonials-cta-text {
   font-family: var(--font-primary);
-  font-size: 13px;
+  font-size: 14px;
   line-height: var(--line-relaxed);
   color: rgba(0, 0, 0, 0.65);
   margin: 0 0 12px;
@@ -378,7 +378,7 @@
   justify-content: center;
   padding: 8px 16px;
   font-family: var(--font-primary);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--color-blue-ribbon);
   background: transparent;
@@ -420,13 +420,13 @@
   }
 
   .testimonials-cta-text {
-    font-size: 12px;
-    margin-bottom: 10px;
+    font-size: 14px;
+    margin-bottom: 12px;
   }
 
   .testimonials-cta-button {
-    padding: 6px 14px;
-    font-size: 12px;
+    padding: 8px 16px;
+    font-size: 14px;
   }
 }
 

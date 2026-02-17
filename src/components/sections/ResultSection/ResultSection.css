@@ -101,7 +101,7 @@
 .result-section-left .glass-tagline p,
 .result-section-left .glass-tagline span {
   color: var(--color-blue-ribbon);
-  font-size: 12px;
+  font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 0.02em;
 }

@@ -22,7 +22,7 @@
   position: relative;
   display: inline-flex;
   align-items: center;
-  padding: 6px 14px;
+  padding: 8px 16px;
   background: rgba(0, 122, 255, 0.1);
   border: none;
   box-shadow: none;
@@ -65,7 +65,7 @@
 .glass-tagline p,
 .glass-tagline span {
   font-family: var(--font-primary);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   line-height: var(--line-normal, 1.5);
   color: var(--color-blue-ribbon);
@@ -172,7 +172,7 @@
 .tagline-wrapper {
   display: inline-flex;
   align-items: center;
-  padding: 6px 16px;
+  padding: 8px 16px;
   background-color: rgba(255, 255, 255, 0.15);
   border-radius: 20px;
   border: none;

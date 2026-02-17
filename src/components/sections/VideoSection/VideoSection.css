@@ -14,14 +14,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 223px;
+  gap: 224px;
 }
 
 .video-text {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 10px 0;
+  padding: 12px 0;
 }
 
 .video-title {

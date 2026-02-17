@@ -98,7 +98,7 @@
 
 .funnel-progress-step:hover:not(:disabled) {
   transform: scale(1.15);
-  box-shadow: 0 0 0 3px var(--color-blue-ribbon-lightest);
+  box-shadow: 0 0 0 4px var(--color-blue-ribbon-lightest);
 }
 
 .funnel-progress-step:disabled {

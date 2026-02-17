@@ -1,6 +1,6 @@
 /* Hero - Mobile First Layout */
 .hero {
-  --navbar-height: 93px;
+  --navbar-height: 96px;
   position: relative;
   overflow: hidden;
   width: 100%;
@@ -149,8 +149,8 @@
 .hero-text .glass-tagline .glass-tagline-dot {
   position: relative;
   display: block;
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   background-color: var(--color-blue-ribbon, #0070ff);
   flex-shrink: 0;
@@ -163,10 +163,10 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 10px;
-  height: 10px;
-  margin-left: -5px;
-  margin-top: -5px;
+  width: 12px;
+  height: 12px;
+  margin-left: -6px;
+  margin-top: -6px;
   border-radius: 50%;
   border: 2px solid var(--color-blue-ribbon, #0070ff);
   opacity: 0;

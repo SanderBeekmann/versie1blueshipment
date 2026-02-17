@@ -162,7 +162,7 @@ ul, ol {
   
   /* Border Radius */
   --radius-small: 8px;
-  --radius-button: 10px;
+  --radius-button: 12px;
   --radius-medium: 32px;
   --radius-large: 40px;
   
@@ -240,7 +240,7 @@ p {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 24px;
+  padding: 12px 24px;
   font-family: var(--font-primary);
   font-size: var(--text-regular);
   font-weight: var(--font-medium);
@@ -394,8 +394,8 @@ a.btn-primary {
 /* Custom Scrollbar - Passend bij website stijl */
 /* Webkit browsers (Chrome, Safari, Edge) */
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
 }
 
 ::-webkit-scrollbar-track {

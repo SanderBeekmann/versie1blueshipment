@@ -178,7 +178,7 @@
   position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   font-family: var(--font-primary);
   font-size: var(--text-regular);
   font-weight: var(--font-medium);
@@ -226,7 +226,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   padding: 0;
 }
 
