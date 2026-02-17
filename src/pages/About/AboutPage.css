@@ -1197,3 +1197,10 @@
   }
 }
 
+/* Mobiel: kleinere hero titels - desktop blijft ongewijzigd */
+@media (max-width: 768px) {
+  .about-hero-title {
+    font-size: clamp(1.953rem, 1.6rem + 1.5vw, 4.5rem); /* 31px - 72px */
+  }
+}
+

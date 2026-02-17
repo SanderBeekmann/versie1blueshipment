@@ -151,6 +151,10 @@
     padding-left: 0; /* Neutralize desktop offset for perfect centering on mobile */
   }
 
+  .result-section-title {
+    font-size: clamp(2.441rem, 2rem + 2vw, 6.103rem); /* 39px - 98px */
+  }
+
   .result-section-subtitle {
     font-size: var(--heading-3);
   }

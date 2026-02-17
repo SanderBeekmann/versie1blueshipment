@@ -520,6 +520,13 @@ a.btn-primary {
     --section-padding-large: 64px;
     --gap-large: 48px;
     --gap-medium: 32px;
+
+    /* Kleinere titels voor mobiel - desktop blijft ongewijzigd */
+    --heading-1-responsive: clamp(1.953rem, 1.6rem + 1.5vw, 3.815rem); /* 31px - 61px */
+    --heading-2-responsive: clamp(1.563rem, 1.3rem + 1.2vw, 3.052rem); /* 25px - 49px */
+    --heading-3-responsive: clamp(1.25rem, 1.1rem + 0.8vw, 2.441rem); /* 20px - 39px */
+    --heading-4-responsive: clamp(1.125rem, 1rem + 0.5vw, 1.953rem); /* 18px - 31px */
+    --heading-5-responsive: clamp(1rem, 0.95rem + 0.25vw, 1.563rem); /* 16px - 25px */
   }
 
   /* Alle titels: letter-spacing naar 0 op mobiel */
