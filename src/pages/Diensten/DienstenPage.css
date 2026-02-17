@@ -110,11 +110,12 @@
 
 .diensten-hero-title {
   font-family: var(--font-primary);
-  font-size: clamp(2.7rem, 1.2rem + 3vw, 4.5rem);
+  font-size: clamp(2.441rem, 2rem + 2vw, 4.768rem); /* Major Third scale: H3 to H1+ (39px - 76px) */
   font-weight: var(--font-bold);
-  line-height: var(--leading-heading);
-  letter-spacing: clamp(-1.8px, -0.36vw, -3.6px);
+  line-height: var(--line-heading-large); /* 1.1 (110%) */
+  letter-spacing: var(--tracking-tight); /* -0.025em (-2.5%) */
   color: var(--color-neutral-darkest);
+  opacity: var(--text-opacity-primary); /* 100% */
   margin: 0;
   word-break: normal;
   overflow-wrap: break-word;
@@ -150,13 +151,14 @@
 
 .diensten-hero-subtitle {
   font-family: var(--font-primary);
-  font-size: var(--text-large);
+  font-size: var(--text-large); /* 1.125rem (18px) */
   font-weight: var(--font-semibold);
-  line-height: var(--line-relaxed);
+  line-height: var(--line-relaxed); /* 1.5 (150%) */
+  letter-spacing: var(--tracking-normal); /* 0em */
   color: var(--color-neutral-darkest);
+  opacity: var(--text-opacity-primary); /* 100% for emphasized text */
   width: fit-content;
-  max-width: 100%;
-  opacity: 1;
+  max-width: var(--max-content-width); /* 65ch */
   margin: 0;
   text-align: left;
   word-break: normal;
@@ -165,11 +167,13 @@
 
 .diensten-hero-intro {
   font-family: var(--font-primary);
-  font-size: var(--text-regular);
+  font-size: var(--text-regular); /* 1rem (16px) */
   font-weight: var(--font-regular);
-  line-height: var(--line-relaxed);
+  line-height: var(--line-relaxed); /* 1.5 (150%) */
+  letter-spacing: var(--tracking-normal); /* 0em */
   color: var(--color-neutral-darkest);
-  opacity: 0.75;
+  opacity: var(--text-opacity-secondary); /* 80% for body text */
+  max-width: var(--max-content-width); /* 65ch */
   margin: var(--gap-xsmall) 0 0;
   text-align: left;
   word-break: normal;
@@ -224,11 +228,12 @@
 
 .diensten-services-title {
   font-family: var(--font-primary);
-  font-size: var(--heading-2);
+  font-size: var(--heading-2-responsive); /* Major Third scale */
   font-weight: var(--font-bold);
-  line-height: var(--line-tight);
-  letter-spacing: var(--tracking-h2);
+  line-height: var(--line-heading-large); /* 1.1 (110%) */
+  letter-spacing: var(--tracking-h2); /* -0.02em */
   color: var(--color-neutral-darkest);
+  opacity: var(--text-opacity-primary); /* 100% */
   text-align: center;
   margin: 0;
   word-break: normal;
@@ -237,12 +242,15 @@
 
 .diensten-services-subtitle {
   font-family: var(--font-primary);
-  font-size: var(--text-subtitle-size);
+  font-size: var(--text-subtitle-size); /* 1rem (16px) */
   font-weight: var(--font-regular);
-  line-height: var(--text-subtitle-line-height);
-  color: var(--text-subtitle-color);
+  line-height: var(--line-relaxed); /* 1.5 (150%) */
+  letter-spacing: var(--tracking-normal); /* 0em */
+  color: var(--color-neutral-darkest);
+  opacity: var(--text-opacity-secondary); /* 80% */
+  max-width: var(--max-content-width); /* 65ch */
   text-align: center;
-  margin: 0;
+  margin: 0 auto;
 }
 
 /* CTA Button */
@@ -579,9 +587,10 @@
 .diensten-card__title {
   font-family: var(--font-secondary);
   font-weight: var(--font-bold);
-  line-height: var(--line-tight);
-  letter-spacing: var(--tracking-h6);
+  line-height: var(--line-heading-medium); /* 1.2 (120%) */
+  letter-spacing: var(--tracking-h4); /* -0.02em */
   color: var(--color-neutral-darkest);
+  opacity: var(--text-opacity-primary); /* 100% */
   margin: 0 0 clamp(8px, 1vw, 12px);
   word-wrap: break-word;
   overflow-wrap: break-word;
@@ -592,28 +601,30 @@
 }
 
 .diensten-card--featured .diensten-card__title {
-  font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.7rem);
+  font-size: clamp(1.563rem, 1.3rem + 1vw, 2.441rem); /* H5 to H3 (25px - 39px) */
   max-width: 100%;
 }
 
 .diensten-card--compact .diensten-card__title {
-  font-size: clamp(1rem, 0.9rem + 0.4vw, 1.5rem);
+  font-size: clamp(1rem, 0.9rem + 0.4vw, 1.563rem); /* 16px to H5 (25px) */
   max-width: 100%;
 }
 
 /* Verzending en Software cards - grotere titels */
 .diensten-card--compact[data-area="c"] .diensten-card__title,
 .diensten-card--compact[data-area="d"] .diensten-card__title {
-  font-size: clamp(1.2rem, 1.08rem + 0.48vw, 1.8rem);
+  font-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.953rem); /* H6 to H4 (20px - 31px) */
 }
 
 .diensten-card__text {
   font-family: var(--font-primary);
-  font-size: clamp(0.875rem, 0.85rem + 0.15vw, 1rem);
-  color: rgba(13, 6, 0, 0.72);
-  line-height: var(--line-relaxed);
+  font-size: clamp(0.875rem, 0.85rem + 0.15vw, 1rem); /* 14px - 16px */
+  line-height: var(--line-relaxed); /* 1.5 (150%) */
+  letter-spacing: var(--tracking-normal); /* 0em */
+  color: var(--color-neutral-darkest);
+  opacity: var(--text-opacity-secondary); /* 80% for body text */
   margin: 0;
-  max-width: 100%;
+  max-width: var(--max-content-width); /* 65ch */
   word-wrap: break-word;
   overflow-wrap: break-word;
   overflow: visible;
@@ -633,9 +644,12 @@
   align-items: center;
   gap: clamp(6px, 0.5vw, 8px);
   font-family: var(--font-primary);
-  font-size: clamp(0.9375rem, 0.9rem + 0.2vw, 1rem);
+  font-size: var(--text-regular); /* 1rem (16px) */
   font-weight: var(--font-semibold);
+  line-height: var(--line-relaxed); /* 1.5 (150%) */
+  letter-spacing: var(--tracking-normal); /* 0em */
   color: var(--color-blue-ribbon);
+  opacity: var(--text-opacity-primary); /* 100% */
   text-decoration: none;
   transition: gap 200ms ease;
 }
@@ -680,23 +694,26 @@
 
 .diensten-how-it-works-title {
   font-family: var(--font-primary);
-  font-size: var(--heading-2);
+  font-size: var(--heading-2-responsive); /* Major Third scale */
   font-weight: var(--font-bold);
-  line-height: var(--line-tight);
-  letter-spacing: var(--tracking-h2);
+  line-height: var(--line-heading-large); /* 1.1 (110%) */
+  letter-spacing: var(--tracking-h2); /* -0.02em */
   color: var(--color-neutral-darkest);
+  opacity: var(--text-opacity-primary); /* 100% */
   text-align: center;
 }
 
 .diensten-how-it-works-subtitle {
   font-family: var(--font-primary);
-  font-size: var(--text-medium);
+  font-size: var(--text-medium); /* 1rem - 1.125rem */
   font-weight: var(--font-regular);
-  line-height: var(--line-relaxed);
+  line-height: var(--line-relaxed); /* 1.5 (150%) */
+  letter-spacing: var(--tracking-normal); /* 0em */
   color: var(--color-neutral-darkest);
-  opacity: 0.8;
+  opacity: var(--text-opacity-secondary); /* 80% */
+  max-width: var(--max-content-width); /* 65ch */
   text-align: center;
-  margin-bottom: var(--gap-small);
+  margin: 0 auto var(--gap-small);
 }
 
 .diensten-how-it-works-flow {
@@ -738,10 +755,12 @@
 .diensten-how-it-works-text {
   flex: 1;
   font-family: var(--font-primary);
-  font-size: var(--text-medium);
+  font-size: var(--text-medium); /* 1rem - 1.125rem */
   font-weight: var(--font-medium);
-  line-height: var(--line-relaxed);
+  line-height: var(--line-relaxed); /* 1.5 (150%) */
+  letter-spacing: var(--tracking-normal); /* 0em */
   color: var(--color-neutral-darkest);
+  opacity: var(--text-opacity-primary); /* 100% for emphasized text */
   margin: 0;
 }
 
@@ -1080,21 +1099,24 @@
 
 .diensten-detail-label {
   font-family: var(--font-primary);
-  font-size: clamp(0.75rem, 0.7rem + 0.3vw, 0.875rem);
+  font-size: var(--text-small); /* 0.875rem (14px) */
   font-weight: var(--font-semibold);
-  color: rgba(13, 6, 0, 0.6);
+  line-height: var(--line-relaxed); /* 1.5 (150%) */
   letter-spacing: 0.02em;
+  color: var(--color-neutral-darkest);
+  opacity: var(--text-opacity-tertiary); /* 60% for labels */
   text-transform: uppercase;
   margin-bottom: var(--gap-xxsmall);
 }
 
 .diensten-detail-title {
   font-family: var(--font-primary);
-  font-size: clamp(1.75rem, 1rem + 2.5vw, 3.25rem);
+  font-size: clamp(1.953rem, 1.6rem + 1.5vw, 3.052rem); /* H4 to H2 (31px - 49px) */
   font-weight: var(--font-bold);
-  line-height: var(--line-tight);
-  letter-spacing: var(--tracking-h2);
+  line-height: var(--line-heading-large); /* 1.1 (110%) */
+  letter-spacing: var(--tracking-h2); /* -0.02em */
   color: var(--color-neutral-darkest);
+  opacity: var(--text-opacity-primary); /* 100% */
   margin: 0 0 calc(var(--gap-xxsmall) / 2);
   word-break: normal;
   overflow-wrap: break-word;
@@ -1102,11 +1124,13 @@
 
 .diensten-detail-description {
   font-family: var(--font-primary);
-  font-size: var(--text-medium);
+  font-size: var(--text-medium); /* 1rem - 1.125rem */
   font-weight: var(--font-regular);
-  line-height: var(--line-relaxed);
+  line-height: var(--line-relaxed); /* 1.5 (150%) */
+  letter-spacing: var(--tracking-normal); /* 0em */
   color: var(--color-neutral-darkest);
-  opacity: 0.9;
+  opacity: var(--text-opacity-secondary); /* 80% for body text */
+  max-width: var(--max-content-width); /* 65ch */
   margin: 0 0 var(--gap-xxsmall);
 }
 
@@ -1132,10 +1156,12 @@
 
 .diensten-detail-bullets-label {
   font-family: var(--font-primary);
-  font-size: var(--text-regular);
+  font-size: var(--text-regular); /* 1rem (16px) */
   font-weight: var(--font-semibold);
-  line-height: var(--line-relaxed);
+  line-height: var(--line-relaxed); /* 1.5 (150%) */
+  letter-spacing: var(--tracking-normal); /* 0em */
   color: var(--color-neutral-darkest);
+  opacity: var(--text-opacity-primary); /* 100% */
   margin: 0;
   padding: 0;
 }

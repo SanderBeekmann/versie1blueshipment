@@ -205,11 +205,12 @@
 
 .hero-title {
   font-family: var(--font-primary);
-  font-size: clamp(3.2rem, 1.5rem + 3.5vw, 5.5rem);
+  font-size: clamp(2.441rem, 2rem + 2vw, 4.768rem); /* Major Third scale: H3 to H1+ (39px - 76px) */
   font-weight: var(--font-bold);
-  line-height: var(--leading-heading);
-  letter-spacing: clamp(-1.8px, -0.36vw, -3.6px);
+  line-height: var(--line-heading-large); /* 1.1 (110%) - tightest for large headings */
+  letter-spacing: var(--tracking-tight); /* -0.025em (-2.5%) */
   color: var(--color-neutral-darkest);
+  opacity: var(--text-opacity-primary); /* 100% */
   margin: 0;
 }
 
@@ -262,12 +263,14 @@
 
 .hero-subtitle {
   font-family: var(--font-primary);
-  font-size: var(--text-subtitle-size);
+  font-size: var(--text-subtitle-size); /* 1rem (16px) */
   font-weight: var(--font-regular);
-  line-height: var(--text-subtitle-line-height);
-  color: var(--text-subtitle-color);
+  line-height: var(--line-relaxed); /* 1.5 (150%) */
+  letter-spacing: var(--tracking-normal); /* 0em */
+  color: var(--color-neutral-darkest);
+  opacity: var(--text-opacity-secondary); /* 80% for body text */
   width: fit-content;
-  max-width: 100%;
+  max-width: var(--max-content-width); /* 65ch for readability */
   margin: 0 auto;
   text-align: center;
 }
