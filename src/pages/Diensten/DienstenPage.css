@@ -298,6 +298,7 @@
   overflow: hidden;
   height: 100%;
   transition: box-shadow 180ms ease, border-color 180ms ease, background-color 180ms ease;
+  z-index: 1;
 }
 
 
@@ -338,6 +339,8 @@
   box-shadow: var(--shadow-soft-hover);
   border-color: transparent;
   background-color: rgba(0, 112, 255, 0.04);
+  z-index: 0;
+  position: relative;
 }
 
 .diensten-card__button:hover {
