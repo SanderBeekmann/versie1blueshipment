@@ -1139,14 +1139,14 @@
   margin-bottom: 0;
 }
 
-/* Tweede en derde alinea's krijgen hogere opacity */
+/* Tweede en derde alinea's krijgen zelfde opacity als eerste */
 .diensten-detail-description + .diensten-detail-description {
   margin-top: 0;
-  opacity: 0.95;
+  opacity: 0.8;
 }
 
 .diensten-detail-description + .diensten-detail-description + .diensten-detail-description {
-  opacity: 0.95;
+  opacity: 0.8;
 }
 
 .diensten-detail-bullets-block {
