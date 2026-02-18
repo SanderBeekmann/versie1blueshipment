@@ -916,10 +916,13 @@ const IntakeFunnel = ({ onComplete }) => {
                     selectedDate={formData.preferredDate}
                     selectedTime={formData.preferredTime}
                     onDateChange={(date) => {
-                      updateFormData('preferredDate', date);
-                      updateFormData('preferredTime', '');
+                      setFormData(prev => ({ ...prev, preferredDate: date, preferredTime: '' }));
+                      setErrors(prev => { const e = { ...prev }; delete e.preferredDate; return e; });
                     }}
-                    onTimeChange={(time) => updateFormData('preferredTime', time)}
+                    onTimeChange={(time) => {
+                      setFormData(prev => ({ ...prev, preferredTime: time }));
+                      setErrors(prev => { const e = { ...prev }; delete e.preferredDate; return e; });
+                    }}
                     error={errors.preferredDate}
                   />
                 </div>
