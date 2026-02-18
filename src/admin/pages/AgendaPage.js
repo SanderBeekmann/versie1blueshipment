@@ -13,7 +13,8 @@ function toDateStr(year, month, day) {
 function formatDutchDate(dateStr) {
   if (!dateStr) return '—';
   const [year, month, day] = dateStr.split('-');
-  return `${parseInt(day)} ${MONTH_NAMES[parseInt(month) - 1]} ${year}`;
+  const weekday = new Date(dateStr).toLocaleDateString('nl-NL', { weekday: 'long' });
+  return `${weekday.charAt(0).toUpperCase() + weekday.slice(1)} ${parseInt(day)} ${MONTH_NAMES[parseInt(month) - 1]}`;
 }
 
 const STATUS_LABELS = {
@@ -27,11 +28,243 @@ const STATUS_LABELS = {
   afgewezen: 'Afgewezen',
 };
 
+function DayTimeline({ selectedDate, bookedSlots, tasks, blockedSlots, saving, reason, onToggleBlock, onBlockDay, onUnblockDay, onReasonChange }) {
+  const activeBookings = bookedSlots.filter(
+    s => s.preferred_date === selectedDate && !['geannuleerd', 'afgewezen'].includes(s.status)
+  );
+  const dayTasks = tasks.filter(t => t.due_date && t.due_date.startsWith(selectedDate));
+  const dayBlockedCount = blockedSlots.filter(s => s.block_date === selectedDate).length;
+  const isDayFullyBlocked = TIME_SLOTS.every(t => {
+    const blocked = blockedSlots.some(s => s.block_date === selectedDate && s.block_time === t);
+    const booked = bookedSlots.some(s => s.preferred_date === selectedDate && s.preferred_time === t && !['geannuleerd', 'afgewezen'].includes(s.status));
+    return blocked || booked;
+  });
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+
+      <div style={{ padding: '16px 20px 12px', borderBottom: '1px solid #f1f5f9' }}>
+        <div style={{ fontSize: 15, fontWeight: 700, color: '#0f172a', marginBottom: 2 }}>
+          {formatDutchDate(selectedDate)}
+        </div>
+        <div style={{ fontSize: 12, color: '#94a3b8' }}>
+          {activeBookings.length} afspraak{activeBookings.length !== 1 ? 'en' : ''} · {dayTasks.length} ta{dayTasks.length !== 1 ? 'ken' : 'ak'}
+        </div>
+      </div>
+
+      <div style={{ padding: '12px 16px', borderBottom: '1px solid #f1f5f9' }}>
+        <div style={{ display: 'flex', gap: 6, marginBottom: 8 }}>
+          <button
+            className="admin-btn admin-btn--sm"
+            style={{ background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca', flex: 1, fontSize: 11 }}
+            onClick={() => onBlockDay(selectedDate)}
+            disabled={saving === `day-${selectedDate}` || isDayFullyBlocked}
+          >
+            Dag blokkeren
+          </button>
+          <button
+            className="admin-btn admin-btn--sm"
+            style={{ background: '#f0fdf4', color: '#16a34a', border: '1px solid #bbf7d0', flex: 1, fontSize: 11 }}
+            onClick={() => onUnblockDay(selectedDate)}
+            disabled={saving === `day-${selectedDate}` || dayBlockedCount === 0}
+          >
+            Dag vrijgeven
+          </button>
+        </div>
+        <input
+          className="admin-form-input"
+          placeholder="Reden blokkade (optioneel)"
+          value={reason}
+          onChange={e => onReasonChange(e.target.value)}
+          style={{ fontSize: 11 }}
+        />
+      </div>
+
+      <div style={{ overflowY: 'auto', maxHeight: 520 }}>
+        {TIME_SLOTS.map(time => {
+          const booking = bookedSlots.find(
+            s => s.preferred_date === selectedDate && s.preferred_time === time && !['geannuleerd', 'afgewezen'].includes(s.status)
+          );
+          const blocked = blockedSlots.find(s => s.block_date === selectedDate && s.block_time === time);
+          const isSaving = saving === `${selectedDate}-${time}`;
+          const slotTasks = dayTasks.filter(t => {
+            if (!t.due_date) return false;
+            const h = new Date(t.due_date).getHours();
+            const slotH = parseInt(time.split(':')[0]);
+            return h === slotH;
+          });
+
+          const hasContent = booking || blocked || slotTasks.length > 0;
+
+          return (
+            <div
+              key={time}
+              style={{
+                display: 'flex',
+                gap: 0,
+                borderBottom: '1px solid #f8fafc',
+                minHeight: hasContent ? 'auto' : 36,
+              }}
+            >
+              <div style={{
+                width: 48,
+                flexShrink: 0,
+                paddingTop: 8,
+                paddingLeft: 16,
+                fontSize: 11,
+                fontWeight: 600,
+                color: '#94a3b8',
+                letterSpacing: '0.3px',
+              }}>
+                {time}
+              </div>
+
+              <div style={{ flex: 1, padding: '6px 12px 6px 8px', display: 'flex', flexDirection: 'column', gap: 4, borderLeft: '2px solid #f1f5f9' }}>
+                {booking && (
+                  <div style={{
+                    borderRadius: 8,
+                    background: '#fff7ed',
+                    border: '1px solid #fed7aa',
+                    padding: '7px 10px',
+                    borderLeft: '3px solid #f97316',
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
+                      <span style={{ fontSize: 12, fontWeight: 700, color: '#c2410c' }}>
+                        {booking.naam || '—'}
+                      </span>
+                      <span style={{
+                        fontSize: 10, fontWeight: 600,
+                        background: '#fef3c7', color: '#92400e',
+                        padding: '1px 6px', borderRadius: 20,
+                        border: '1px solid #fde68a',
+                      }}>
+                        {STATUS_LABELS[booking.status] || booking.status}
+                      </span>
+                    </div>
+                    {booking.bedrijf && (
+                      <div style={{ fontSize: 11, color: '#92400e' }}>{booking.bedrijf}</div>
+                    )}
+                    {(booking.telefoon || booking.email) && (
+                      <div style={{ fontSize: 10, color: '#b45309', marginTop: 3 }}>
+                        {booking.telefoon}{booking.telefoon && booking.email ? ' · ' : ''}{booking.email}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {slotTasks.map(task => {
+                  const isOverdue = !task.completed && new Date(task.due_date) < new Date();
+                  return (
+                    <div
+                      key={task.id}
+                      style={{
+                        borderRadius: 8,
+                        background: task.completed ? '#f8fafc' : isOverdue ? '#fef2f2' : '#eff6ff',
+                        border: `1px solid ${task.completed ? '#e2e8f0' : isOverdue ? '#fecaca' : '#bfdbfe'}`,
+                        borderLeft: `3px solid ${task.completed ? '#cbd5e1' : isOverdue ? '#ef4444' : '#2563eb'}`,
+                        padding: '7px 10px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 8,
+                      }}
+                    >
+                      <div style={{
+                        width: 14, height: 14, borderRadius: '50%', flexShrink: 0,
+                        background: task.completed ? '#22c55e' : isOverdue ? '#ef4444' : '#2563eb',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      }}>
+                        {task.completed && (
+                          <svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="20 6 9 17 4 12"/>
+                          </svg>
+                        )}
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{
+                          fontSize: 11, fontWeight: 600,
+                          color: task.completed ? '#94a3b8' : '#0f172a',
+                          textDecoration: task.completed ? 'line-through' : 'none',
+                          whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+                        }}>
+                          {task.title}
+                        </div>
+                        {task.intakes?.naam && (
+                          <div style={{ fontSize: 10, color: '#64748b' }}>
+                            {task.intakes.naam}{task.intakes.bedrijf ? ` · ${task.intakes.bedrijf}` : ''}
+                          </div>
+                        )}
+                      </div>
+                      <span style={{
+                        fontSize: 10, fontWeight: 600, flexShrink: 0,
+                        padding: '1px 6px', borderRadius: 20,
+                        background: task.completed ? '#dcfce7' : isOverdue ? '#fee2e2' : '#dbeafe',
+                        color: task.completed ? '#16a34a' : isOverdue ? '#dc2626' : '#1d4ed8',
+                      }}>
+                        {task.completed ? 'Klaar' : isOverdue ? 'Te laat' : 'Open'}
+                      </span>
+                    </div>
+                  );
+                })}
+
+                {blocked && !booking && (
+                  <div style={{
+                    borderRadius: 8,
+                    background: '#f8fafc',
+                    border: '1px solid #e2e8f0',
+                    borderLeft: '3px solid #cbd5e1',
+                    padding: '5px 10px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}>
+                    <span style={{ fontSize: 11, color: '#94a3b8' }}>
+                      {blocked.reason ? blocked.reason : 'Geblokkeerd'}
+                    </span>
+                    <button
+                      onClick={() => onToggleBlock(selectedDate, time)}
+                      disabled={isSaving}
+                      style={{
+                        fontSize: 10, fontWeight: 600,
+                        padding: '2px 7px', borderRadius: 5,
+                        border: 'none', cursor: isSaving ? 'default' : 'pointer',
+                        background: '#dcfce7', color: '#16a34a',
+                        opacity: isSaving ? 0.5 : 1, flexShrink: 0,
+                      }}
+                    >
+                      {isSaving ? '...' : 'Vrijgeven'}
+                    </button>
+                  </div>
+                )}
+
+                {!hasContent && (
+                  <button
+                    onClick={() => onToggleBlock(selectedDate, time)}
+                    disabled={isSaving}
+                    style={{
+                      background: 'none', border: 'none',
+                      cursor: isSaving ? 'default' : 'pointer',
+                      fontSize: 10, color: '#e2e8f0',
+                      padding: '2px 0', textAlign: 'left',
+                      opacity: isSaving ? 0.5 : 1,
+                    }}
+                  >
+                    {isSaving ? '...' : '+ blokkeer'}
+                  </button>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export default function AgendaPage() {
   const now = new Date();
   const [viewYear, setViewYear] = useState(now.getFullYear());
   const [viewMonth, setViewMonth] = useState(now.getMonth());
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(toDateStr(now.getFullYear(), now.getMonth(), now.getDate()));
   const [blockedSlots, setBlockedSlots] = useState([]);
   const [bookedSlots, setBookedSlots] = useState([]);
   const [tasks, setTasks] = useState([]);
@@ -43,7 +276,6 @@ export default function AgendaPage() {
     setLoading(true);
     const firstDay = toDateStr(year, month, 1);
     const lastDay = toDateStr(year, month, new Date(year, month + 1, 0).getDate());
-
     const firstDayTs = `${firstDay}T00:00:00`;
     const lastDayTs = `${lastDay}T23:59:59`;
 
@@ -98,26 +330,20 @@ export default function AgendaPage() {
       !['geannuleerd', 'afgewezen'].includes(s.status)
     );
 
-  const getTasksForDate = (dateStr) =>
-    tasks.filter(t => t.due_date && t.due_date.startsWith(dateStr));
-
   const toggleBlock = async (dateStr, time) => {
     const key = `${dateStr}-${time}`;
     setSaving(key);
-
     const existing = blockedSlots.find(s => s.block_date === dateStr && s.block_time === time);
     if (existing) {
       await supabase.from('availability_blocks').delete().eq('id', existing.id);
     } else {
-      const booking = getBooking(dateStr, time);
-      if (booking) { setSaving(null); return; }
+      if (getBooking(dateStr, time)) { setSaving(null); return; }
       await supabase.from('availability_blocks').insert({
         block_date: dateStr,
         block_time: time,
         reason: reason || null,
       });
     }
-
     await fetchData(viewYear, viewMonth);
     setSaving(null);
   };
@@ -153,27 +379,6 @@ export default function AgendaPage() {
   for (let i = 0; i < offset; i++) cells.push(null);
   for (let d = 1; d <= daysInMonth; d++) cells.push(d);
 
-  const getSlotStatus = (dateStr, time) => {
-    if (getBooking(dateStr, time)) return 'booked';
-    if (isBlocked(dateStr, time)) return 'blocked';
-    return 'free';
-  };
-
-  const selectedDayBookings = selectedDate
-    ? bookedSlots.filter(s => s.preferred_date === selectedDate)
-    : [];
-
-  const selectedDayActiveBookings = selectedDayBookings.filter(
-    b => !['geannuleerd', 'afgewezen'].includes(b.status)
-  );
-
-  const dayBlockedCount = selectedDate
-    ? blockedSlots.filter(s => s.block_date === selectedDate).length
-    : 0;
-
-  const isDayFullyBlocked = selectedDate &&
-    TIME_SLOTS.every(t => isBlocked(selectedDate, t) || getBooking(selectedDate, t));
-
   return (
     <div>
       <div className="admin-page-header">
@@ -181,7 +386,7 @@ export default function AgendaPage() {
         <p className="admin-page-subtitle">Beheer beschikbaarheid en bekijk geplande kennismakingen</p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: 24, alignItems: 'start' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 24, alignItems: 'start' }}>
 
         <div className="admin-card">
           <div className="admin-card-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -290,263 +495,33 @@ export default function AgendaPage() {
           </div>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div className="admin-card" style={{ overflow: 'hidden' }}>
           {selectedDate ? (
-            <>
-              {selectedDayActiveBookings.length > 0 && (
-                <div className="admin-card">
-                  <div className="admin-card-header">
-                    <h2 className="admin-card-title" style={{ fontSize: 13 }}>
-                      Geplande afspraken — {formatDutchDate(selectedDate)}
-                    </h2>
-                  </div>
-                  <div className="admin-card-body" style={{ paddingTop: 0 }}>
-                    {selectedDayActiveBookings.map(b => (
-                      <div
-                        key={b.id}
-                        style={{
-                          padding: '12px 14px',
-                          borderRadius: 10,
-                          background: '#fff7ed',
-                          border: '1px solid #fed7aa',
-                          marginBottom: 8,
-                        }}
-                      >
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
-                          <span style={{
-                            fontSize: 12,
-                            fontWeight: 700,
-                            color: '#c2410c',
-                            background: '#ffedd5',
-                            padding: '2px 8px',
-                            borderRadius: 20,
-                          }}>
-                            {b.preferred_time}
-                          </span>
-                          {b.status && (
-                            <span style={{
-                              fontSize: 11,
-                              color: '#92400e',
-                              background: '#fef3c7',
-                              padding: '2px 7px',
-                              borderRadius: 20,
-                              border: '1px solid #fde68a',
-                            }}>
-                              {STATUS_LABELS[b.status] || b.status}
-                            </span>
-                          )}
-                        </div>
-                        <div style={{ fontSize: 13, fontWeight: 600, color: '#0f172a' }}>
-                          {b.naam || '—'}
-                        </div>
-                        {b.bedrijf && (
-                          <div style={{ fontSize: 12, color: '#64748b', marginTop: 1 }}>{b.bedrijf}</div>
-                        )}
-                        {b.telefoon && (
-                          <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 4 }}>{b.telefoon}</div>
-                        )}
-                        {b.email && (
-                          <div style={{ fontSize: 11, color: '#94a3b8' }}>{b.email}</div>
-                        )}
-                      </div>
-                    ))}
-                    {selectedDayBookings.filter(b => ['geannuleerd', 'afgewezen'].includes(b.status)).length > 0 && (
-                      <p style={{ fontSize: 11, color: '#94a3b8', margin: '4px 0 0', textAlign: 'center' }}>
-                        +{selectedDayBookings.filter(b => ['geannuleerd', 'afgewezen'].includes(b.status)).length} geannuleerde afspraak(en) niet weergegeven
-                      </p>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {getTasksForDate(selectedDate).length > 0 && (
-                <div className="admin-card">
-                  <div className="admin-card-header">
-                    <h2 className="admin-card-title" style={{ fontSize: 13 }}>
-                      Taken — {formatDutchDate(selectedDate)}
-                    </h2>
-                  </div>
-                  <div className="admin-card-body" style={{ paddingTop: 0 }}>
-                    {getTasksForDate(selectedDate).map(task => {
-                      const isOverdue = !task.completed && new Date(task.due_date) < new Date();
-                      return (
-                        <div
-                          key={task.id}
-                          style={{
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                            gap: 10,
-                            padding: '10px 12px',
-                            borderRadius: 8,
-                            background: task.completed ? '#f8fafc' : isOverdue ? '#fef2f2' : '#eff6ff',
-                            border: `1px solid ${task.completed ? '#e2e8f0' : isOverdue ? '#fecaca' : '#bfdbfe'}`,
-                            marginBottom: 6,
-                          }}
-                        >
-                          <div style={{
-                            width: 16, height: 16, borderRadius: '50%', flexShrink: 0, marginTop: 1,
-                            background: task.completed ? '#22c55e' : isOverdue ? '#ef4444' : '#2563eb',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          }}>
-                            {task.completed && (
-                              <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                                <polyline points="20 6 9 17 4 12"/>
-                              </svg>
-                            )}
-                          </div>
-                          <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{
-                              fontSize: 12, fontWeight: 600,
-                              color: task.completed ? '#94a3b8' : '#0f172a',
-                              textDecoration: task.completed ? 'line-through' : 'none',
-                            }}>
-                              {task.title}
-                            </div>
-                            {task.intakes?.naam && (
-                              <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>
-                                {task.intakes.naam}{task.intakes.bedrijf ? ` · ${task.intakes.bedrijf}` : ''}
-                              </div>
-                            )}
-                          </div>
-                          <span style={{
-                            fontSize: 10, fontWeight: 600, flexShrink: 0,
-                            padding: '2px 7px', borderRadius: 20,
-                            background: task.completed ? '#dcfce7' : isOverdue ? '#fee2e2' : '#dbeafe',
-                            color: task.completed ? '#16a34a' : isOverdue ? '#dc2626' : '#1d4ed8',
-                          }}>
-                            {task.completed ? 'Klaar' : isOverdue ? 'Te laat' : 'Open'}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              <div className="admin-card">
-                <div className="admin-card-header">
-                  <h2 className="admin-card-title" style={{ fontSize: 13 }}>
-                    Tijdslots — {formatDutchDate(selectedDate)}
-                  </h2>
-                </div>
-                <div className="admin-card-body" style={{ paddingTop: 0 }}>
-
-                  <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
-                    <button
-                      className="admin-btn admin-btn--sm"
-                      style={{ background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca', flex: 1 }}
-                      onClick={() => blockFullDay(selectedDate)}
-                      disabled={saving === `day-${selectedDate}` || isDayFullyBlocked}
-                    >
-                      Dag blokkeren
-                    </button>
-                    <button
-                      className="admin-btn admin-btn--sm"
-                      style={{ background: '#f0fdf4', color: '#16a34a', border: '1px solid #bbf7d0', flex: 1 }}
-                      onClick={() => unblockFullDay(selectedDate)}
-                      disabled={saving === `day-${selectedDate}` || dayBlockedCount === 0}
-                    >
-                      Dag vrijgeven
-                    </button>
-                  </div>
-
-                  <div style={{ marginBottom: 12 }}>
-                    <input
-                      className="admin-form-input"
-                      placeholder="Reden blokkade (optioneel)"
-                      value={reason}
-                      onChange={e => setReason(e.target.value)}
-                      style={{ fontSize: 12 }}
-                    />
-                  </div>
-
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-                    {TIME_SLOTS.map(time => {
-                      const status = getSlotStatus(selectedDate, time);
-                      const booking = getBooking(selectedDate, time);
-                      const isSaving = saving === `${selectedDate}-${time}`;
-
-                      let bg = '#f8fafc';
-                      let textCol = '#374151';
-                      let borderCol = '#e5e7eb';
-                      let label = 'Beschikbaar';
-
-                      if (status === 'blocked') {
-                        bg = '#fef2f2'; textCol = '#ef4444'; borderCol = '#fecaca';
-                        const block = blockedSlots.find(s => s.block_date === selectedDate && s.block_time === time);
-                        label = 'Geblokkeerd';
-                        if (block?.reason) label = `Geblokkeerd`;
-                      }
-                      if (status === 'booked') {
-                        bg = '#fffbeb'; textCol = '#c2410c'; borderCol = '#fed7aa';
-                        label = booking?.naam || booking?.bedrijf || 'Afspraak';
-                      }
-
-                      return (
-                        <div
-                          key={time}
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            padding: '7px 10px',
-                            borderRadius: 8,
-                            background: bg,
-                            border: `1px solid ${borderCol}`,
-                          }}
-                        >
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                            <span style={{ fontSize: 12, fontWeight: 700, color: '#0f172a', minWidth: 40 }}>{time}</span>
-                            <span style={{
-                              fontSize: 11,
-                              color: textCol,
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                              whiteSpace: 'nowrap',
-                              maxWidth: 130,
-                            }}>{label}</span>
-                          </div>
-                          {status !== 'booked' && (
-                            <button
-                              onClick={() => toggleBlock(selectedDate, time)}
-                              disabled={isSaving}
-                              style={{
-                                fontSize: 10,
-                                fontWeight: 600,
-                                padding: '2px 7px',
-                                borderRadius: 5,
-                                border: 'none',
-                                cursor: isSaving ? 'default' : 'pointer',
-                                background: status === 'blocked' ? '#dcfce7' : '#fee2e2',
-                                color: status === 'blocked' ? '#16a34a' : '#dc2626',
-                                opacity: isSaving ? 0.5 : 1,
-                                flexShrink: 0,
-                              }}
-                            >
-                              {isSaving ? '...' : status === 'blocked' ? 'Vrijgeven' : 'Blokkeer'}
-                            </button>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            </>
+            <DayTimeline
+              selectedDate={selectedDate}
+              bookedSlots={bookedSlots}
+              tasks={tasks}
+              blockedSlots={blockedSlots}
+              saving={saving}
+              reason={reason}
+              onToggleBlock={toggleBlock}
+              onBlockDay={blockFullDay}
+              onUnblockDay={unblockFullDay}
+              onReasonChange={setReason}
+            />
           ) : (
-            <div className="admin-card">
-              <div className="admin-card-body" style={{ textAlign: 'center', padding: '40px 20px' }}>
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ margin: '0 auto 12px', display: 'block' }}>
-                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                  <line x1="16" y1="2" x2="16" y2="6"/>
-                  <line x1="8" y1="2" x2="8" y2="6"/>
-                  <line x1="3" y1="10" x2="21" y2="10"/>
-                </svg>
-                <p style={{ fontSize: 13, color: '#94a3b8', margin: 0 }}>Klik op een datum om tijdslots en afspraken te bekijken</p>
-              </div>
+            <div style={{ padding: '60px 20px', textAlign: 'center' }}>
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ margin: '0 auto 12px', display: 'block' }}>
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                <line x1="16" y1="2" x2="16" y2="6"/>
+                <line x1="8" y1="2" x2="8" y2="6"/>
+                <line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
+              <p style={{ fontSize: 13, color: '#94a3b8', margin: 0 }}>Klik op een datum om de dagweergave te openen</p>
             </div>
           )}
         </div>
+
       </div>
     </div>
   );
