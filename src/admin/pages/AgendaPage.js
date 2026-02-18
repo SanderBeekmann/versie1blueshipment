@@ -34,6 +34,7 @@ export default function AgendaPage() {
   const [selectedDate, setSelectedDate] = useState(null);
   const [blockedSlots, setBlockedSlots] = useState([]);
   const [bookedSlots, setBookedSlots] = useState([]);
+  const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(null);
   const [reason, setReason] = useState('');
@@ -43,7 +44,10 @@ export default function AgendaPage() {
     const firstDay = toDateStr(year, month, 1);
     const lastDay = toDateStr(year, month, new Date(year, month + 1, 0).getDate());
 
-    const [{ data: blocked }, { data: booked }] = await Promise.all([
+    const firstDayTs = `${firstDay}T00:00:00`;
+    const lastDayTs = `${lastDay}T23:59:59`;
+
+    const [{ data: blocked }, { data: booked }, { data: taskData }] = await Promise.all([
       supabase
         .from('availability_blocks')
         .select('id, block_date, block_time, reason')
@@ -56,10 +60,17 @@ export default function AgendaPage() {
         .lte('preferred_date', lastDay)
         .not('preferred_date', 'is', null)
         .not('preferred_time', 'is', null),
+      supabase
+        .from('crm_tasks')
+        .select('id, title, due_date, completed, intake_id, intakes(naam, bedrijf)')
+        .gte('due_date', firstDayTs)
+        .lte('due_date', lastDayTs)
+        .not('due_date', 'is', null),
     ]);
 
     setBlockedSlots(blocked || []);
     setBookedSlots(booked || []);
+    setTasks(taskData || []);
     setLoading(false);
   }, []);
 
@@ -86,6 +97,9 @@ export default function AgendaPage() {
       s.preferred_time === time &&
       !['geannuleerd', 'afgewezen'].includes(s.status)
     );
+
+  const getTasksForDate = (dateStr) =>
+    tasks.filter(t => t.due_date && t.due_date.startsWith(dateStr));
 
   const toggleBlock = async (dateStr, time) => {
     const key = `${dateStr}-${time}`;
@@ -213,6 +227,7 @@ export default function AgendaPage() {
                     ).length;
                     const dayBlocked = blockedSlots.filter(s => s.block_date === dateStr).length;
                     const availCount = TIME_SLOTS.length - activeBookingsCount - dayBlocked;
+                    const dayTasksCount = tasks.filter(t => t.due_date && t.due_date.startsWith(dateStr)).length;
 
                     let bg = '#ffffff';
                     let border = '1.5px solid #e5e7eb';
@@ -245,9 +260,10 @@ export default function AgendaPage() {
                         }}
                       >
                         {day}
-                        {(activeBookingsCount > 0 || dayBlocked > 0) && !isSelected && (
+                        {(activeBookingsCount > 0 || dayBlocked > 0 || dayTasksCount > 0) && !isSelected && (
                           <div style={{ display: 'flex', gap: 2, marginTop: 2 }}>
                             {activeBookingsCount > 0 && <div style={{ width: 4, height: 4, borderRadius: '50%', background: '#f97316' }} />}
+                            {dayTasksCount > 0 && <div style={{ width: 4, height: 4, borderRadius: '50%', background: '#2563eb' }} />}
                             {dayBlocked > 0 && availCount < TIME_SLOTS.length && <div style={{ width: 4, height: 4, borderRadius: '50%', background: '#94a3b8' }} />}
                           </div>
                         )}
@@ -260,6 +276,7 @@ export default function AgendaPage() {
                   {[
                     { color: '#0070ff', label: 'Geselecteerd' },
                     { color: '#f97316', label: 'Afspraak' },
+                    { color: '#2563eb', label: 'Taak' },
                     { color: '#94a3b8', label: 'Geblokkeerd' },
                   ].map(({ color, label }) => (
                     <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -338,6 +355,70 @@ export default function AgendaPage() {
                         +{selectedDayBookings.filter(b => ['geannuleerd', 'afgewezen'].includes(b.status)).length} geannuleerde afspraak(en) niet weergegeven
                       </p>
                     )}
+                  </div>
+                </div>
+              )}
+
+              {getTasksForDate(selectedDate).length > 0 && (
+                <div className="admin-card">
+                  <div className="admin-card-header">
+                    <h2 className="admin-card-title" style={{ fontSize: 13 }}>
+                      Taken — {formatDutchDate(selectedDate)}
+                    </h2>
+                  </div>
+                  <div className="admin-card-body" style={{ paddingTop: 0 }}>
+                    {getTasksForDate(selectedDate).map(task => {
+                      const isOverdue = !task.completed && new Date(task.due_date) < new Date();
+                      return (
+                        <div
+                          key={task.id}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'flex-start',
+                            gap: 10,
+                            padding: '10px 12px',
+                            borderRadius: 8,
+                            background: task.completed ? '#f8fafc' : isOverdue ? '#fef2f2' : '#eff6ff',
+                            border: `1px solid ${task.completed ? '#e2e8f0' : isOverdue ? '#fecaca' : '#bfdbfe'}`,
+                            marginBottom: 6,
+                          }}
+                        >
+                          <div style={{
+                            width: 16, height: 16, borderRadius: '50%', flexShrink: 0, marginTop: 1,
+                            background: task.completed ? '#22c55e' : isOverdue ? '#ef4444' : '#2563eb',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          }}>
+                            {task.completed && (
+                              <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="20 6 9 17 4 12"/>
+                              </svg>
+                            )}
+                          </div>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{
+                              fontSize: 12, fontWeight: 600,
+                              color: task.completed ? '#94a3b8' : '#0f172a',
+                              textDecoration: task.completed ? 'line-through' : 'none',
+                            }}>
+                              {task.title}
+                            </div>
+                            {task.intakes?.naam && (
+                              <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>
+                                {task.intakes.naam}{task.intakes.bedrijf ? ` · ${task.intakes.bedrijf}` : ''}
+                              </div>
+                            )}
+                          </div>
+                          <span style={{
+                            fontSize: 10, fontWeight: 600, flexShrink: 0,
+                            padding: '2px 7px', borderRadius: 20,
+                            background: task.completed ? '#dcfce7' : isOverdue ? '#fee2e2' : '#dbeafe',
+                            color: task.completed ? '#16a34a' : isOverdue ? '#dc2626' : '#1d4ed8',
+                          }}>
+                            {task.completed ? 'Klaar' : isOverdue ? 'Te laat' : 'Open'}
+                          </span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               )}
