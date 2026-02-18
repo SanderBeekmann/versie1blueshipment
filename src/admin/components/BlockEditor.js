@@ -47,7 +47,7 @@ function ParagraphBlock({ block, onChange }) {
   return (
     <textarea
       className="admin-form-textarea"
-      style={{ minHeight: 100, fontSize: 14, lineHeight: 1.6 }}
+      style={{ minHeight: 100, fontSize: 14, lineHeight: 1.6, width: '100%', boxSizing: 'border-box' }}
       value={block.text}
       onChange={(e) => onChange({ ...block, text: e.target.value })}
       placeholder="Schrijf hier je alinea..."

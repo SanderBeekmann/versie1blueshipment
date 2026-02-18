@@ -417,6 +417,8 @@
 .admin-form-textarea {
   resize: vertical;
   min-height: 80px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* ===================== BACK LINK ===================== */
