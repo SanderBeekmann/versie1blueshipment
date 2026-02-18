@@ -879,37 +879,14 @@ const IntakeFunnel = ({ onComplete }) => {
                 <h2 className="funnel-question">Bijna klaar!</h2>
                 
                 {/* Timo Introduction */}
-                <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-                  <div style={{ marginBottom: '20px' }}>
-                    <img 
-                      src={timoImage} 
-                      alt="Timo" 
-                      style={{ 
-                        width: '120px', 
-                        height: '120px', 
-                        borderRadius: '50%', 
-                        objectFit: 'cover',
-                        border: '3px solid #2563eb',
-                        margin: '0 auto',
-                        display: 'block'
-                      }} 
-                    />
-                  </div>
-                  <p style={{ 
-                    fontSize: '18px', 
-                    fontWeight: '600', 
-                    color: '#1f2937', 
-                    marginBottom: '8px' 
-                  }}>
-                    Je kennismakingsgesprek is met Timo
-                  </p>
-                  <p style={{ 
-                    fontSize: '14px', 
-                    color: '#6b7280', 
-                    marginBottom: '30px' 
-                  }}>
-                    Timo kijkt er naar uit om met jou in gesprek te gaan!
-                  </p>
+                <div className="funnel-timo-intro">
+                  <img
+                    src={timoImage}
+                    alt="Timo"
+                    className="funnel-timo-avatar"
+                  />
+                  <p className="funnel-timo-name">Je kennismakingsgesprek is met Timo</p>
+                  <p className="funnel-timo-sub">Timo kijkt er naar uit om met jou in gesprek te gaan!</p>
                 </div>
 
                 {/* Calendar Picker */}

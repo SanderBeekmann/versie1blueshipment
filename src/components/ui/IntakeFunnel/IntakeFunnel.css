@@ -1,3 +1,35 @@
+/* Timo intro block */
+.funnel-timo-intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.funnel-timo-avatar {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #2563eb;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.funnel-timo-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 4px;
+}
+
+.funnel-timo-sub {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0;
+}
+
 /* Intake Funnel Styles */
 .intake-funnel {
   width: 100%;
