@@ -114,13 +114,6 @@ export default function IntakeDetailPage() {
         Terug naar intakes
       </Link>
 
-      <div className="admin-page-header">
-        <div>
-          <h1 className="admin-page-title">{intake.naam || intake.email}</h1>
-          <p className="admin-page-subtitle">Aangemeld op {formatDate(intake.created_at)}</p>
-        </div>
-      </div>
-
       <div className="intake-pipeline-bar">
         {STATUS_OPTIONS.map((s, idx) => {
           const currentIdx = STATUS_OPTIONS.indexOf(intake.status);
@@ -132,6 +125,7 @@ export default function IntakeDetailPage() {
             <React.Fragment key={s}>
               <button
                 className={`pipeline-step${isActive ? ' pipeline-step--active' : ''}${isDone ? ' pipeline-step--done' : ''}${isNext ? ' pipeline-step--next' : ''}`}
+                data-status={s}
                 onClick={() => !isActive && !updatingStatus && updateStatus(s)}
                 disabled={updatingStatus || isActive}
                 title={`Zet op ${STATUS_LABELS[s]}`}
@@ -151,6 +145,13 @@ export default function IntakeDetailPage() {
             </React.Fragment>
           );
         })}
+      </div>
+
+      <div className="admin-page-header">
+        <div>
+          <h1 className="admin-page-title">{intake.naam || intake.email}</h1>
+          <p className="admin-page-subtitle">Aangemeld op {formatDate(intake.created_at)}</p>
+        </div>
       </div>
 
       <div className="admin-detail-grid">
