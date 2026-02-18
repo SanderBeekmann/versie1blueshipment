@@ -45,6 +45,7 @@ export const sendFunnelEmail = async (formData) => {
         website: formData.website || '',
         consent: formData.awareOfTimeReservation === true,
         preferred_date: formData.preferredDate || null,
+        preferred_time: formData.preferredTime || null,
         status: 'nieuw',
       })
       .select('id')

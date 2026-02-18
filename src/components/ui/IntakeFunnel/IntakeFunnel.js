@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './IntakeFunnel.css';
 import { sendFunnelEmail } from '../../../utils/emailService';
 import timoImage from '../../../assets/timo.png';
+import CalendarPicker from '../CalendarPicker/CalendarPicker';
 
 const IntakeFunnel = ({ onComplete }) => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -21,6 +22,7 @@ const IntakeFunnel = ({ onComplete }) => {
     website: '',
     // Step 5
     preferredDate: '',
+    preferredTime: '',
     awareOfTimeReservation: false
   });
 
@@ -101,6 +103,8 @@ const IntakeFunnel = ({ onComplete }) => {
       case 5:
         if (!formData.preferredDate) {
           newErrors.preferredDate = 'Kies een voorkeursdatum';
+        } else if (!formData.preferredTime) {
+          newErrors.preferredDate = 'Kies ook een tijdstip';
         }
         if (!formData.awareOfTimeReservation) {
           newErrors.awareOfTimeReservation = 'Je moet akkoord gaan om door te gaan';
@@ -906,34 +910,18 @@ const IntakeFunnel = ({ onComplete }) => {
                   </p>
                 </div>
 
-                {/* Date picker */}
+                {/* Calendar Picker */}
                 <div className="funnel-input-group" style={{ marginBottom: '24px' }}>
-                  <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', color: '#374151', marginBottom: '8px' }}>
-                    Voorkeursdatum voor kennismaking
-                  </label>
-                  <input
-                    type="date"
-                    value={formData.preferredDate}
-                    min={new Date(Date.now() + 86400000).toISOString().split('T')[0]}
-                    onChange={(e) => updateFormData('preferredDate', e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '12px 14px',
-                      border: `2px solid ${errors.preferredDate ? '#ef4444' : formData.preferredDate ? '#0070ff' : '#e5e7eb'}`,
-                      borderRadius: '8px',
-                      fontSize: '15px',
-                      color: '#1f2937',
-                      backgroundColor: '#ffffff',
-                      outline: 'none',
-                      boxSizing: 'border-box',
-                      transition: 'border-color 0.2s ease'
+                  <CalendarPicker
+                    selectedDate={formData.preferredDate}
+                    selectedTime={formData.preferredTime}
+                    onDateChange={(date) => {
+                      updateFormData('preferredDate', date);
+                      updateFormData('preferredTime', '');
                     }}
+                    onTimeChange={(time) => updateFormData('preferredTime', time)}
+                    error={errors.preferredDate}
                   />
-                  {errors.preferredDate && (
-                    <p className="funnel-error-text" style={{ marginTop: '6px' }}>
-                      {errors.preferredDate}
-                    </p>
-                  )}
                 </div>
 
                 {/* Checkbox */}

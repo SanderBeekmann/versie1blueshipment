@@ -98,7 +98,7 @@ function buildKlantEmail(intake: Record<string, unknown>, template: { subject: s
             ${intake.preferred_date ? `
             <tr><td style="border-top:1px solid #e2e8f0;padding:10px 0 0;">
               <p style="font-size:12px;font-weight:500;color:#64748b;margin:0 0 2px;">Voorkeursdatum kennismaking</p>
-              <p style="font-size:14px;color:#0070ff;font-weight:600;margin:0;">${formatDutchDate(intake.preferred_date)}</p>
+              <p style="font-size:14px;color:#0070ff;font-weight:600;margin:0;">${formatDutchDate(intake.preferred_date)}${intake.preferred_time ? ` om ${intake.preferred_time}` : ""}</p>
             </td></tr>` : ""}
           </table>
 
@@ -191,7 +191,7 @@ function buildInternEmail(intake: Record<string, unknown>, template: { subject: 
             ${intake.preferred_date ? `
             <tr style="border-top:1px solid #e2e8f0;background:#eff6ff;">
               <td style="padding:10px 16px;font-size:13px;color:#64748b;">Voorkeursdatum</td>
-              <td style="padding:10px 16px;font-size:13px;color:#0070ff;font-weight:600;">${formatDutchDate(intake.preferred_date)}</td>
+              <td style="padding:10px 16px;font-size:13px;color:#0070ff;font-weight:600;">${formatDutchDate(intake.preferred_date)}${intake.preferred_time ? ` om ${intake.preferred_time}` : ""}</td>
             </tr>` : ""}
             <tr style="border-top:1px solid #e2e8f0;background:#f8fafc;">
               <td style="padding:10px 16px;font-size:13px;color:#64748b;">Consent</td>

@@ -308,6 +308,7 @@ export default function IntakeDetailPage() {
                   <span className="admin-field-label">Voorkeursdatum</span>
                   <span className="admin-field-value" style={{ color: '#0070ff', fontWeight: 600 }}>
                     {new Date(intake.preferred_date + 'T00:00:00').toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' })}
+                    {intake.preferred_time && ` om ${intake.preferred_time}`}
                   </span>
                 </div>
               )}

@@ -13,6 +13,7 @@ import ContentPage from './admin/pages/ContentPage';
 import ContentEditPage from './admin/pages/ContentEditPage';
 import RapportagePage from './admin/pages/RapportagePage';
 import InstellingenPage from './admin/pages/InstellingenPage';
+import AgendaPage from './admin/pages/AgendaPage';
 import HomePage from './pages/Home/HomePage';
 import AboutPage from './pages/About/AboutPage';
 import DienstenPage from './pages/Diensten/DienstenPage';
@@ -33,6 +34,7 @@ function AdminApp() {
         <Route path="crm" element={<CrmPage />} />
         <Route path="content" element={<ContentPage />} />
         <Route path="content/:id" element={<ContentEditPage />} />
+        <Route path="agenda" element={<AgendaPage />} />
         <Route path="rapportage" element={<RapportagePage />} />
         <Route path="instellingen" element={<InstellingenPage />} />
       </Routes>
