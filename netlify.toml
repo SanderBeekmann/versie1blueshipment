@@ -4,6 +4,8 @@ publish = "build"
 
 [build.environment]
 NODE_VERSION = "18"
+REACT_APP_SUPABASE_URL = "https://zejvcntnyrdkkswiyqpp.supabase.co"
+REACT_APP_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplanZjbnRueXJka2tzd2l5cXBwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAwMjg3NTYsImV4cCI6MjA4NTYwNDc1Nn0.2RN7z9_gMyFHy7Md8o6KClny19Tw3lODUiaeQEKuuOI"
 
 [[redirects]]
 from = "/*"
