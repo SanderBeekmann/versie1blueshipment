@@ -12,7 +12,7 @@ function toDateStr(year, month, day) {
 
 function formatDutchDate(dateStr) {
   if (!dateStr) return '—';
-  const [year, month, day] = dateStr.split('-');
+  const [, month, day] = dateStr.split('-');
   const weekday = new Date(dateStr).toLocaleDateString('nl-NL', { weekday: 'long' });
   return `${weekday.charAt(0).toUpperCase() + weekday.slice(1)} ${parseInt(day)} ${MONTH_NAMES[parseInt(month) - 1]}`;
 }
