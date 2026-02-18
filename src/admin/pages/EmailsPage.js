@@ -404,8 +404,30 @@ function TemplatesTab() {
   const offerteTiming = timingSettings['followup_lead_offerte'];
   const offerteLocal = localTiming['followup_lead_offerte'];
 
+  const flowSteps = [
+    {
+      icon: '📥', label: 'Intake ingediend', sub: 'Klant vult formulier in', timing: null, color: '#2563eb', enabled: true,
+    },
+    {
+      icon: '⚡', label: 'Bevestiging & signaal', sub: 'Direct verstuurd', timing: 'Onmiddellijk', color: '#16a34a', enabled: true,
+    },
+    {
+      icon: '📧', label: 'Follow-up lead', sub: 'Als intake nog "Nieuw" is', timingKey: 'followup_lead_nieuw', color: '#ea580c',
+    },
+    {
+      icon: '🔔', label: 'Interne herinnering', sub: 'Als intake nog niet opgepakt', timingKey: 'followup_intern_nieuw', color: '#dc2626',
+    },
+    {
+      icon: '📋', label: 'Follow-up offerte', sub: 'Als offerte lang open staat', timingKey: 'followup_lead_offerte', color: '#0369a1',
+    },
+    {
+      icon: '🕘', label: 'Dagelijkse check', sub: 'Elke dag om 09:00 UTC', timing: 'Dagelijks', color: '#64748b', enabled: true,
+    },
+  ];
+
   return (
-    <div style={{ maxWidth: 760 }}>
+    <div style={{ display: 'flex', gap: 24, alignItems: 'flex-start' }}>
+      <div style={{ flex: 1, minWidth: 0 }}>
       <div className="admin-card">
         <div className="admin-card-header">
           <h2 className="admin-card-title">Templates & Timing</h2>
@@ -626,6 +648,65 @@ function TemplatesTab() {
               )}
             </>
           )}
+        </div>
+      </div>
+      </div>
+
+      <div style={{ width: 240, flexShrink: 0 }}>
+        <div className="admin-card" style={{ position: 'sticky', top: 24 }}>
+          <div className="admin-card-header" style={{ paddingBottom: 12 }}>
+            <h2 className="admin-card-title" style={{ fontSize: 13 }}>E-mailflow</h2>
+          </div>
+          <div className="admin-card-body" style={{ padding: '8px 16px 16px' }}>
+            {flowSteps.map((step, idx) => {
+              const timingVal = step.timingKey ? localTiming[step.timingKey] : null;
+              const isOff = timingVal ? timingVal.enabled === false : false;
+              const dotColor = isOff ? '#cbd5e1' : step.color;
+
+              return (
+                <div key={idx} style={{ display: 'flex', gap: 10, marginBottom: 0 }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: 24, flexShrink: 0 }}>
+                    <div style={{
+                      width: 24, height: 24, borderRadius: '50%',
+                      background: isOff ? '#f1f5f9' : `${step.color}18`,
+                      border: `2px solid ${dotColor}`,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: 11, flexShrink: 0,
+                    }}>
+                      {step.icon}
+                    </div>
+                    {idx < flowSteps.length - 1 && (
+                      <div style={{ width: 2, flex: 1, minHeight: 16, background: '#e2e8f0', margin: '2px 0' }} />
+                    )}
+                  </div>
+                  <div style={{ flex: 1, paddingBottom: 14, paddingTop: 2 }}>
+                    <div style={{ fontSize: 12, fontWeight: 600, color: isOff ? '#94a3b8' : '#0f172a', lineHeight: 1.3 }}>
+                      {step.label}
+                    </div>
+                    <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 1 }}>{step.sub}</div>
+                    {(step.timing || timingVal) && (
+                      <div style={{
+                        display: 'inline-block',
+                        marginTop: 4,
+                        fontSize: 10, fontWeight: 600,
+                        background: isOff ? '#f1f5f9' : '#f8fafc',
+                        border: `1px solid ${isOff ? '#e2e8f0' : dotColor + '40'}`,
+                        color: isOff ? '#94a3b8' : dotColor,
+                        borderRadius: 4,
+                        padding: '2px 6px',
+                      }}>
+                        {step.timing
+                          ? step.timing
+                          : isOff
+                            ? 'Uitgeschakeld'
+                            : `Na ${formatHours(Number(timingVal.hours))}`}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>
