@@ -24,10 +24,46 @@ function formatDate(d) {
   return new Date(d).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' });
 }
 
+function DeleteConfirmModal({ item, onConfirm, onCancel }) {
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 1000,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+    }}>
+      <div style={{
+        background: '#fff', borderRadius: 12, padding: '28px 32px', maxWidth: 400, width: '90%',
+        boxShadow: '0 8px 40px rgba(0,0,0,0.18)',
+      }}>
+        <h3 style={{ margin: '0 0 8px', fontSize: 17, fontWeight: 700, color: '#0f172a' }}>Klant verwijderen</h3>
+        <p style={{ margin: '0 0 24px', fontSize: 14, color: '#64748b', lineHeight: 1.5 }}>
+          Weet je zeker dat je <strong>{item.naam || item.email}</strong> wilt verwijderen? Dit kan niet ongedaan worden gemaakt.
+        </p>
+        <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+          <button
+            onClick={onCancel}
+            style={{
+              padding: '8px 18px', border: '1px solid #e2e8f0', borderRadius: 7, background: '#fff',
+              fontSize: 13, fontWeight: 600, color: '#374151', cursor: 'pointer',
+            }}
+          >Annuleren</button>
+          <button
+            onClick={onConfirm}
+            style={{
+              padding: '8px 18px', border: 'none', borderRadius: 7, background: '#dc2626',
+              fontSize: 13, fontWeight: 600, color: '#fff', cursor: 'pointer',
+            }}
+          >Verwijderen</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function CrmPage() {
   const [columns, setColumns] = useState({});
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [deleteTarget, setDeleteTarget] = useState(null);
 
   const load = useCallback(async () => {
     let query = supabase
@@ -54,8 +90,23 @@ export default function CrmPage() {
     return () => clearTimeout(timer);
   }, [load]);
 
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+    await supabase.from('intakes').delete().eq('id', deleteTarget.id);
+    setDeleteTarget(null);
+    load();
+  };
+
   return (
     <div>
+      {deleteTarget && (
+        <DeleteConfirmModal
+          item={deleteTarget}
+          onConfirm={handleDelete}
+          onCancel={() => setDeleteTarget(null)}
+        />
+      )}
+
       <div className="admin-page-header" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
         <div>
           <h1 className="admin-page-title">CRM Pipeline</h1>
@@ -87,19 +138,33 @@ export default function CrmPage() {
                   {items.length === 0 ? (
                     <div className="crm-empty">Leeg</div>
                   ) : items.map(item => (
-                    <Link key={item.id} to={`/admin/intakes/${item.id}`} className="crm-card">
-                      <div className="crm-card-name">{item.naam || item.email}</div>
-                      {item.bedrijf && <div className="crm-card-company">{item.bedrijf}</div>}
-                      <div className="crm-card-meta">
-                        {Array.isArray(item.diensten) && item.diensten.length > 0 && (
-                          <span className="crm-card-tag">{item.diensten[0]}{item.diensten.length > 1 ? ` +${item.diensten.length - 1}` : ''}</span>
-                        )}
-                        {item.shipment_volume > 0 && (
-                          <span className="crm-card-shipments">{item.shipment_volume.toLocaleString('nl-NL')} ship.</span>
-                        )}
-                      </div>
-                      <div className="crm-card-date">{formatDate(item.created_at)}</div>
-                    </Link>
+                    <div key={item.id} className="crm-card-wrapper">
+                      <Link to={`/admin/intakes/${item.id}`} className="crm-card">
+                        <div className="crm-card-name">{item.naam || item.email}</div>
+                        {item.bedrijf && <div className="crm-card-company">{item.bedrijf}</div>}
+                        <div className="crm-card-meta">
+                          {Array.isArray(item.diensten) && item.diensten.length > 0 && (
+                            <span className="crm-card-tag">{item.diensten[0]}{item.diensten.length > 1 ? ` +${item.diensten.length - 1}` : ''}</span>
+                          )}
+                          {item.shipment_volume > 0 && (
+                            <span className="crm-card-shipments">{item.shipment_volume.toLocaleString('nl-NL')} ship.</span>
+                          )}
+                        </div>
+                        <div className="crm-card-date">{formatDate(item.created_at)}</div>
+                      </Link>
+                      <button
+                        className="crm-card-delete"
+                        title="Verwijderen"
+                        onClick={(e) => { e.preventDefault(); setDeleteTarget(item); }}
+                      >
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="3 6 5 6 21 6"/>
+                          <path d="M19 6l-1 14H6L5 6"/>
+                          <path d="M10 11v6M14 11v6"/>
+                          <path d="M9 6V4h6v2"/>
+                        </svg>
+                      </button>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -154,6 +219,12 @@ export default function CrmPage() {
           flex-direction: column;
           gap: 6px;
         }
+        .crm-card-wrapper {
+          position: relative;
+        }
+        .crm-card-wrapper:hover .crm-card-delete {
+          opacity: 1;
+        }
         .crm-card {
           background: #ffffff;
           border: 1px solid #e2e8f0;
@@ -167,11 +238,31 @@ export default function CrmPage() {
           box-shadow: 0 2px 12px rgba(0,0,0,0.08);
           border-color: #bfdbfe;
         }
+        .crm-card-delete {
+          position: absolute;
+          top: 7px;
+          right: 7px;
+          background: #fff;
+          border: 1px solid #e2e8f0;
+          border-radius: 5px;
+          padding: 3px 5px;
+          cursor: pointer;
+          color: #94a3b8;
+          line-height: 1;
+          opacity: 0;
+          transition: opacity 0.15s, color 0.15s, background 0.15s, border-color 0.15s;
+        }
+        .crm-card-delete:hover {
+          color: #dc2626;
+          background: #fee2e2;
+          border-color: #fca5a5;
+        }
         .crm-card-name {
           font-size: 13px;
           font-weight: 600;
           color: #0f172a;
           margin-bottom: 2px;
+          padding-right: 20px;
         }
         .crm-card-company {
           font-size: 11px;
