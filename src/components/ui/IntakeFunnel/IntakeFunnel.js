@@ -295,8 +295,16 @@ const IntakeFunnel = ({ onComplete }) => {
               </div>
               <h2 className="funnel-success-title">Bedankt!</h2>
               <p className="funnel-success-message">
-                Je gegevens zijn verzonden. We nemen zo snel mogelijk contact met je op om een kennismakingsgesprek in te plannen.
+                Je gegevens zijn verzonden. Check nog even je inbox op de bevestigingsmail. Heb je deze niet ontvangen? Neem dan contact met ons op via{' '}
+                <a href="https://wa.me/31617818246" target="_blank" rel="noopener noreferrer" style={{color:'inherit',textDecoration:'underline'}}>WhatsApp</a>.
               </p>
+              {formData.preferredDate && (
+                <p className="funnel-success-message" style={{marginTop:'0.5rem',fontWeight:600}}>
+                  Wij kijken uit naar het gesprek op{' '}
+                  {new Date(formData.preferredDate + 'T00:00:00').toLocaleDateString('nl-NL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                  {formData.preferredTime ? ` om ${formData.preferredTime}` : ''}.
+                </p>
+              )}
             </div>
           </div>
         )}
