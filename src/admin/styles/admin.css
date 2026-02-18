@@ -24,10 +24,10 @@
   align-items: center;
   justify-content: center;
   gap: 3px;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  padding: 10px 16px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 10px 0;
   margin-bottom: 16px;
   flex-wrap: wrap;
 }
