@@ -203,7 +203,9 @@ function CtaInlineBlock({ block, onChange }) {
 
 function Block({ block, index, total, onChange, onRemove, onMoveUp, onMoveDown }) {
   const [showTypeMenu, setShowTypeMenu] = useState(false);
+  const [typeMenuPos, setTypeMenuPos] = useState({ top: 0, left: 0 });
   const typeMenuRef = useRef(null);
+  const typeBtnRef = useRef(null);
 
   useEffect(() => {
     if (!showTypeMenu) return;
@@ -215,6 +217,14 @@ function Block({ block, index, total, onChange, onRemove, onMoveUp, onMoveDown }
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, [showTypeMenu]);
+
+  const handleTypeMenuOpen = () => {
+    if (!showTypeMenu && typeBtnRef.current) {
+      const rect = typeBtnRef.current.getBoundingClientRect();
+      setTypeMenuPos({ top: rect.bottom + 4, left: rect.left });
+    }
+    setShowTypeMenu(v => !v);
+  };
 
   const renderEditor = () => {
     if (block.type === 'paragraph') return <ParagraphBlock block={block} onChange={onChange} />;
@@ -255,8 +265,9 @@ function Block({ block, index, total, onChange, onRemove, onMoveUp, onMoveDown }
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
           <div style={{ position: 'relative' }} ref={typeMenuRef}>
             <button
+              ref={typeBtnRef}
               type="button"
-              onClick={() => setShowTypeMenu(v => !v)}
+              onClick={handleTypeMenuOpen}
               style={{ display: 'flex', alignItems: 'center', gap: 5, background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 6, padding: '4px 8px', cursor: 'pointer', fontSize: 11, fontWeight: 600, color: '#374151' }}
             >
               <BlockTypeIcon type={block.type} />
@@ -264,7 +275,7 @@ function Block({ block, index, total, onChange, onRemove, onMoveUp, onMoveDown }
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
             {showTypeMenu && (
-              <div style={{ position: 'absolute', top: '100%', left: 0, marginTop: 4, background: '#fff', border: '1px solid #e2e8f0', borderRadius: 8, boxShadow: '0 4px 16px rgba(0,0,0,0.08)', zIndex: 50, minWidth: 160, overflow: 'hidden' }}>
+              <div style={{ position: 'fixed', top: typeMenuPos.top, left: typeMenuPos.left, background: '#fff', border: '1px solid #e2e8f0', borderRadius: 8, boxShadow: '0 4px 16px rgba(0,0,0,0.08)', zIndex: 9999, minWidth: 160, overflow: 'hidden' }}>
                 {BLOCK_TYPES.map(t => (
                   <button
                     key={t.value}
@@ -298,7 +309,9 @@ function Block({ block, index, total, onChange, onRemove, onMoveUp, onMoveDown }
 
 function AddBlockButton({ onAdd }) {
   const [open, setOpen] = useState(false);
+  const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 });
   const ref = useRef(null);
+  const btnRef = useRef(null);
 
   useEffect(() => {
     if (!open) return;
@@ -309,12 +322,21 @@ function AddBlockButton({ onAdd }) {
     return () => document.removeEventListener('mousedown', handler);
   }, [open]);
 
+  const handleOpen = () => {
+    if (!open && btnRef.current) {
+      const rect = btnRef.current.getBoundingClientRect();
+      setDropdownPos({ top: rect.bottom + 6, left: rect.left + rect.width / 2 });
+    }
+    setOpen(v => !v);
+  };
+
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', justifyContent: 'center' }}>
       <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: 1, background: '#f1f5f9', transform: 'translateY(-50%)', zIndex: 0 }} />
       <button
+        ref={btnRef}
         type="button"
-        onClick={() => setOpen(v => !v)}
+        onClick={handleOpen}
         style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', gap: 5, background: '#fff', border: '1.5px dashed #cbd5e1', borderRadius: 20, padding: '5px 14px', cursor: 'pointer', fontSize: 12, fontWeight: 600, color: '#64748b', transition: 'all 0.15s' }}
         onMouseEnter={e => { e.currentTarget.style.borderColor = '#2563eb'; e.currentTarget.style.color = '#2563eb'; }}
         onMouseLeave={e => { e.currentTarget.style.borderColor = '#cbd5e1'; e.currentTarget.style.color = '#64748b'; }}
@@ -325,7 +347,7 @@ function AddBlockButton({ onAdd }) {
         Blok toevoegen
       </button>
       {open && (
-        <div style={{ position: 'absolute', top: '100%', marginTop: 6, background: '#fff', border: '1px solid #e2e8f0', borderRadius: 10, boxShadow: '0 4px 20px rgba(0,0,0,0.1)', zIndex: 50, display: 'flex', gap: 6, padding: 10, flexWrap: 'wrap', minWidth: 320 }}>
+        <div style={{ position: 'fixed', top: dropdownPos.top, left: dropdownPos.left, transform: 'translateX(-50%)', background: '#fff', border: '1px solid #e2e8f0', borderRadius: 10, boxShadow: '0 4px 20px rgba(0,0,0,0.1)', zIndex: 9999, display: 'flex', gap: 6, padding: 10, flexWrap: 'wrap', minWidth: 320 }}>
           {BLOCK_TYPES.map(t => (
             <button
               key={t.value}
