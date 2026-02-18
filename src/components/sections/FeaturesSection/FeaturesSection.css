@@ -127,11 +127,12 @@
 /* Premium hover: alleen blauwe kleur (desktop only) */
 @media (hover: hover) and (pointer: fine) {
   .features-section__card {
-    transition: border-color 220ms ease;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
   }
 
   .features-section__card:hover {
-    border-bottom-color: var(--color-blue-ribbon);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-medium);
   }
 }
 

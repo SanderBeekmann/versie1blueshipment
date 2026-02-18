@@ -210,12 +210,12 @@
   border-radius: var(--radius-large);
   box-shadow: var(--shadow-xsmall);
   gap: var(--gap-small);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .contact-method-card:hover {
   transform: translateY(-4px);
-  box-shadow: var(--shadow-soft-hover);
+  box-shadow: var(--shadow-medium);
 }
 
 .contact-method-icon {
