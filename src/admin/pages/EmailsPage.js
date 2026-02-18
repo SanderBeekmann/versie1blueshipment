@@ -313,71 +313,16 @@ function QueueTab() {
   );
 }
 
-const FLOW_STEPS = [
-  {
-    key: 'intake_submitted',
-    icon: '📥',
-    label: 'Intake ingediend',
-    description: 'Klant vult het formulier in op de website.',
-    timing: null,
-    emails: [],
-    color: '#2563eb',
-  },
-  {
-    key: 'instant_emails',
-    icon: '⚡',
-    label: 'Direct verstuurde e-mails',
-    description: 'Worden direct na het indienen verstuurd — niet instelbaar.',
-    timing: 'Onmiddellijk',
-    emails: [
-      { type: 'klant_bevestiging', label: 'Bevestiging aan klant', recipient: 'klant' },
-      { type: 'intern_signaal', label: 'Intern lead signaal', recipient: 'intern team' },
-    ],
-    color: '#16a34a',
-  },
-  {
-    key: 'followup_lead_nieuw',
-    icon: '📧',
-    label: 'Follow-up naar lead',
-    description: 'Verstuurd als intake nog op status "Nieuw" staat na de ingestelde tijd.',
-    timingKey: 'followup_lead_nieuw',
-    emails: [
-      { type: 'followup_lead', label: 'Follow-up naar lead', recipient: 'klant' },
-    ],
-    color: '#ea580c',
-  },
-  {
-    key: 'followup_intern_nieuw',
-    icon: '🔔',
-    label: 'Interne herinnering',
-    description: 'Herinnering aan het team als de intake nog niet is opgevolgd.',
-    timingKey: 'followup_intern_nieuw',
-    emails: [
-      { type: 'followup_intern', label: 'Interne herinnering', recipient: 'intern team' },
-    ],
-    color: '#dc2626',
-  },
-  {
-    key: 'followup_lead_offerte',
-    icon: '📋',
-    label: 'Follow-up na offerte',
-    description: 'Verstuurd als intake al een tijdje op status "Offerte" staat.',
-    timingKey: 'followup_lead_offerte',
-    emails: [
-      { type: 'followup_lead', label: 'Follow-up offerte', recipient: 'klant' },
-    ],
-    color: '#7c3aed',
-  },
-  {
-    key: 'cron',
-    icon: '🕘',
-    label: 'Dagelijkse verwerking',
-    description: 'De follow-up check draait elke dag om 09:00 UTC via een automatische taak.',
-    timing: 'Dagelijks 09:00 UTC',
-    emails: [],
-    color: '#64748b',
-  },
-];
+const TIMING_KEY_BY_TEMPLATE_TYPE = {
+  followup_lead: 'followup_lead_nieuw',
+  followup_intern: 'followup_intern_nieuw',
+};
+
+const TIMING_DESC_BY_KEY = {
+  followup_lead_nieuw: 'Verstuur als intake na X uur nog op "Nieuw" staat.',
+  followup_intern_nieuw: 'Stuur intern een herinnering als intake na X uur nog niet is opgevolgd.',
+  followup_lead_offerte: 'Verstuur als offerte na X uur nog niet is geaccepteerd.',
+};
 
 function formatHours(hours) {
   if (hours < 24) return `${hours} uur`;
@@ -385,221 +330,30 @@ function formatHours(hours) {
   return days === Math.floor(days) ? `${days} dag${days !== 1 ? 'en' : ''}` : `${hours} uur`;
 }
 
-function TimingTab() {
-  const [settings, setSettings] = useState([]);
-  const [localSettings, setLocalSettings] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(null);
-  const [saved, setSaved] = useState(null);
-
-  useEffect(() => {
-    supabase.from('email_timing_settings').select('*').then(({ data }) => {
-      const rows = data || [];
-      setSettings(rows);
-      const local = {};
-      rows.forEach(r => { local[r.key] = { hours: r.hours, enabled: r.enabled }; });
-      setLocalSettings(local);
-      setLoading(false);
-    });
-  }, []);
-
-  const updateLocal = (key, field, value) => {
-    setLocalSettings(prev => ({ ...prev, [key]: { ...prev[key], [field]: value } }));
-  };
-
-  const saveSetting = async (key) => {
-    setSaving(key);
-    const val = localSettings[key];
-    await supabase.from('email_timing_settings')
-      .update({ hours: Number(val.hours), enabled: val.enabled, updated_at: new Date().toISOString() })
-      .eq('key', key);
-    setSaving(null);
-    setSaved(key);
-    setTimeout(() => setSaved(null), 2000);
-  };
-
-  const toggleEnabled = async (key) => {
-    const newEnabled = !localSettings[key]?.enabled;
-    updateLocal(key, 'enabled', newEnabled);
-    await supabase.from('email_timing_settings')
-      .update({ enabled: newEnabled, updated_at: new Date().toISOString() })
-      .eq('key', key);
-  };
-
-  return (
-    <div>
-      <div style={{ maxWidth: 760 }}>
-        <div className="admin-card" style={{ marginBottom: 24 }}>
-          <div className="admin-card-header">
-            <h2 className="admin-card-title">Huidige e-mailflow</h2>
-          </div>
-          <div className="admin-card-body" style={{ padding: '8px 24px 24px' }}>
-            <p style={{ fontSize: 13, color: '#64748b', marginTop: 8, marginBottom: 24 }}>
-              Zo werkt de automatische e-mailflow van begin tot eind. De timing van follow-ups is instelbaar via de instellingen hieronder.
-            </p>
-            <div style={{ position: 'relative' }}>
-              {FLOW_STEPS.map((step, idx) => {
-                const timingVal = step.timingKey ? localSettings[step.timingKey] : null;
-                const isDisabled = timingVal && timingVal.enabled === false;
-
-                return (
-                  <div key={step.key} style={{ display: 'flex', gap: 16, marginBottom: idx < FLOW_STEPS.length - 1 ? 0 : 0 }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: 32, flexShrink: 0 }}>
-                      <div style={{
-                        width: 32, height: 32, borderRadius: '50%',
-                        background: isDisabled ? '#e2e8f0' : step.color,
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: 14, flexShrink: 0, zIndex: 1, position: 'relative',
-                      }}>
-                        {step.icon}
-                      </div>
-                      {idx < FLOW_STEPS.length - 1 && (
-                        <div style={{ width: 2, flex: 1, minHeight: 24, background: '#e2e8f0', margin: '2px 0' }} />
-                      )}
-                    </div>
-
-                    <div style={{ flex: 1, paddingBottom: 24 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                        <span style={{ fontSize: 14, fontWeight: 600, color: isDisabled ? '#94a3b8' : '#0f172a' }}>
-                          {step.label}
-                        </span>
-                        {step.timing && (
-                          <span style={{
-                            fontSize: 11, fontWeight: 600,
-                            background: '#f8fafc', border: '1px solid #e2e8f0',
-                            color: '#475569', borderRadius: 4, padding: '2px 7px',
-                          }}>
-                            {step.timing}
-                          </span>
-                        )}
-                        {timingVal && !loading && (
-                          <span style={{
-                            fontSize: 11, fontWeight: 600,
-                            background: isDisabled ? '#f1f5f9' : '#eff6ff',
-                            border: isDisabled ? '1px solid #e2e8f0' : '1px solid #bfdbfe',
-                            color: isDisabled ? '#94a3b8' : '#2563eb',
-                            borderRadius: 4, padding: '2px 7px',
-                          }}>
-                            {isDisabled ? 'Uitgeschakeld' : `Na ${formatHours(timingVal.hours)}`}
-                          </span>
-                        )}
-                      </div>
-                      <div style={{ fontSize: 12, color: '#64748b', marginTop: 3, marginBottom: step.emails.length > 0 ? 8 : 0 }}>
-                        {step.description}
-                      </div>
-                      {step.emails.length > 0 && (
-                        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                          {step.emails.map(email => (
-                            <span key={email.type} style={{
-                              fontSize: 11, padding: '3px 9px', borderRadius: 4,
-                              background: '#f8fafc', border: '1px solid #e2e8f0',
-                              color: '#475569',
-                            }}>
-                              {email.label} &rarr; {email.recipient}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-
-        <div className="admin-card">
-          <div className="admin-card-header">
-            <h2 className="admin-card-title">Timing instellen</h2>
-          </div>
-          <div className="admin-card-body">
-            <p style={{ fontSize: 13, color: '#64748b', marginTop: 0, marginBottom: 20 }}>
-              Stel per follow-up in na hoeveel uur deze verstuurd wordt. De check draait dagelijks om 09:00 UTC.
-            </p>
-
-            {loading ? (
-              <div style={{ textAlign: 'center', padding: '32px 0', color: '#94a3b8', fontSize: 13 }}>Laden...</div>
-            ) : settings.map((setting, idx) => {
-              const local = localSettings[setting.key] || { hours: setting.hours, enabled: setting.enabled };
-              const step = FLOW_STEPS.find(s => s.timingKey === setting.key);
-
-              return (
-                <div key={setting.key} style={{ padding: '20px 0', borderTop: idx > 0 ? '1px solid #f1f5f9' : 'none', opacity: local.enabled ? 1 : 0.6 }}>
-                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 12 }}>
-                    <div>
-                      <div style={{ fontSize: 13, fontWeight: 600, color: '#0f172a' }}>
-                        {step ? step.label : setting.key}
-                      </div>
-                      <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>
-                        {step ? step.description : ''}
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => toggleEnabled(setting.key)}
-                      style={{
-                        flexShrink: 0,
-                        display: 'flex', alignItems: 'center', gap: 6,
-                        padding: '4px 10px', borderRadius: 20,
-                        border: local.enabled ? '1px solid #bbf7d0' : '1px solid #e2e8f0',
-                        background: local.enabled ? '#f0fdf4' : '#f8fafc',
-                        color: local.enabled ? '#16a34a' : '#94a3b8',
-                        fontSize: 12, fontWeight: 600, cursor: 'pointer',
-                      }}
-                    >
-                      <span style={{
-                        width: 8, height: 8, borderRadius: '50%',
-                        background: local.enabled ? '#16a34a' : '#cbd5e1',
-                        display: 'inline-block',
-                      }} />
-                      {local.enabled ? 'Actief' : 'Uitgeschakeld'}
-                    </button>
-                  </div>
-
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span style={{ fontSize: 13, color: '#475569' }}>Verstuur na</span>
-                      <input
-                        type="number"
-                        min={1}
-                        max={720}
-                        className="admin-form-input"
-                        value={local.hours}
-                        onChange={e => updateLocal(setting.key, 'hours', e.target.value)}
-                        style={{ width: 80, textAlign: 'center' }}
-                      />
-                      <span style={{ fontSize: 13, color: '#475569' }}>uur</span>
-                      <span style={{ fontSize: 12, color: '#94a3b8' }}>({formatHours(Number(local.hours))})</span>
-                    </div>
-                    <button
-                      className="admin-btn admin-btn--primary admin-btn--sm"
-                      onClick={() => saveSetting(setting.key)}
-                      disabled={saving === setting.key}
-                    >
-                      {saving === setting.key ? 'Opslaan...' : 'Opslaan'}
-                    </button>
-                    {saved === setting.key && (
-                      <span style={{ fontSize: 12, color: '#16a34a' }}>Opgeslagen</span>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function TemplatesTab() {
   const [templates, setTemplates] = useState([]);
+  const [timingSettings, setTimingSettings] = useState({});
+  const [localTiming, setLocalTiming] = useState({});
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(null);
-  const [saved, setSaved] = useState(null);
+  const [savingTemplate, setSavingTemplate] = useState(null);
+  const [savedTemplate, setSavedTemplate] = useState(null);
+  const [savingTiming, setSavingTiming] = useState(null);
+  const [savedTiming, setSavedTiming] = useState(null);
 
   useEffect(() => {
-    supabase.from('email_templates').select('*').order('type').then(({ data }) => {
-      setTemplates(data || []);
+    Promise.all([
+      supabase.from('email_templates').select('*').order('type'),
+      supabase.from('email_timing_settings').select('*'),
+    ]).then(([{ data: tplData }, { data: timData }]) => {
+      setTemplates(tplData || []);
+      const tMap = {};
+      const lMap = {};
+      (timData || []).forEach(r => {
+        tMap[r.key] = r;
+        lMap[r.key] = { hours: r.hours, enabled: r.enabled };
+      });
+      setTimingSettings(tMap);
+      setLocalTiming(lMap);
       setLoading(false);
     });
   }, []);
@@ -609,94 +363,269 @@ function TemplatesTab() {
   };
 
   const saveTemplate = async (template) => {
-    setSaving(template.id);
+    setSavingTemplate(template.id);
     await supabase.from('email_templates')
       .update({ subject: template.subject, intro: template.intro, enabled: template.enabled })
       .eq('id', template.id);
-    setSaving(null);
-    setSaved(template.id);
-    setTimeout(() => setSaved(null), 2000);
+    setSavingTemplate(null);
+    setSavedTemplate(template.id);
+    setTimeout(() => setSavedTemplate(null), 2000);
   };
 
-  const toggleEnabled = async (template) => {
+  const toggleTemplateEnabled = async (template) => {
     const newEnabled = !template.enabled;
     updateTemplate(template.id, 'enabled', newEnabled);
     await supabase.from('email_templates').update({ enabled: newEnabled }).eq('id', template.id);
   };
 
+  const updateLocalTiming = (key, field, value) => {
+    setLocalTiming(prev => ({ ...prev, [key]: { ...prev[key], [field]: value } }));
+  };
+
+  const saveTimingSetting = async (key) => {
+    setSavingTiming(key);
+    const val = localTiming[key];
+    await supabase.from('email_timing_settings')
+      .update({ hours: Number(val.hours), enabled: val.enabled, updated_at: new Date().toISOString() })
+      .eq('key', key);
+    setSavingTiming(null);
+    setSavedTiming(key);
+    setTimeout(() => setSavedTiming(null), 2000);
+  };
+
+  const toggleTimingEnabled = async (key) => {
+    const newEnabled = !localTiming[key]?.enabled;
+    updateLocalTiming(key, 'enabled', newEnabled);
+    await supabase.from('email_timing_settings')
+      .update({ enabled: newEnabled, updated_at: new Date().toISOString() })
+      .eq('key', key);
+  };
+
+  const offerteTiming = timingSettings['followup_lead_offerte'];
+  const offerteLocal = localTiming['followup_lead_offerte'];
+
   return (
-    <div style={{ maxWidth: 720 }}>
+    <div style={{ maxWidth: 760 }}>
       <div className="admin-card">
         <div className="admin-card-header">
-          <h2 className="admin-card-title">E-mail templates</h2>
+          <h2 className="admin-card-title">Templates & Timing</h2>
         </div>
         <div className="admin-card-body">
-          <p style={{ fontSize: 13, color: '#64748b', marginTop: 0, marginBottom: 20 }}>
-            Pas de onderwerpen en intro-teksten aan voor automatische e-mails. De volledige layout en structuur worden automatisch opgebouwd.
+          <p style={{ fontSize: 13, color: '#64748b', marginTop: 0, marginBottom: 4 }}>
+            Pas per automatische e-mail de tekst, het onderwerp en de verzenddatum aan. De follow-up check draait dagelijks om 09:00 UTC.
           </p>
 
           {loading ? (
             <div style={{ textAlign: 'center', padding: '32px 0', color: '#94a3b8', fontSize: 13 }}>Laden...</div>
-          ) : templates.map(template => (
-            <div key={template.id} style={{ padding: '20px 0', borderTop: '1px solid #f1f5f9', opacity: template.enabled === false ? 0.6 : 1 }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                <div style={{ fontSize: 13, fontWeight: 600, color: '#0f172a' }}>
-                  {TYPE_LABELS[template.type] || template.type}
-                  <span style={{ fontSize: 11, fontWeight: 400, color: '#94a3b8', marginLeft: 8 }}>({template.type})</span>
+          ) : (
+            <>
+              {templates.map((template, idx) => {
+                const timingKey = TIMING_KEY_BY_TEMPLATE_TYPE[template.type];
+                const timing = timingKey ? localTiming[timingKey] : null;
+                const isDisabledByTiming = timing && timing.enabled === false;
+                const isDisabledByTemplate = template.enabled === false;
+                const isDisabled = isDisabledByTemplate || isDisabledByTiming;
+
+                return (
+                  <div key={template.id} style={{
+                    padding: '24px 0',
+                    borderTop: idx === 0 ? '1px solid #f1f5f9' : '1px solid #e2e8f0',
+                    marginTop: idx === 0 ? 16 : 0,
+                    opacity: isDisabled ? 0.65 : 1,
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 16 }}>
+                      <div>
+                        <div style={{ fontSize: 14, fontWeight: 700, color: '#0f172a' }}>
+                          {TYPE_LABELS[template.type] || template.type}
+                        </div>
+                        <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>{template.type}</div>
+                      </div>
+                      <button
+                        onClick={() => toggleTemplateEnabled(template)}
+                        style={{
+                          flexShrink: 0,
+                          display: 'flex', alignItems: 'center', gap: 6,
+                          padding: '4px 10px', borderRadius: 20,
+                          border: template.enabled !== false ? '1px solid #bbf7d0' : '1px solid #e2e8f0',
+                          background: template.enabled !== false ? '#f0fdf4' : '#f8fafc',
+                          color: template.enabled !== false ? '#16a34a' : '#94a3b8',
+                          fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                        }}
+                      >
+                        <span style={{
+                          width: 8, height: 8, borderRadius: '50%',
+                          background: template.enabled !== false ? '#16a34a' : '#cbd5e1',
+                          display: 'inline-block',
+                        }} />
+                        {template.enabled !== false ? 'Actief' : 'Uitgeschakeld'}
+                      </button>
+                    </div>
+
+                    <div className="admin-form-field">
+                      <label className="admin-form-label">Onderwerp</label>
+                      <input
+                        className="admin-form-input"
+                        value={template.subject}
+                        onChange={(e) => updateTemplate(template.id, 'subject', e.target.value)}
+                      />
+                    </div>
+
+                    <div className="admin-form-field">
+                      <label className="admin-form-label">Intro tekst</label>
+                      <textarea
+                        className="admin-form-textarea"
+                        value={template.intro}
+                        onChange={(e) => updateTemplate(template.id, 'intro', e.target.value)}
+                        rows={3}
+                      />
+                    </div>
+
+                    {timingKey && timing && (
+                      <div style={{
+                        background: '#f8fafc',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: 8,
+                        padding: '14px 16px',
+                        marginTop: 4,
+                        marginBottom: 16,
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 10 }}>
+                          <div>
+                            <div style={{ fontSize: 12, fontWeight: 600, color: '#475569' }}>Timing</div>
+                            <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>
+                              {TIMING_DESC_BY_KEY[timingKey]}
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => toggleTimingEnabled(timingKey)}
+                            style={{
+                              flexShrink: 0,
+                              display: 'flex', alignItems: 'center', gap: 5,
+                              padding: '3px 9px', borderRadius: 20,
+                              border: timing.enabled ? '1px solid #bbf7d0' : '1px solid #e2e8f0',
+                              background: timing.enabled ? '#f0fdf4' : '#f8fafc',
+                              color: timing.enabled ? '#16a34a' : '#94a3b8',
+                              fontSize: 11, fontWeight: 600, cursor: 'pointer',
+                            }}
+                          >
+                            <span style={{
+                              width: 7, height: 7, borderRadius: '50%',
+                              background: timing.enabled ? '#16a34a' : '#cbd5e1',
+                              display: 'inline-block',
+                            }} />
+                            {timing.enabled ? 'Actief' : 'Uit'}
+                          </button>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                          <span style={{ fontSize: 12, color: '#64748b' }}>Verstuur na</span>
+                          <input
+                            type="number"
+                            min={1}
+                            max={720}
+                            className="admin-form-input"
+                            value={timing.hours}
+                            onChange={e => updateLocalTiming(timingKey, 'hours', e.target.value)}
+                            style={{ width: 72, textAlign: 'center', padding: '5px 8px', fontSize: 13 }}
+                          />
+                          <span style={{ fontSize: 12, color: '#64748b' }}>uur</span>
+                          <span style={{ fontSize: 11, color: '#94a3b8' }}>({formatHours(Number(timing.hours))})</span>
+                          <button
+                            className="admin-btn admin-btn--sm"
+                            onClick={() => saveTimingSetting(timingKey)}
+                            disabled={savingTiming === timingKey}
+                            style={{ background: '#e0f2fe', border: '1px solid #bae6fd', color: '#0369a1', marginLeft: 2 }}
+                          >
+                            {savingTiming === timingKey ? 'Opslaan...' : 'Opslaan'}
+                          </button>
+                          {savedTiming === timingKey && (
+                            <span style={{ fontSize: 11, color: '#16a34a' }}>Opgeslagen</span>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <button
+                        className="admin-btn admin-btn--primary admin-btn--sm"
+                        onClick={() => saveTemplate(template)}
+                        disabled={savingTemplate === template.id}
+                      >
+                        {savingTemplate === template.id ? 'Opslaan...' : 'Template opslaan'}
+                      </button>
+                      {savedTemplate === template.id && (
+                        <span style={{ fontSize: 12, color: '#16a34a' }}>Opgeslagen</span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+
+              {offerteTiming && offerteLocal && (
+                <div style={{ padding: '24px 0', borderTop: '1px solid #e2e8f0', opacity: offerteLocal.enabled ? 1 : 0.65 }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 12 }}>
+                    <div>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: '#0f172a' }}>Follow-up na offerte</div>
+                      <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>followup_lead_offerte — geen aanpasbare template, vaste tekst</div>
+                    </div>
+                    <button
+                      onClick={() => toggleTimingEnabled('followup_lead_offerte')}
+                      style={{
+                        flexShrink: 0,
+                        display: 'flex', alignItems: 'center', gap: 6,
+                        padding: '4px 10px', borderRadius: 20,
+                        border: offerteLocal.enabled ? '1px solid #bbf7d0' : '1px solid #e2e8f0',
+                        background: offerteLocal.enabled ? '#f0fdf4' : '#f8fafc',
+                        color: offerteLocal.enabled ? '#16a34a' : '#94a3b8',
+                        fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                      }}
+                    >
+                      <span style={{
+                        width: 8, height: 8, borderRadius: '50%',
+                        background: offerteLocal.enabled ? '#16a34a' : '#cbd5e1',
+                        display: 'inline-block',
+                      }} />
+                      {offerteLocal.enabled ? 'Actief' : 'Uitgeschakeld'}
+                    </button>
+                  </div>
+
+                  <div style={{
+                    background: '#f8fafc', border: '1px solid #e2e8f0',
+                    borderRadius: 8, padding: '14px 16px',
+                  }}>
+                    <div style={{ fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 6 }}>Timing</div>
+                    <div style={{ fontSize: 11, color: '#94a3b8', marginBottom: 10 }}>
+                      {TIMING_DESC_BY_KEY['followup_lead_offerte']}
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <span style={{ fontSize: 12, color: '#64748b' }}>Verstuur na</span>
+                      <input
+                        type="number"
+                        min={1}
+                        max={720}
+                        className="admin-form-input"
+                        value={offerteLocal.hours}
+                        onChange={e => updateLocalTiming('followup_lead_offerte', 'hours', e.target.value)}
+                        style={{ width: 72, textAlign: 'center', padding: '5px 8px', fontSize: 13 }}
+                      />
+                      <span style={{ fontSize: 12, color: '#64748b' }}>uur</span>
+                      <span style={{ fontSize: 11, color: '#94a3b8' }}>({formatHours(Number(offerteLocal.hours))})</span>
+                      <button
+                        className="admin-btn admin-btn--sm"
+                        onClick={() => saveTimingSetting('followup_lead_offerte')}
+                        disabled={savingTiming === 'followup_lead_offerte'}
+                        style={{ background: '#e0f2fe', border: '1px solid #bae6fd', color: '#0369a1', marginLeft: 2 }}
+                      >
+                        {savingTiming === 'followup_lead_offerte' ? 'Opslaan...' : 'Opslaan'}
+                      </button>
+                      {savedTiming === 'followup_lead_offerte' && (
+                        <span style={{ fontSize: 11, color: '#16a34a' }}>Opgeslagen</span>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                <button
-                  onClick={() => toggleEnabled(template)}
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: 6,
-                    padding: '4px 10px', borderRadius: 20,
-                    border: template.enabled !== false ? '1px solid #bbf7d0' : '1px solid #e2e8f0',
-                    background: template.enabled !== false ? '#f0fdf4' : '#f8fafc',
-                    color: template.enabled !== false ? '#16a34a' : '#94a3b8',
-                    fontSize: 12, fontWeight: 600, cursor: 'pointer',
-                  }}
-                >
-                  <span style={{
-                    width: 8, height: 8, borderRadius: '50%',
-                    background: template.enabled !== false ? '#16a34a' : '#cbd5e1',
-                    display: 'inline-block',
-                  }} />
-                  {template.enabled !== false ? 'Actief' : 'Uitgeschakeld'}
-                </button>
-              </div>
-
-              <div className="admin-form-field">
-                <label className="admin-form-label">Onderwerp</label>
-                <input
-                  className="admin-form-input"
-                  value={template.subject}
-                  onChange={(e) => updateTemplate(template.id, 'subject', e.target.value)}
-                />
-              </div>
-
-              <div className="admin-form-field">
-                <label className="admin-form-label">Intro tekst</label>
-                <textarea
-                  className="admin-form-textarea"
-                  value={template.intro}
-                  onChange={(e) => updateTemplate(template.id, 'intro', e.target.value)}
-                  rows={3}
-                />
-              </div>
-
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <button
-                  className="admin-btn admin-btn--primary admin-btn--sm"
-                  onClick={() => saveTemplate(template)}
-                  disabled={saving === template.id}
-                >
-                  {saving === template.id ? 'Opslaan...' : 'Opslaan'}
-                </button>
-                {saved === template.id && (
-                  <span style={{ fontSize: 12, color: '#16a34a' }}>Opgeslagen</span>
-                )}
-              </div>
-            </div>
-          ))}
+              )}
+            </>
+          )}
         </div>
       </div>
     </div>
@@ -708,8 +637,7 @@ export default function EmailsPage() {
 
   const tabs = [
     { id: 'queue', label: 'Wachtrij' },
-    { id: 'templates', label: 'Templates' },
-    { id: 'timing', label: 'Timing & Flow' },
+    { id: 'templates', label: 'Templates & Timing' },
   ];
 
   return (
@@ -743,7 +671,6 @@ export default function EmailsPage() {
 
       {activeTab === 'queue' && <QueueTab />}
       {activeTab === 'templates' && <TemplatesTab />}
-      {activeTab === 'timing' && <TimingTab />}
     </div>
   );
 }
