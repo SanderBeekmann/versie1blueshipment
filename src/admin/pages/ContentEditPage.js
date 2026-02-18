@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../context/AuthContext';
+import BlockEditor from '../components/BlockEditor';
 import '../styles/admin.css';
 
 const EMPTY_POST = {
@@ -99,6 +100,8 @@ export default function ContentEditPage() {
     }
   };
 
+  const safeContent = Array.isArray(post.content) ? post.content : [];
+
   if (loading) return <div className="admin-loading" style={{ minHeight: 300 }}><div className="admin-loading-spinner" /></div>;
 
   return (
@@ -147,26 +150,19 @@ export default function ContentEditPage() {
                 <label className="admin-form-label">Excerpt (samenvatting voor overzicht) *</label>
                 <textarea className="admin-form-textarea" value={post.excerpt} onChange={(e) => update('excerpt', e.target.value)} placeholder="Korte samenvatting voor de resources overzichtspagina..." rows={3} />
               </div>
-              <div className="admin-form-field">
-                <label className="admin-form-label" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  Content (JSON blokken)
-                  <span style={{ fontSize: 11, color: '#94a3b8', fontWeight: 400 }}>Format: {`[{"type":"paragraph","text":"..."}]`}</span>
-                </label>
-                <textarea
-                  className="admin-form-textarea"
-                  style={{ fontFamily: 'monospace', fontSize: 12 }}
-                  value={typeof post.content === 'string' ? post.content : JSON.stringify(post.content, null, 2)}
-                  onChange={(e) => {
-                    try {
-                      update('content', JSON.parse(e.target.value));
-                    } catch {
-                      update('content', e.target.value);
-                    }
-                  }}
-                  rows={16}
-                  placeholder='[{"type":"paragraph","text":"Inhoud hier..."}]'
-                />
-              </div>
+            </div>
+          </div>
+
+          <div className="admin-card">
+            <div className="admin-card-header">
+              <h2 className="admin-card-title">Blog inhoud</h2>
+              <span style={{ fontSize: 12, color: '#94a3b8' }}>{safeContent.length} {safeContent.length === 1 ? 'blok' : 'blokken'}</span>
+            </div>
+            <div className="admin-card-body">
+              <BlockEditor
+                blocks={safeContent}
+                onChange={(blocks) => update('content', blocks)}
+              />
             </div>
           </div>
         </div>
