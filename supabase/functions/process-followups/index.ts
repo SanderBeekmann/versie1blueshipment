@@ -54,12 +54,12 @@ function buildFollowupLeadHtml(intake: { naam?: string; email?: string }, intro:
     </div>`;
 }
 
-function buildFollowupInternHtml(intake: { naam?: string; email?: string; bedrijf?: string; id: string }): string {
+function buildFollowupInternHtml(intake: { naam?: string; email?: string; bedrijf?: string; id: string }, hours: number): string {
   const adminUrl = `${ADMIN_BASE_URL}/admin/intakes/${intake.id}`;
   return `
     <div style="font-family:-apple-system,sans-serif;max-width:600px;margin:0 auto;padding:40px 20px;">
       <h2 style="color:#0f172a;">Interne herinnering</h2>
-      <p style="color:#475569;">Intake van <strong>${intake.naam || intake.email}</strong>${intake.bedrijf ? ` (${intake.bedrijf})` : ""} staat al meer dan 72 uur op status <strong>Nieuw</strong> zonder opvolging.</p>
+      <p style="color:#475569;">Intake van <strong>${intake.naam || intake.email}</strong>${intake.bedrijf ? ` (${intake.bedrijf})` : ""} staat al meer dan ${hours} uur op status <strong>Nieuw</strong> zonder opvolging.</p>
       <a href="${adminUrl}" style="display:inline-block;background:#2563eb;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;margin-top:16px;">Bekijk intake in admin</a>
     </div>`;
 }
@@ -76,10 +76,26 @@ function buildOfferteFollowupHtml(intake: { naam?: string }): string {
 }
 
 async function processFollowups() {
+  const { data: timingRows } = await supabase
+    .from("email_timing_settings")
+    .select("key, hours, enabled");
+
+  const timing: Record<string, { hours: number; enabled: boolean }> = {};
+  (timingRows || []).forEach((r: { key: string; hours: number; enabled: boolean }) => {
+    timing[r.key] = { hours: r.hours, enabled: r.enabled };
+  });
+
+  const hoursLeadNieuw = timing["followup_lead_nieuw"]?.hours ?? 48;
+  const enabledLeadNieuw = timing["followup_lead_nieuw"]?.enabled ?? true;
+  const hoursInternNieuw = timing["followup_intern_nieuw"]?.hours ?? 72;
+  const enabledInternNieuw = timing["followup_intern_nieuw"]?.enabled ?? true;
+  const hoursLeadOfferte = timing["followup_lead_offerte"]?.hours ?? 120;
+  const enabledLeadOfferte = timing["followup_lead_offerte"]?.enabled ?? true;
+
   const now = new Date();
-  const h48 = new Date(now.getTime() - 48 * 60 * 60 * 1000);
-  const h72 = new Date(now.getTime() - 72 * 60 * 60 * 1000);
-  const d5 = new Date(now.getTime() - 5 * 24 * 60 * 60 * 1000);
+  const cutoffLeadNieuw = new Date(now.getTime() - hoursLeadNieuw * 60 * 60 * 1000);
+  const cutoffInternNieuw = new Date(now.getTime() - hoursInternNieuw * 60 * 60 * 1000);
+  const cutoffLeadOfferte = new Date(now.getTime() - hoursLeadOfferte * 60 * 60 * 1000);
 
   const { data: intakes } = await supabase
     .from("intakes")
@@ -126,7 +142,7 @@ async function processFollowups() {
     const created = new Date(intake.created_at);
     const intakeLogs = logsByIntake[intake.id] || [];
 
-    if (intake.status === "nieuw" && created <= h48 && !alreadySent(intakeLogs, "followup_lead") && !alreadyQueued(queueEntries, intake.id, "followup_lead")) {
+    if (enabledLeadNieuw && intake.status === "nieuw" && created <= cutoffLeadNieuw && !alreadySent(intakeLogs, "followup_lead") && !alreadyQueued(queueEntries, intake.id, "followup_lead")) {
       const template = tmpl.followup_lead;
       if (template?.enabled === false) continue;
 
@@ -146,12 +162,12 @@ async function processFollowups() {
       queued++;
     }
 
-    if (intake.status === "nieuw" && created <= h72 && !alreadySent(intakeLogs, "followup_intern") && !alreadyQueued(queueEntries, intake.id, "followup_intern")) {
+    if (enabledInternNieuw && intake.status === "nieuw" && created <= cutoffInternNieuw && !alreadySent(intakeLogs, "followup_intern") && !alreadyQueued(queueEntries, intake.id, "followup_intern")) {
       const template = tmpl.followup_intern;
       if (template?.enabled === false) continue;
 
-      const subject = `Interne herinnering: intake ${intake.naam || intake.email} staat al 72u op nieuw`;
-      const body_html = buildFollowupInternHtml(intake);
+      const subject = `Interne herinnering: intake ${intake.naam || intake.email} staat al ${hoursInternNieuw}u op nieuw`;
+      const body_html = buildFollowupInternHtml(intake, hoursInternNieuw);
 
       await supabase.from("email_queue").insert({
         intake_id: intake.id,
@@ -165,7 +181,7 @@ async function processFollowups() {
       queued++;
     }
 
-    if (intake.status === "offerte" && created <= d5 && !alreadySent(intakeLogs, "followup_lead") && !alreadyQueued(queueEntries, intake.id, "followup_lead")) {
+    if (enabledLeadOfferte && intake.status === "offerte" && created <= cutoffLeadOfferte && !alreadySent(intakeLogs, "followup_lead") && !alreadyQueued(queueEntries, intake.id, "followup_lead")) {
       const template = tmpl.followup_lead;
       if (template?.enabled === false) continue;
 
