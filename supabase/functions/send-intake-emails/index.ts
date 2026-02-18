@@ -58,8 +58,8 @@ function buildKlantEmail(intake: Record<string, unknown>, template: { subject: s
   <tr><td align="center">
     <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,0.06);">
       <tr>
-        <td style="background:#0f172a;padding:28px 40px;">
-          <span style="font-size:18px;font-weight:700;color:#f8fafc;letter-spacing:-0.3px;">BlueShipment</span>
+        <td style="background:#0070ff;padding:28px 40px;">
+          <span style="font-size:18px;font-weight:700;color:#ffffff;letter-spacing:-0.3px;">BlueShipment</span>
         </td>
       </tr>
       <tr>
@@ -124,8 +124,8 @@ function buildInternEmail(intake: Record<string, unknown>, template: { subject: 
   <tr><td align="center">
     <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,0.06);">
       <tr>
-        <td style="background:#0f172a;padding:28px 40px;display:flex;align-items:center;gap:8px;">
-          <span style="font-size:18px;font-weight:700;color:#f8fafc;">BlueShipment</span>
+        <td style="background:#0070ff;padding:28px 40px;display:flex;align-items:center;gap:8px;">
+          <span style="font-size:18px;font-weight:700;color:#ffffff;">BlueShipment</span>
           <span style="font-size:11px;font-weight:600;color:#93c5fd;background:rgba(147,197,253,0.12);border:1px solid rgba(147,197,253,0.2);border-radius:4px;padding:2px 6px;text-transform:uppercase;letter-spacing:0.5px;margin-left:8px;">Nieuw Lead</span>
         </td>
       </tr>
