@@ -420,72 +420,124 @@ export default function AgendaPage() {
                   ))}
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 1, border: '1px solid #f1f5f9', borderRadius: 8, overflow: 'hidden' }}>
                   {cells.map((day, i) => {
-                    if (!day) return <div key={`e-${i}`} />;
+                    if (!day) return <div key={`e-${i}`} style={{ background: '#fafafa', minHeight: 80 }} />;
                     const dateStr = toDateStr(viewYear, viewMonth, day);
                     const isToday = dateStr === todayStr;
                     const isSelected = dateStr === selectedDate;
 
-                    const activeBookingsCount = bookedSlots.filter(
+                    const dayBookings = bookedSlots.filter(
                       s => s.preferred_date === dateStr && !['geannuleerd', 'afgewezen'].includes(s.status)
-                    ).length;
-                    const dayBlocked = blockedSlots.filter(s => s.block_date === dateStr).length;
-                    const availCount = TIME_SLOTS.length - activeBookingsCount - dayBlocked;
-                    const dayTasksCount = tasks.filter(t => t.due_date && t.due_date.startsWith(dateStr)).length;
+                    ).sort((a, b) => (a.preferred_time || '').localeCompare(b.preferred_time || ''));
+                    const dayTaskItems = tasks.filter(t => t.due_date && t.due_date.startsWith(dateStr));
 
-                    let bg = '#ffffff';
-                    let border = '1.5px solid #e5e7eb';
-                    let textColor = '#1f2937';
-                    if (activeBookingsCount > 0 && availCount === 0) { bg = '#fef2f2'; border = '1.5px solid #fecaca'; textColor = '#dc2626'; }
-                    else if (activeBookingsCount > 0) { bg = '#fff7ed'; border = '1.5px solid #fed7aa'; textColor = '#c2410c'; }
-                    else if (dayBlocked > 0 && availCount === 0) { bg = '#f8fafc'; border = '1.5px solid #e2e8f0'; textColor = '#94a3b8'; }
-                    if (isSelected) { bg = '#0070ff'; border = '1.5px solid #0070ff'; textColor = '#ffffff'; }
-                    if (isToday && !isSelected) { border = '1.5px solid #0070ff'; }
+                    const MAX_VISIBLE = 3;
+                    const allItems = [
+                      ...dayBookings.map(b => ({ type: 'booking', data: b })),
+                      ...dayTaskItems.map(t => ({ type: 'task', data: t })),
+                    ];
+                    const visibleItems = allItems.slice(0, MAX_VISIBLE);
+                    const overflow = allItems.length - MAX_VISIBLE;
 
                     return (
                       <div
                         key={dateStr}
                         onClick={() => setSelectedDate(isSelected ? null : dateStr)}
                         style={{
-                          aspectRatio: '1',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          borderRadius: 8,
-                          border,
-                          background: bg,
-                          color: textColor,
+                          minHeight: 88,
+                          padding: '6px 5px 5px',
+                          background: isSelected ? '#eff6ff' : '#ffffff',
                           cursor: 'pointer',
-                          fontSize: 13,
-                          fontWeight: isToday ? 700 : 500,
+                          borderRight: '1px solid #f1f5f9',
+                          borderBottom: '1px solid #f1f5f9',
+                          transition: 'background 0.1s',
                           position: 'relative',
-                          transition: 'all 0.12s',
                         }}
                       >
-                        {day}
-                        {(activeBookingsCount > 0 || dayBlocked > 0 || dayTasksCount > 0) && !isSelected && (
-                          <div style={{ display: 'flex', gap: 2, marginTop: 2 }}>
-                            {activeBookingsCount > 0 && <div style={{ width: 4, height: 4, borderRadius: '50%', background: '#f97316' }} />}
-                            {dayTasksCount > 0 && <div style={{ width: 4, height: 4, borderRadius: '50%', background: '#2563eb' }} />}
-                            {dayBlocked > 0 && availCount < TIME_SLOTS.length && <div style={{ width: 4, height: 4, borderRadius: '50%', background: '#94a3b8' }} />}
-                          </div>
-                        )}
+                        <div style={{
+                          width: 22, height: 22,
+                          borderRadius: '50%',
+                          background: isToday ? '#0070ff' : 'transparent',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          marginBottom: 4,
+                          marginLeft: 1,
+                        }}>
+                          <span style={{
+                            fontSize: 12,
+                            fontWeight: isToday ? 700 : 500,
+                            color: isToday ? '#ffffff' : isSelected ? '#0070ff' : '#374151',
+                            lineHeight: 1,
+                          }}>
+                            {day}
+                          </span>
+                        </div>
+
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                          {visibleItems.map((item, idx) => {
+                            if (item.type === 'booking') {
+                              const b = item.data;
+                              return (
+                                <div key={`b-${b.id}`} style={{
+                                  background: '#fff7ed',
+                                  border: '1px solid #fed7aa',
+                                  borderLeft: '2px solid #f97316',
+                                  borderRadius: 3,
+                                  padding: '1px 4px',
+                                  fontSize: 10,
+                                  fontWeight: 600,
+                                  color: '#c2410c',
+                                  lineHeight: 1.3,
+                                  overflow: 'hidden',
+                                  whiteSpace: 'nowrap',
+                                  textOverflow: 'ellipsis',
+                                }}>
+                                  {b.preferred_time && <span style={{ opacity: 0.75, marginRight: 3 }}>{b.preferred_time}</span>}
+                                  {b.naam || b.bedrijf || 'Afspraak'}
+                                </div>
+                              );
+                            }
+                            const t = item.data;
+                            const isOverdue = !t.completed && new Date(t.due_date) < new Date();
+                            return (
+                              <div key={`t-${t.id}`} style={{
+                                background: t.completed ? '#f8fafc' : isOverdue ? '#fef2f2' : '#eff6ff',
+                                border: `1px solid ${t.completed ? '#e2e8f0' : isOverdue ? '#fecaca' : '#bfdbfe'}`,
+                                borderLeft: `2px solid ${t.completed ? '#cbd5e1' : isOverdue ? '#ef4444' : '#2563eb'}`,
+                                borderRadius: 3,
+                                padding: '1px 4px',
+                                fontSize: 10,
+                                fontWeight: 600,
+                                color: t.completed ? '#94a3b8' : isOverdue ? '#dc2626' : '#1d4ed8',
+                                lineHeight: 1.3,
+                                overflow: 'hidden',
+                                whiteSpace: 'nowrap',
+                                textOverflow: 'ellipsis',
+                                textDecoration: t.completed ? 'line-through' : 'none',
+                              }}>
+                                {t.title}
+                              </div>
+                            );
+                          })}
+                          {overflow > 0 && (
+                            <div style={{ fontSize: 9, color: '#94a3b8', fontWeight: 600, paddingLeft: 2 }}>
+                              +{overflow} meer
+                            </div>
+                          )}
+                        </div>
                       </div>
                     );
                   })}
                 </div>
 
-                <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginTop: 16, paddingTop: 16, borderTop: '1px solid #f1f5f9' }}>
+                <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginTop: 12, paddingTop: 12, borderTop: '1px solid #f1f5f9' }}>
                   {[
-                    { color: '#0070ff', label: 'Geselecteerd' },
                     { color: '#f97316', label: 'Afspraak' },
                     { color: '#2563eb', label: 'Taak' },
-                    { color: '#94a3b8', label: 'Geblokkeerd' },
+                    { color: '#ef4444', label: 'Te laat' },
                   ].map(({ color, label }) => (
                     <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <div style={{ width: 8, height: 8, borderRadius: '50%', background: color }} />
+                      <div style={{ width: 8, height: 8, borderRadius: 2, background: color }} />
                       <span style={{ fontSize: 11, color: '#64748b' }}>{label}</span>
                     </div>
                   ))}
