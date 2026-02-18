@@ -16,6 +16,17 @@ function formatDutchDate(dateStr) {
   return `${parseInt(day)} ${MONTH_NAMES[parseInt(month) - 1]} ${year}`;
 }
 
+const STATUS_LABELS = {
+  nieuw: 'Nieuw',
+  contact_opgenomen: 'Contact opgenomen',
+  gekwalificeerd: 'Gekwalificeerd',
+  offerte_verstuurd: 'Offerte verstuurd',
+  gewonnen: 'Gewonnen',
+  verloren: 'Verloren',
+  geannuleerd: 'Geannuleerd',
+  afgewezen: 'Afgewezen',
+};
+
 export default function AgendaPage() {
   const now = new Date();
   const [viewYear, setViewYear] = useState(now.getFullYear());
@@ -40,7 +51,7 @@ export default function AgendaPage() {
         .lte('block_date', lastDay),
       supabase
         .from('intakes')
-        .select('id, naam, bedrijf, preferred_date, preferred_time')
+        .select('id, naam, bedrijf, telefoon, email, preferred_date, preferred_time, status')
         .gte('preferred_date', firstDay)
         .lte('preferred_date', lastDay)
         .not('preferred_date', 'is', null)
@@ -70,7 +81,11 @@ export default function AgendaPage() {
     blockedSlots.some(s => s.block_date === dateStr && s.block_time === time);
 
   const getBooking = (dateStr, time) =>
-    bookedSlots.find(s => s.preferred_date === dateStr && s.preferred_time === time);
+    bookedSlots.find(s =>
+      s.preferred_date === dateStr &&
+      s.preferred_time === time &&
+      !['geannuleerd', 'afgewezen'].includes(s.status)
+    );
 
   const toggleBlock = async (dateStr, time) => {
     const key = `${dateStr}-${time}`;
@@ -130,9 +145,13 @@ export default function AgendaPage() {
     return 'free';
   };
 
-  const dayBookings = selectedDate
+  const selectedDayBookings = selectedDate
     ? bookedSlots.filter(s => s.preferred_date === selectedDate)
     : [];
+
+  const selectedDayActiveBookings = selectedDayBookings.filter(
+    b => !['geannuleerd', 'afgewezen'].includes(b.status)
+  );
 
   const dayBlockedCount = selectedDate
     ? blockedSlots.filter(s => s.block_date === selectedDate).length
@@ -148,9 +167,8 @@ export default function AgendaPage() {
         <p className="admin-page-subtitle">Beheer beschikbaarheid en bekijk geplande kennismakingen</p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 24, alignItems: 'start' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: 24, alignItems: 'start' }}>
 
-        {/* Left: calendar */}
         <div className="admin-card">
           <div className="admin-card-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <h2 className="admin-card-title">
@@ -175,7 +193,6 @@ export default function AgendaPage() {
               <div style={{ textAlign: 'center', padding: '40px 0', color: '#94a3b8', fontSize: 13 }}>Laden...</div>
             ) : (
               <>
-                {/* day-of-week headers */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4, marginBottom: 4 }}>
                   {DAY_NAMES.map(d => (
                     <div key={d} style={{ textAlign: 'center', fontSize: 11, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px', padding: '4px 0 8px' }}>
@@ -184,22 +201,24 @@ export default function AgendaPage() {
                   ))}
                 </div>
 
-                {/* calendar cells */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4 }}>
                   {cells.map((day, i) => {
                     if (!day) return <div key={`e-${i}`} />;
                     const dateStr = toDateStr(viewYear, viewMonth, day);
                     const isToday = dateStr === todayStr;
                     const isSelected = dateStr === selectedDate;
-                    const dayBooked = bookedSlots.filter(s => s.preferred_date === dateStr).length;
+
+                    const activeBookingsCount = bookedSlots.filter(
+                      s => s.preferred_date === dateStr && !['geannuleerd', 'afgewezen'].includes(s.status)
+                    ).length;
                     const dayBlocked = blockedSlots.filter(s => s.block_date === dateStr).length;
-                    const availCount = TIME_SLOTS.length - dayBooked - dayBlocked;
+                    const availCount = TIME_SLOTS.length - activeBookingsCount - dayBlocked;
 
                     let bg = '#ffffff';
                     let border = '1.5px solid #e5e7eb';
                     let textColor = '#1f2937';
-                    if (dayBooked > 0 && availCount === 0) { bg = '#fef2f2'; border = '1.5px solid #fecaca'; textColor = '#dc2626'; }
-                    else if (dayBooked > 0) { bg = '#fff7ed'; border = '1.5px solid #fed7aa'; textColor = '#c2410c'; }
+                    if (activeBookingsCount > 0 && availCount === 0) { bg = '#fef2f2'; border = '1.5px solid #fecaca'; textColor = '#dc2626'; }
+                    else if (activeBookingsCount > 0) { bg = '#fff7ed'; border = '1.5px solid #fed7aa'; textColor = '#c2410c'; }
                     else if (dayBlocked > 0 && availCount === 0) { bg = '#f8fafc'; border = '1.5px solid #e2e8f0'; textColor = '#94a3b8'; }
                     if (isSelected) { bg = '#0070ff'; border = '1.5px solid #0070ff'; textColor = '#ffffff'; }
                     if (isToday && !isSelected) { border = '1.5px solid #0070ff'; }
@@ -226,9 +245,9 @@ export default function AgendaPage() {
                         }}
                       >
                         {day}
-                        {(dayBooked > 0 || dayBlocked > 0) && !isSelected && (
+                        {(activeBookingsCount > 0 || dayBlocked > 0) && !isSelected && (
                           <div style={{ display: 'flex', gap: 2, marginTop: 2 }}>
-                            {dayBooked > 0 && <div style={{ width: 4, height: 4, borderRadius: '50%', background: '#f97316' }} />}
+                            {activeBookingsCount > 0 && <div style={{ width: 4, height: 4, borderRadius: '50%', background: '#f97316' }} />}
                             {dayBlocked > 0 && availCount < TIME_SLOTS.length && <div style={{ width: 4, height: 4, borderRadius: '50%', background: '#94a3b8' }} />}
                           </div>
                         )}
@@ -237,11 +256,10 @@ export default function AgendaPage() {
                   })}
                 </div>
 
-                {/* Legend */}
                 <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginTop: 16, paddingTop: 16, borderTop: '1px solid #f1f5f9' }}>
                   {[
                     { color: '#0070ff', label: 'Geselecteerd' },
-                    { color: '#f97316', label: 'Boeking' },
+                    { color: '#f97316', label: 'Afspraak' },
                     { color: '#94a3b8', label: 'Geblokkeerd' },
                   ].map(({ color, label }) => (
                     <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -255,121 +273,185 @@ export default function AgendaPage() {
           </div>
         </div>
 
-        {/* Right: day detail panel */}
-        <div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {selectedDate ? (
-            <div className="admin-card">
-              <div className="admin-card-header">
-                <h2 className="admin-card-title" style={{ fontSize: 14 }}>
-                  {formatDutchDate(selectedDate)}
-                </h2>
-              </div>
-              <div className="admin-card-body" style={{ paddingTop: 0 }}>
-
-                {/* Quick actions */}
-                <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
-                  <button
-                    className="admin-btn admin-btn--sm"
-                    style={{ background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca', flex: 1 }}
-                    onClick={() => blockFullDay(selectedDate)}
-                    disabled={saving === `day-${selectedDate}` || isDayFullyBlocked}
-                  >
-                    Dag blokkeren
-                  </button>
-                  <button
-                    className="admin-btn admin-btn--sm"
-                    style={{ background: '#f0fdf4', color: '#16a34a', border: '1px solid #bbf7d0', flex: 1 }}
-                    onClick={() => unblockFullDay(selectedDate)}
-                    disabled={saving === `day-${selectedDate}` || dayBlockedCount === 0}
-                  >
-                    Dag vrijgeven
-                  </button>
-                </div>
-
-                {/* Optional reason input */}
-                <div style={{ marginBottom: 16 }}>
-                  <input
-                    className="admin-form-input"
-                    placeholder="Reden (optioneel)"
-                    value={reason}
-                    onChange={e => setReason(e.target.value)}
-                    style={{ fontSize: 12 }}
-                  />
-                </div>
-
-                {/* Time slots */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  {TIME_SLOTS.map(time => {
-                    const status = getSlotStatus(selectedDate, time);
-                    const booking = getBooking(selectedDate, time);
-                    const isSaving = saving === `${selectedDate}-${time}`;
-
-                    let bg = '#f8fafc';
-                    let textCol = '#374151';
-                    let borderCol = '#e5e7eb';
-                    let label = 'Beschikbaar';
-                    if (status === 'blocked') { bg = '#fef2f2'; textCol = '#ef4444'; borderCol = '#fecaca'; label = 'Geblokkeerd'; }
-                    if (status === 'booked') { bg = '#fffbeb'; textCol = '#c2410c'; borderCol = '#fed7aa'; label = booking ? `${booking.naam || booking.bedrijf || 'Boeking'}` : 'Bezet'; }
-
-                    return (
+            <>
+              {selectedDayActiveBookings.length > 0 && (
+                <div className="admin-card">
+                  <div className="admin-card-header">
+                    <h2 className="admin-card-title" style={{ fontSize: 13 }}>
+                      Geplande afspraken — {formatDutchDate(selectedDate)}
+                    </h2>
+                  </div>
+                  <div className="admin-card-body" style={{ paddingTop: 0 }}>
+                    {selectedDayActiveBookings.map(b => (
                       <div
-                        key={time}
+                        key={b.id}
                         style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          padding: '8px 12px',
-                          borderRadius: 8,
-                          background: bg,
-                          border: `1px solid ${borderCol}`,
+                          padding: '12px 14px',
+                          borderRadius: 10,
+                          background: '#fff7ed',
+                          border: '1px solid #fed7aa',
+                          marginBottom: 8,
                         }}
                       >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                          <span style={{ fontSize: 13, fontWeight: 600, color: '#0f172a', minWidth: 42 }}>{time}</span>
-                          <span style={{ fontSize: 12, color: textCol, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 120 }}>{label}</span>
-                        </div>
-                        {status !== 'booked' && (
-                          <button
-                            onClick={() => toggleBlock(selectedDate, time)}
-                            disabled={isSaving}
-                            style={{
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+                          <span style={{
+                            fontSize: 12,
+                            fontWeight: 700,
+                            color: '#c2410c',
+                            background: '#ffedd5',
+                            padding: '2px 8px',
+                            borderRadius: 20,
+                          }}>
+                            {b.preferred_time}
+                          </span>
+                          {b.status && (
+                            <span style={{
                               fontSize: 11,
-                              fontWeight: 600,
-                              padding: '3px 8px',
-                              borderRadius: 6,
-                              border: 'none',
-                              cursor: isSaving ? 'default' : 'pointer',
-                              background: status === 'blocked' ? '#dcfce7' : '#fee2e2',
-                              color: status === 'blocked' ? '#16a34a' : '#dc2626',
-                              transition: 'opacity 0.1s',
-                              opacity: isSaving ? 0.5 : 1,
-                            }}
-                          >
-                            {isSaving ? '...' : status === 'blocked' ? 'Vrijgeven' : 'Blokkeer'}
-                          </button>
+                              color: '#92400e',
+                              background: '#fef3c7',
+                              padding: '2px 7px',
+                              borderRadius: 20,
+                              border: '1px solid #fde68a',
+                            }}>
+                              {STATUS_LABELS[b.status] || b.status}
+                            </span>
+                          )}
+                        </div>
+                        <div style={{ fontSize: 13, fontWeight: 600, color: '#0f172a' }}>
+                          {b.naam || '—'}
+                        </div>
+                        {b.bedrijf && (
+                          <div style={{ fontSize: 12, color: '#64748b', marginTop: 1 }}>{b.bedrijf}</div>
+                        )}
+                        {b.telefoon && (
+                          <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 4 }}>{b.telefoon}</div>
+                        )}
+                        {b.email && (
+                          <div style={{ fontSize: 11, color: '#94a3b8' }}>{b.email}</div>
                         )}
                       </div>
-                    );
-                  })}
-                </div>
-
-                {/* Bookings detail */}
-                {dayBookings.length > 0 && (
-                  <div style={{ marginTop: 16, paddingTop: 16, borderTop: '1px solid #f1f5f9' }}>
-                    <p style={{ fontSize: 11, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 10px' }}>
-                      Geplande kennismakingen
-                    </p>
-                    {dayBookings.map(b => (
-                      <div key={b.id} style={{ padding: '8px 12px', borderRadius: 8, background: '#fff7ed', border: '1px solid #fed7aa', marginBottom: 6 }}>
-                        <div style={{ fontSize: 13, fontWeight: 600, color: '#0f172a' }}>{b.naam || '—'}</div>
-                        {b.bedrijf && <div style={{ fontSize: 11, color: '#64748b' }}>{b.bedrijf}</div>}
-                        <div style={{ fontSize: 12, color: '#c2410c', marginTop: 2 }}>{b.preferred_time}</div>
-                      </div>
                     ))}
+                    {selectedDayBookings.filter(b => ['geannuleerd', 'afgewezen'].includes(b.status)).length > 0 && (
+                      <p style={{ fontSize: 11, color: '#94a3b8', margin: '4px 0 0', textAlign: 'center' }}>
+                        +{selectedDayBookings.filter(b => ['geannuleerd', 'afgewezen'].includes(b.status)).length} geannuleerde afspraak(en) niet weergegeven
+                      </p>
+                    )}
                   </div>
-                )}
+                </div>
+              )}
+
+              <div className="admin-card">
+                <div className="admin-card-header">
+                  <h2 className="admin-card-title" style={{ fontSize: 13 }}>
+                    Tijdslots — {formatDutchDate(selectedDate)}
+                  </h2>
+                </div>
+                <div className="admin-card-body" style={{ paddingTop: 0 }}>
+
+                  <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+                    <button
+                      className="admin-btn admin-btn--sm"
+                      style={{ background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca', flex: 1 }}
+                      onClick={() => blockFullDay(selectedDate)}
+                      disabled={saving === `day-${selectedDate}` || isDayFullyBlocked}
+                    >
+                      Dag blokkeren
+                    </button>
+                    <button
+                      className="admin-btn admin-btn--sm"
+                      style={{ background: '#f0fdf4', color: '#16a34a', border: '1px solid #bbf7d0', flex: 1 }}
+                      onClick={() => unblockFullDay(selectedDate)}
+                      disabled={saving === `day-${selectedDate}` || dayBlockedCount === 0}
+                    >
+                      Dag vrijgeven
+                    </button>
+                  </div>
+
+                  <div style={{ marginBottom: 12 }}>
+                    <input
+                      className="admin-form-input"
+                      placeholder="Reden blokkade (optioneel)"
+                      value={reason}
+                      onChange={e => setReason(e.target.value)}
+                      style={{ fontSize: 12 }}
+                    />
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+                    {TIME_SLOTS.map(time => {
+                      const status = getSlotStatus(selectedDate, time);
+                      const booking = getBooking(selectedDate, time);
+                      const isSaving = saving === `${selectedDate}-${time}`;
+
+                      let bg = '#f8fafc';
+                      let textCol = '#374151';
+                      let borderCol = '#e5e7eb';
+                      let label = 'Beschikbaar';
+
+                      if (status === 'blocked') {
+                        bg = '#fef2f2'; textCol = '#ef4444'; borderCol = '#fecaca';
+                        const block = blockedSlots.find(s => s.block_date === selectedDate && s.block_time === time);
+                        label = 'Geblokkeerd';
+                        if (block?.reason) label = `Geblokkeerd`;
+                      }
+                      if (status === 'booked') {
+                        bg = '#fffbeb'; textCol = '#c2410c'; borderCol = '#fed7aa';
+                        label = booking?.naam || booking?.bedrijf || 'Afspraak';
+                      }
+
+                      return (
+                        <div
+                          key={time}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            padding: '7px 10px',
+                            borderRadius: 8,
+                            background: bg,
+                            border: `1px solid ${borderCol}`,
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                            <span style={{ fontSize: 12, fontWeight: 700, color: '#0f172a', minWidth: 40 }}>{time}</span>
+                            <span style={{
+                              fontSize: 11,
+                              color: textCol,
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                              maxWidth: 130,
+                            }}>{label}</span>
+                          </div>
+                          {status !== 'booked' && (
+                            <button
+                              onClick={() => toggleBlock(selectedDate, time)}
+                              disabled={isSaving}
+                              style={{
+                                fontSize: 10,
+                                fontWeight: 600,
+                                padding: '2px 7px',
+                                borderRadius: 5,
+                                border: 'none',
+                                cursor: isSaving ? 'default' : 'pointer',
+                                background: status === 'blocked' ? '#dcfce7' : '#fee2e2',
+                                color: status === 'blocked' ? '#16a34a' : '#dc2626',
+                                opacity: isSaving ? 0.5 : 1,
+                                flexShrink: 0,
+                              }}
+                            >
+                              {isSaving ? '...' : status === 'blocked' ? 'Vrijgeven' : 'Blokkeer'}
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
-            </div>
+            </>
           ) : (
             <div className="admin-card">
               <div className="admin-card-body" style={{ textAlign: 'center', padding: '40px 20px' }}>
@@ -379,7 +461,7 @@ export default function AgendaPage() {
                   <line x1="8" y1="2" x2="8" y2="6"/>
                   <line x1="3" y1="10" x2="21" y2="10"/>
                 </svg>
-                <p style={{ fontSize: 13, color: '#94a3b8', margin: 0 }}>Klik op een datum om de tijdslots te beheren</p>
+                <p style={{ fontSize: 13, color: '#94a3b8', margin: 0 }}>Klik op een datum om tijdslots en afspraken te bekijken</p>
               </div>
             </div>
           )}
