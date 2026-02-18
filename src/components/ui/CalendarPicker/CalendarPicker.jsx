@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '../../../lib/supabase';
 import './CalendarPicker.css';
 
 const DAY_NAMES = ['Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za', 'Zo'];
 const MONTH_NAMES = ['januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli', 'augustus', 'september', 'oktober', 'november', 'december'];
-const TIME_SLOTS = ['08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00'];
+const TIME_SLOTS = ['08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00'];
 
 function padTwo(n) { return String(n).padStart(2, '0'); }
 
@@ -33,6 +33,10 @@ export default function CalendarPicker({ selectedDate, selectedTime, onDateChang
   const [blockedSlots, setBlockedSlots] = useState([]);
   const [bookedSlots, setBookedSlots] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [popupDate, setPopupDate] = useState(null);
+  const [popupPos, setPopupPos] = useState({ top: 0, left: 0, alignRight: false });
+  const gridRef = useRef(null);
+  const popupRef = useRef(null);
 
   const fetchSlots = useCallback(async (year, month) => {
     setLoading(true);
@@ -60,6 +64,16 @@ export default function CalendarPicker({ selectedDate, selectedTime, onDateChang
   useEffect(() => {
     fetchSlots(viewYear, viewMonth);
   }, [viewYear, viewMonth, fetchSlots]);
+
+  useEffect(() => {
+    const handleOutside = (e) => {
+      if (popupRef.current && !popupRef.current.contains(e.target)) {
+        setPopupDate(null);
+      }
+    };
+    if (popupDate) document.addEventListener('mousedown', handleOutside);
+    return () => document.removeEventListener('mousedown', handleOutside);
+  }, [popupDate]);
 
   const prevMonth = () => {
     const prevY = viewMonth === 0 ? viewYear - 1 : viewYear;
@@ -95,15 +109,32 @@ export default function CalendarPicker({ selectedDate, selectedTime, onDateChang
   for (let i = 0; i < offset; i++) cells.push(null);
   for (let d = 1; d <= daysInMonth; d++) cells.push(d);
 
-  const handleDayClick = (dateStr, isPast, isFullyBooked) => {
+  const handleDayClick = (e, dateStr, isPast, isFullyBooked) => {
     if (isPast || isFullyBooked) return;
     onDateChange(dateStr);
     onTimeChange('');
+
+    const cell = e.currentTarget;
+    const grid = gridRef.current;
+    if (!cell || !grid) { setPopupDate(dateStr); return; }
+
+    const cellRect = cell.getBoundingClientRect();
+    const gridRect = grid.getBoundingClientRect();
+    const top = cellRect.top - gridRect.top + cell.offsetHeight / 2;
+    const spaceRight = gridRect.right - cellRect.right;
+    const alignRight = spaceRight < 180;
+    const left = alignRight
+      ? cellRect.left - gridRect.left - 4
+      : cellRect.right - gridRect.left + 6;
+
+    setPopupPos({ top, left, alignRight });
+    setPopupDate(dateStr);
   };
 
   const handleTimeClick = (time) => {
-    if (!selectedDate || isSlotUnavailable(selectedDate, time)) return;
+    if (!popupDate || isSlotUnavailable(popupDate, time)) return;
     onTimeChange(time);
+    setPopupDate(null);
   };
 
   return (
@@ -116,7 +147,7 @@ export default function CalendarPicker({ selectedDate, selectedTime, onDateChang
           disabled={isPrevDisabled()}
           aria-label="Vorige maand"
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
             <path d="M15 18L9 12l6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </button>
@@ -127,7 +158,7 @@ export default function CalendarPicker({ selectedDate, selectedTime, onDateChang
           onClick={nextMonth}
           aria-label="Volgende maand"
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
             <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </button>
@@ -137,7 +168,7 @@ export default function CalendarPicker({ selectedDate, selectedTime, onDateChang
         <div className="cal-loading">Beschikbaarheid laden...</div>
       ) : (
         <>
-          <div className="cal-grid">
+          <div className="cal-grid" ref={gridRef}>
             {DAY_NAMES.map(d => (
               <div key={d} className="cal-day-name">{d}</div>
             ))}
@@ -158,12 +189,13 @@ export default function CalendarPicker({ selectedDate, selectedTime, onDateChang
               else if (partial) cls += ' cal-day-cell--partial';
               else if (isToday) cls += ' cal-day-cell--today';
               if (isSelected) cls += ' cal-day-cell--selected';
+              if (popupDate === dateStr) cls += ' cal-day-cell--active';
 
               return (
                 <div
                   key={dateStr}
                   className={cls}
-                  onClick={() => handleDayClick(dateStr, isPast, fullyBooked)}
+                  onClick={(e) => handleDayClick(e, dateStr, isPast, fullyBooked)}
                   title={fullyBooked ? 'Geen beschikbaarheid' : isPast ? 'Datum verstreken' : undefined}
                 >
                   {day}
@@ -172,34 +204,47 @@ export default function CalendarPicker({ selectedDate, selectedTime, onDateChang
                 </div>
               );
             })}
+
+            {popupDate && (
+              <div
+                ref={popupRef}
+                className={`cal-time-popup${popupPos.alignRight ? ' cal-time-popup--left' : ''}`}
+                style={{ top: popupPos.top, left: popupPos.left }}
+              >
+                <div className="cal-time-popup-header">
+                  {new Date(popupDate + 'T00:00:00').toLocaleDateString('nl-NL', { weekday: 'short', day: 'numeric', month: 'short' })}
+                </div>
+                <div className="cal-time-popup-grid">
+                  {TIME_SLOTS.map(time => {
+                    const unavailable = isSlotUnavailable(popupDate, time);
+                    const isTimeSelected = time === selectedTime && popupDate === selectedDate;
+                    let cls = 'cal-time-popup-slot';
+                    if (unavailable) cls += ' cal-time-popup-slot--blocked';
+                    else if (isTimeSelected) cls += ' cal-time-popup-slot--selected';
+                    return (
+                      <div
+                        key={time}
+                        className={cls}
+                        onClick={() => handleTimeClick(time)}
+                      >
+                        {time}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
 
-          {selectedDate && (
-            <div className="cal-time-section">
-              <div className="cal-time-label">
-                Kies een tijdstip —{' '}
-                <span>
-                  {new Date(selectedDate + 'T00:00:00').toLocaleDateString('nl-NL', { weekday: 'long', day: 'numeric', month: 'long' })}
-                </span>
-              </div>
-              <div className="cal-time-grid">
-                {TIME_SLOTS.map(time => {
-                  const unavailable = isSlotUnavailable(selectedDate, time);
-                  const isTimeSelected = time === selectedTime;
-                  let cls = 'cal-time-slot';
-                  if (unavailable) cls += ' cal-time-slot--blocked';
-                  else if (isTimeSelected) cls += ' cal-time-slot--selected';
-                  return (
-                    <div
-                      key={time}
-                      className={cls}
-                      onClick={() => handleTimeClick(time)}
-                    >
-                      {time}
-                    </div>
-                  );
-                })}
-              </div>
+          {selectedDate && selectedTime && (
+            <div className="cal-selection-summary">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" stroke="#0070ff" strokeWidth="2"/>
+                <path d="M12 6v6l4 2" stroke="#0070ff" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
+              <span>
+                {new Date(selectedDate + 'T00:00:00').toLocaleDateString('nl-NL', { weekday: 'long', day: 'numeric', month: 'long' })} om <strong>{selectedTime}</strong>
+              </span>
             </div>
           )}
 
