@@ -102,7 +102,7 @@ function buildKlantEmail(intake: Record<string, unknown>, template: { subject: s
             </td></tr>` : ""}
           </table>
 
-          <p style="font-size:14px;color:#475569;line-height:1.6;margin:0 0 28px;">We nemen zo snel mogelijk contact met je op. Heb je in de tussentijd vragen? Stuur ons een berichtje via WhatsApp.</p>
+          <p style="font-size:14px;color:#475569;line-height:1.6;margin:0 0 28px;">We kijken uit naar het gesprek. Heb je in de tussentijd vragen? Stuur ons een berichtje via WhatsApp.</p>
 
           <a href="https://wa.me/31617818246" style="display:inline-block;background:#2563eb;color:#ffffff;text-decoration:none;padding:12px 24px;border-radius:8px;font-size:14px;font-weight:600;">Stuur een WhatsApp bericht</a>
         </td>
