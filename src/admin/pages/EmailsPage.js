@@ -51,7 +51,7 @@ function formatRelative(dateStr) {
   return `over ${days} dag${days !== 1 ? 'en' : ''}`;
 }
 
-export default function EmailsPage() {
+function QueueTab() {
   const [queue, setQueue] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('pending');
@@ -65,15 +65,10 @@ export default function EmailsPage() {
     setLoading(true);
     const query = supabase
       .from('email_queue')
-      .select(`
-        *,
-        intakes(naam, bedrijf, email)
-      `)
+      .select(`*, intakes(naam, bedrijf, email)`)
       .order('scheduled_at', { ascending: true });
 
-    if (filter !== 'all') {
-      query.eq('status', filter);
-    }
+    if (filter !== 'all') query.eq('status', filter);
 
     const { data } = await query;
     setQueue(data || []);
@@ -112,12 +107,7 @@ export default function EmailsPage() {
   const pendingCount = queue.filter(q => q.status === 'pending').length;
 
   return (
-    <div>
-      <div className="admin-page-header">
-        <h1 className="admin-page-title">E-mails</h1>
-        <p className="admin-page-subtitle">Geplande en verstuurde automatische e-mails</p>
-      </div>
-
+    <>
       <div style={{ display: 'flex', gap: 12, marginBottom: 24, flexWrap: 'wrap' }}>
         {['pending', 'sent', 'cancelled', 'failed', 'all'].map(f => (
           <button
@@ -156,10 +146,7 @@ export default function EmailsPage() {
           ) : (
             <div>
               {queue.map((item, idx) => (
-                <div key={item.id} style={{
-                  borderTop: idx > 0 ? '1px solid #f1f5f9' : 'none',
-                  padding: '20px 24px',
-                }}>
+                <div key={item.id} style={{ borderTop: idx > 0 ? '1px solid #f1f5f9' : 'none', padding: '20px 24px' }}>
                   {editingId === item.id ? (
                     <div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
@@ -209,13 +196,8 @@ export default function EmailsPage() {
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6, flexWrap: 'wrap' }}>
                           <StatusBadge status={item.status} />
                           <span style={{
-                            fontSize: 11,
-                            fontWeight: 500,
-                            color: '#64748b',
-                            background: '#f8fafc',
-                            border: '1px solid #e2e8f0',
-                            borderRadius: 4,
-                            padding: '2px 7px',
+                            fontSize: 11, fontWeight: 500, color: '#64748b',
+                            background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 4, padding: '2px 7px',
                           }}>
                             {TYPE_LABELS[item.type] || item.type}
                           </span>
@@ -247,14 +229,8 @@ export default function EmailsPage() {
                         <button
                           onClick={() => setPreview(item)}
                           style={{
-                            padding: '5px 12px',
-                            borderRadius: 6,
-                            border: '1px solid #e2e8f0',
-                            background: '#f8fafc',
-                            color: '#475569',
-                            fontSize: 12,
-                            fontWeight: 500,
-                            cursor: 'pointer',
+                            padding: '5px 12px', borderRadius: 6, border: '1px solid #e2e8f0',
+                            background: '#f8fafc', color: '#475569', fontSize: 12, fontWeight: 500, cursor: 'pointer',
                           }}
                         >
                           Preview
@@ -264,14 +240,8 @@ export default function EmailsPage() {
                             <button
                               onClick={() => startEdit(item)}
                               style={{
-                                padding: '5px 12px',
-                                borderRadius: 6,
-                                border: '1px solid #e2e8f0',
-                                background: '#f8fafc',
-                                color: '#475569',
-                                fontSize: 12,
-                                fontWeight: 500,
-                                cursor: 'pointer',
+                                padding: '5px 12px', borderRadius: 6, border: '1px solid #e2e8f0',
+                                background: '#f8fafc', color: '#475569', fontSize: 12, fontWeight: 500, cursor: 'pointer',
                               }}
                             >
                               Bewerken
@@ -280,14 +250,8 @@ export default function EmailsPage() {
                               onClick={() => cancelEmail(item.id)}
                               disabled={cancelling === item.id}
                               style={{
-                                padding: '5px 12px',
-                                borderRadius: 6,
-                                border: '1px solid #fecaca',
-                                background: '#fef2f2',
-                                color: '#dc2626',
-                                fontSize: 12,
-                                fontWeight: 500,
-                                cursor: 'pointer',
+                                padding: '5px 12px', borderRadius: 6, border: '1px solid #fecaca',
+                                background: '#fef2f2', color: '#dc2626', fontSize: 12, fontWeight: 500, cursor: 'pointer',
                               }}
                             >
                               {cancelling === item.id ? '...' : 'Annuleren'}
@@ -345,6 +309,161 @@ export default function EmailsPage() {
           </div>
         </div>
       )}
+    </>
+  );
+}
+
+function TemplatesTab() {
+  const [templates, setTemplates] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(null);
+  const [saved, setSaved] = useState(null);
+
+  useEffect(() => {
+    supabase.from('email_templates').select('*').order('type').then(({ data }) => {
+      setTemplates(data || []);
+      setLoading(false);
+    });
+  }, []);
+
+  const updateTemplate = (id, field, value) => {
+    setTemplates(prev => prev.map(t => t.id === id ? { ...t, [field]: value } : t));
+  };
+
+  const saveTemplate = async (template) => {
+    setSaving(template.id);
+    await supabase.from('email_templates')
+      .update({ subject: template.subject, intro: template.intro, enabled: template.enabled })
+      .eq('id', template.id);
+    setSaving(null);
+    setSaved(template.id);
+    setTimeout(() => setSaved(null), 2000);
+  };
+
+  const toggleEnabled = async (template) => {
+    const newEnabled = !template.enabled;
+    updateTemplate(template.id, 'enabled', newEnabled);
+    await supabase.from('email_templates').update({ enabled: newEnabled }).eq('id', template.id);
+  };
+
+  return (
+    <div style={{ maxWidth: 720 }}>
+      <div className="admin-card">
+        <div className="admin-card-header">
+          <h2 className="admin-card-title">E-mail templates</h2>
+        </div>
+        <div className="admin-card-body">
+          <p style={{ fontSize: 13, color: '#64748b', marginTop: 0, marginBottom: 20 }}>
+            Pas de onderwerpen en intro-teksten aan voor automatische e-mails. De volledige layout en structuur worden automatisch opgebouwd.
+          </p>
+
+          {loading ? (
+            <div style={{ textAlign: 'center', padding: '32px 0', color: '#94a3b8', fontSize: 13 }}>Laden...</div>
+          ) : templates.map(template => (
+            <div key={template.id} style={{ padding: '20px 0', borderTop: '1px solid #f1f5f9', opacity: template.enabled === false ? 0.6 : 1 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+                <div style={{ fontSize: 13, fontWeight: 600, color: '#0f172a' }}>
+                  {TYPE_LABELS[template.type] || template.type}
+                  <span style={{ fontSize: 11, fontWeight: 400, color: '#94a3b8', marginLeft: 8 }}>({template.type})</span>
+                </div>
+                <button
+                  onClick={() => toggleEnabled(template)}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 6,
+                    padding: '4px 10px', borderRadius: 20,
+                    border: template.enabled !== false ? '1px solid #bbf7d0' : '1px solid #e2e8f0',
+                    background: template.enabled !== false ? '#f0fdf4' : '#f8fafc',
+                    color: template.enabled !== false ? '#16a34a' : '#94a3b8',
+                    fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                  }}
+                >
+                  <span style={{
+                    width: 8, height: 8, borderRadius: '50%',
+                    background: template.enabled !== false ? '#16a34a' : '#cbd5e1',
+                    display: 'inline-block',
+                  }} />
+                  {template.enabled !== false ? 'Actief' : 'Uitgeschakeld'}
+                </button>
+              </div>
+
+              <div className="admin-form-field">
+                <label className="admin-form-label">Onderwerp</label>
+                <input
+                  className="admin-form-input"
+                  value={template.subject}
+                  onChange={(e) => updateTemplate(template.id, 'subject', e.target.value)}
+                />
+              </div>
+
+              <div className="admin-form-field">
+                <label className="admin-form-label">Intro tekst</label>
+                <textarea
+                  className="admin-form-textarea"
+                  value={template.intro}
+                  onChange={(e) => updateTemplate(template.id, 'intro', e.target.value)}
+                  rows={3}
+                />
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <button
+                  className="admin-btn admin-btn--primary admin-btn--sm"
+                  onClick={() => saveTemplate(template)}
+                  disabled={saving === template.id}
+                >
+                  {saving === template.id ? 'Opslaan...' : 'Opslaan'}
+                </button>
+                {saved === template.id && (
+                  <span style={{ fontSize: 12, color: '#16a34a' }}>Opgeslagen</span>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function EmailsPage() {
+  const [activeTab, setActiveTab] = useState('queue');
+
+  const tabs = [
+    { id: 'queue', label: 'Wachtrij' },
+    { id: 'templates', label: 'Templates' },
+  ];
+
+  return (
+    <div>
+      <div className="admin-page-header">
+        <h1 className="admin-page-title">E-mails</h1>
+        <p className="admin-page-subtitle">Geplande en verstuurde automatische e-mails</p>
+      </div>
+
+      <div style={{ display: 'flex', gap: 0, marginBottom: 28, borderBottom: '1px solid #e2e8f0' }}>
+        {tabs.map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            style={{
+              padding: '10px 20px',
+              border: 'none',
+              borderBottom: activeTab === tab.id ? '2px solid #2563eb' : '2px solid transparent',
+              background: 'none',
+              color: activeTab === tab.id ? '#2563eb' : '#64748b',
+              fontSize: 14,
+              fontWeight: activeTab === tab.id ? 600 : 400,
+              cursor: 'pointer',
+              marginBottom: -1,
+            }}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {activeTab === 'queue' && <QueueTab />}
+      {activeTab === 'templates' && <TemplatesTab />}
     </div>
   );
 }
