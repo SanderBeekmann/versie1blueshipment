@@ -12,6 +12,8 @@ const INTERN_EMAIL = Deno.env.get("INTERN_EMAIL") ?? "info@blueshipment.nl";
 const FROM_EMAIL = Deno.env.get("FROM_EMAIL") ?? "noreply@blueshipment.nl";
 const ADMIN_BASE_URL = Deno.env.get("ADMIN_BASE_URL") ?? "https://blueshipment.nl";
 
+const SCHEDULE_HORIZON_DAYS = 7;
+
 const supabase = createClient(
   Deno.env.get("SUPABASE_URL") ?? "",
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
@@ -75,7 +77,7 @@ function buildOfferteFollowupHtml(intake: { naam?: string }): string {
     </div>`;
 }
 
-async function processFollowups() {
+async function scheduleFollowups(now: Date): Promise<number> {
   const { data: timingRows } = await supabase
     .from("email_timing_settings")
     .select("key, hours, enabled");
@@ -92,17 +94,19 @@ async function processFollowups() {
   const hoursLeadOfferte = timing["followup_lead_offerte"]?.hours ?? 120;
   const enabledLeadOfferte = timing["followup_lead_offerte"]?.enabled ?? true;
 
-  const now = new Date();
-  const cutoffLeadNieuw = new Date(now.getTime() - hoursLeadNieuw * 60 * 60 * 1000);
-  const cutoffInternNieuw = new Date(now.getTime() - hoursInternNieuw * 60 * 60 * 1000);
-  const cutoffLeadOfferte = new Date(now.getTime() - hoursLeadOfferte * 60 * 60 * 1000);
+  const horizonMs = SCHEDULE_HORIZON_DAYS * 24 * 60 * 60 * 1000;
+  const horizon = new Date(now.getTime() + horizonMs);
+
+  const createdAfterLeadNieuw = new Date(horizon.getTime() - hoursLeadNieuw * 60 * 60 * 1000);
+  const createdAfterInternNieuw = new Date(horizon.getTime() - hoursInternNieuw * 60 * 60 * 1000);
+  const createdAfterLeadOfferte = new Date(horizon.getTime() - hoursLeadOfferte * 60 * 60 * 1000);
 
   const { data: intakes } = await supabase
     .from("intakes")
     .select("id, naam, email, status, created_at, bedrijf")
     .in("status", ["nieuw", "in_behandeling", "offerte"]);
 
-  if (!intakes || intakes.length === 0) return { processed: 0, queued: 0, sent: 0 };
+  if (!intakes || intakes.length === 0) return 0;
 
   const intakeIds = intakes.map((i: { id: string }) => i.id);
 
@@ -136,16 +140,22 @@ async function processFollowups() {
   const queueEntries = (existingQueue || []) as { intake_id: string; type: string; status: string }[];
 
   let queued = 0;
-  let sent = 0;
 
   for (const intake of intakes as { id: string; naam: string; email: string; status: string; created_at: string; bedrijf: string }[]) {
     const created = new Date(intake.created_at);
     const intakeLogs = logsByIntake[intake.id] || [];
 
-    if (enabledLeadNieuw && intake.status === "nieuw" && created <= cutoffLeadNieuw && !alreadySent(intakeLogs, "followup_lead") && !alreadyQueued(queueEntries, intake.id, "followup_lead")) {
+    if (
+      enabledLeadNieuw &&
+      intake.status === "nieuw" &&
+      created >= createdAfterLeadNieuw &&
+      !alreadySent(intakeLogs, "followup_lead") &&
+      !alreadyQueued(queueEntries, intake.id, "followup_lead")
+    ) {
       const template = tmpl.followup_lead;
       if (template?.enabled === false) continue;
 
+      const scheduledAt = new Date(created.getTime() + hoursLeadNieuw * 60 * 60 * 1000);
       const subject = template?.subject ?? "Heb je nog vragen? — BlueShipment";
       const intro = template?.intro ?? "Je hebt onlangs een aanvraag ingediend bij BlueShipment.";
       const body_html = buildFollowupLeadHtml(intake, intro);
@@ -156,16 +166,23 @@ async function processFollowups() {
         recipient: intake.email,
         subject,
         body_html,
-        scheduled_at: now.toISOString(),
+        scheduled_at: scheduledAt.toISOString(),
         status: "pending",
       });
       queued++;
     }
 
-    if (enabledInternNieuw && intake.status === "nieuw" && created <= cutoffInternNieuw && !alreadySent(intakeLogs, "followup_intern") && !alreadyQueued(queueEntries, intake.id, "followup_intern")) {
+    if (
+      enabledInternNieuw &&
+      intake.status === "nieuw" &&
+      created >= createdAfterInternNieuw &&
+      !alreadySent(intakeLogs, "followup_intern") &&
+      !alreadyQueued(queueEntries, intake.id, "followup_intern")
+    ) {
       const template = tmpl.followup_intern;
       if (template?.enabled === false) continue;
 
+      const scheduledAt = new Date(created.getTime() + hoursInternNieuw * 60 * 60 * 1000);
       const subject = `Interne herinnering: intake ${intake.naam || intake.email} staat al ${hoursInternNieuw}u op nieuw`;
       const body_html = buildFollowupInternHtml(intake, hoursInternNieuw);
 
@@ -175,16 +192,23 @@ async function processFollowups() {
         recipient: INTERN_EMAIL,
         subject,
         body_html,
-        scheduled_at: now.toISOString(),
+        scheduled_at: scheduledAt.toISOString(),
         status: "pending",
       });
       queued++;
     }
 
-    if (enabledLeadOfferte && intake.status === "offerte" && created <= cutoffLeadOfferte && !alreadySent(intakeLogs, "followup_lead") && !alreadyQueued(queueEntries, intake.id, "followup_lead")) {
+    if (
+      enabledLeadOfferte &&
+      intake.status === "offerte" &&
+      created >= createdAfterLeadOfferte &&
+      !alreadySent(intakeLogs, "followup_lead") &&
+      !alreadyQueued(queueEntries, intake.id, "followup_lead")
+    ) {
       const template = tmpl.followup_lead;
       if (template?.enabled === false) continue;
 
+      const scheduledAt = new Date(created.getTime() + hoursLeadOfferte * 60 * 60 * 1000);
       const subject = "Kort bericht over onze offerte — BlueShipment";
       const body_html = buildOfferteFollowupHtml(intake);
 
@@ -194,18 +218,24 @@ async function processFollowups() {
         recipient: intake.email,
         subject,
         body_html,
-        scheduled_at: now.toISOString(),
+        scheduled_at: scheduledAt.toISOString(),
         status: "pending",
       });
       queued++;
     }
   }
 
+  return queued;
+}
+
+async function sendDueEmails(now: Date): Promise<number> {
   const { data: pendingEmails } = await supabase
     .from("email_queue")
     .select("*")
     .eq("status", "pending")
     .lte("scheduled_at", now.toISOString());
+
+  let sent = 0;
 
   for (const qItem of (pendingEmails || []) as { id: string; intake_id: string; type: string; recipient: string; subject: string; body_html: string }[]) {
     const r = await sendEmail(qItem.recipient, qItem.subject, qItem.body_html);
@@ -219,7 +249,7 @@ async function processFollowups() {
     }
   }
 
-  return { queued, sent };
+  return sent;
 }
 
 Deno.serve(async (req: Request) => {
@@ -228,8 +258,28 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const result = await processFollowups();
-    return new Response(JSON.stringify({ success: true, ...result }), {
+    const now = new Date();
+
+    let url: URL;
+    try {
+      url = new URL(req.url);
+    } catch {
+      url = new URL("https://placeholder/");
+    }
+    const mode = url.searchParams.get("mode") ?? "both";
+
+    let queued = 0;
+    let sent = 0;
+
+    if (mode === "schedule" || mode === "both") {
+      queued = await scheduleFollowups(now);
+    }
+
+    if (mode === "send" || mode === "both") {
+      sent = await sendDueEmails(now);
+    }
+
+    return new Response(JSON.stringify({ success: true, queued, sent, mode }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {
