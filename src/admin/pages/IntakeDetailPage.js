@@ -114,22 +114,43 @@ export default function IntakeDetailPage() {
         Terug naar intakes
       </Link>
 
-      <div className="admin-page-header" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+      <div className="admin-page-header">
         <div>
           <h1 className="admin-page-title">{intake.naam || intake.email}</h1>
           <p className="admin-page-subtitle">Aangemeld op {formatDate(intake.created_at)}</p>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <select
-            className="admin-filter-select"
-            value={intake.status}
-            onChange={(e) => updateStatus(e.target.value)}
-            disabled={updatingStatus}
-          >
-            {STATUS_OPTIONS.map(s => <option key={s} value={s}>{STATUS_LABELS[s]}</option>)}
-          </select>
-          <span className={`admin-badge admin-badge--${intake.status}`}>{STATUS_LABELS[intake.status]}</span>
-        </div>
+      </div>
+
+      <div className="intake-pipeline-bar">
+        {STATUS_OPTIONS.map((s, idx) => {
+          const currentIdx = STATUS_OPTIONS.indexOf(intake.status);
+          const isActive = s === intake.status;
+          const isDone = idx < currentIdx;
+          const isNext = idx === currentIdx + 1;
+          const isLast = idx === STATUS_OPTIONS.length - 1;
+          return (
+            <React.Fragment key={s}>
+              <button
+                className={`pipeline-step${isActive ? ' pipeline-step--active' : ''}${isDone ? ' pipeline-step--done' : ''}${isNext ? ' pipeline-step--next' : ''}`}
+                onClick={() => !isActive && !updatingStatus && updateStatus(s)}
+                disabled={updatingStatus || isActive}
+                title={`Zet op ${STATUS_LABELS[s]}`}
+              >
+                {isDone && (
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 5, flexShrink: 0 }}>
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                )}
+                {STATUS_LABELS[s]}
+              </button>
+              {!isLast && (
+                <svg className={`pipeline-arrow${isDone || isActive ? ' pipeline-arrow--active' : ''}`} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="9 18 15 12 9 6"/>
+                </svg>
+              )}
+            </React.Fragment>
+          );
+        })}
       </div>
 
       <div className="admin-detail-grid">
