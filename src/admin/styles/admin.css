@@ -52,10 +52,11 @@
 }
 
 .pipeline-step[data-status="nieuw"] {
-  background: #f1f5f9;
-  border-color: #cbd5e1;
+  background: #f8fafc;
+  border-color: #e2e8f0;
   color: #475569;
 }
+.pipeline-step[data-status="nieuw"].pipeline-step--done,
 .pipeline-step[data-status="nieuw"].pipeline-step--active {
   background: #475569;
   border-color: #475569;
@@ -64,10 +65,11 @@
 }
 
 .pipeline-step[data-status="in_behandeling"] {
-  background: #fff7ed;
-  border-color: #fdba74;
+  background: #f8fafc;
+  border-color: #e2e8f0;
   color: #c2410c;
 }
+.pipeline-step[data-status="in_behandeling"].pipeline-step--done,
 .pipeline-step[data-status="in_behandeling"].pipeline-step--active {
   background: #ea580c;
   border-color: #ea580c;
@@ -76,10 +78,11 @@
 }
 
 .pipeline-step[data-status="offerte"] {
-  background: #eff6ff;
-  border-color: #93c5fd;
+  background: #f8fafc;
+  border-color: #e2e8f0;
   color: #1d4ed8;
 }
+.pipeline-step[data-status="offerte"].pipeline-step--done,
 .pipeline-step[data-status="offerte"].pipeline-step--active {
   background: #2563eb;
   border-color: #2563eb;
@@ -88,10 +91,11 @@
 }
 
 .pipeline-step[data-status="gewonnen"] {
-  background: #f0fdf4;
-  border-color: #86efac;
+  background: #f8fafc;
+  border-color: #e2e8f0;
   color: #15803d;
 }
+.pipeline-step[data-status="gewonnen"].pipeline-step--done,
 .pipeline-step[data-status="gewonnen"].pipeline-step--active {
   background: #16a34a;
   border-color: #16a34a;
@@ -100,10 +104,11 @@
 }
 
 .pipeline-step[data-status="verloren"] {
-  background: #fef2f2;
-  border-color: #fca5a5;
+  background: #f8fafc;
+  border-color: #e2e8f0;
   color: #dc2626;
 }
+.pipeline-step[data-status="verloren"].pipeline-step--done,
 .pipeline-step[data-status="verloren"].pipeline-step--active {
   background: #dc2626;
   border-color: #dc2626;
