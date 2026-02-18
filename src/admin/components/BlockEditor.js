@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const BLOCK_TYPES = [
   { value: 'paragraph', label: 'Alinea' },
@@ -203,6 +203,18 @@ function CtaInlineBlock({ block, onChange }) {
 
 function Block({ block, index, total, onChange, onRemove, onMoveUp, onMoveDown }) {
   const [showTypeMenu, setShowTypeMenu] = useState(false);
+  const typeMenuRef = useRef(null);
+
+  useEffect(() => {
+    if (!showTypeMenu) return;
+    const handler = (e) => {
+      if (typeMenuRef.current && !typeMenuRef.current.contains(e.target)) {
+        setShowTypeMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [showTypeMenu]);
 
   const renderEditor = () => {
     if (block.type === 'paragraph') return <ParagraphBlock block={block} onChange={onChange} />;
@@ -241,7 +253,7 @@ function Block({ block, index, total, onChange, onRemove, onMoveUp, onMoveDown }
 
       <div style={{ flex: 1, background: '#ffffff', border: '1.5px solid #e2e8f0', borderRadius: 10, padding: 14, position: 'relative' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-          <div style={{ position: 'relative' }}>
+          <div style={{ position: 'relative' }} ref={typeMenuRef}>
             <button
               type="button"
               onClick={() => setShowTypeMenu(v => !v)}
@@ -286,9 +298,19 @@ function Block({ block, index, total, onChange, onRemove, onMoveUp, onMoveDown }
 
 function AddBlockButton({ onAdd }) {
   const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [open]);
 
   return (
-    <div style={{ position: 'relative', display: 'flex', justifyContent: 'center' }}>
+    <div ref={ref} style={{ position: 'relative', display: 'flex', justifyContent: 'center' }}>
       <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: 1, background: '#f1f5f9', transform: 'translateY(-50%)', zIndex: 0 }} />
       <button
         type="button"

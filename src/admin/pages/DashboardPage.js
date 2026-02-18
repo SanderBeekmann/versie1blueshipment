@@ -89,6 +89,13 @@ export default function DashboardPage() {
               <div className="admin-kpi-label">Gewonnen</div>
               <div className="admin-kpi-value" style={{ color: '#16a34a' }}>{stats.gewonnen}</div>
             </div>
+            <div className="admin-kpi-card">
+              <div className="admin-kpi-label">Conversieratio</div>
+              <div className="admin-kpi-value" style={{ color: stats.total > 0 && stats.gewonnen / stats.total >= 0.1 ? '#16a34a' : '#0f172a' }}>
+                {stats.total > 0 ? Math.round((stats.gewonnen / stats.total) * 100) : 0}%
+              </div>
+              <div className="admin-kpi-meta">Nieuw → Gewonnen</div>
+            </div>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 20, alignItems: 'start' }}>

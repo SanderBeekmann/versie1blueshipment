@@ -100,7 +100,12 @@ export default function ContentEditPage() {
     }
   };
 
-  const safeContent = Array.isArray(post.content) ? post.content : [];
+  let safeContent = [];
+  if (Array.isArray(post.content)) {
+    safeContent = post.content;
+  } else if (typeof post.content === 'string' && post.content.trim()) {
+    try { safeContent = JSON.parse(post.content); } catch { safeContent = []; }
+  }
 
   if (loading) return <div className="admin-loading" style={{ minHeight: 300 }}><div className="admin-loading-spinner" /></div>;
 
