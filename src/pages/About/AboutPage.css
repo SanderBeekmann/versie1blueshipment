@@ -566,13 +566,12 @@
   border-radius: var(--radius-large);
   box-shadow: var(--shadow-xsmall);
   padding: var(--gap-large);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transition: box-shadow 0.3s ease;
 }
 
 .culture-whatsapp-card:hover,
 .culture-feature-card:hover,
 .culture-proof-card:hover {
-  transform: translateY(-4px);
   box-shadow: var(--shadow-medium);
 }
 

@@ -87,7 +87,7 @@
 .trust-section__feature-card {
   padding: var(--gap-xsmall) var(--gap-xsmall);
   border-radius: var(--radius-medium);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transition: all 0.3s ease;
   border: 1px solid transparent;
   background: var(--color-white);
   height: 100%;

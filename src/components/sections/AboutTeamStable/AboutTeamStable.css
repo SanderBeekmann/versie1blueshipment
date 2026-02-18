@@ -88,7 +88,7 @@
   padding: var(--gap-small);
   margin: 0;
   overflow: hidden;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
   /* Lock all layout-affecting properties */
   min-height: 120px;
   width: 100%;
@@ -102,8 +102,8 @@
 /* Hover: alleen subtiele shadow en transform, geen layout shift */
 @media (hover: hover) and (pointer: fine) {
   .about-team-stable-card:hover {
-    box-shadow: var(--shadow-medium);
-    transform: translateY(-4px) !important;
+    box-shadow: var(--shadow-soft-hover);
+    transform: translateY(-2px) !important;
     /* Alle layout properties blijven hetzelfde */
     border: 2px solid transparent;
     padding: var(--gap-small);
@@ -453,7 +453,7 @@
     .about-team-stable-card:hover {
       min-height: 100px;
       padding: var(--gap-xxsmall) var(--gap-xsmall);
-      transform: translateY(-4px) !important;
+      transform: translateY(-2px) !important;
     }
   }
 
