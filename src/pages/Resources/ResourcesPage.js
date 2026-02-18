@@ -1,27 +1,39 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './ResourcesPage.css';
 import Navbar from '../../components/layout/Navbar/Navbar';
 import Footer from '../../components/layout/Footer/Footer';
 import SEO from '../../components/SEO/SEO';
+import { supabase } from '../../lib/supabase';
+
+function formatDate(dateStr) {
+  return new Date(dateStr).toLocaleDateString('nl-NL', {
+    year: 'numeric', month: 'long', day: 'numeric',
+  });
+}
 
 function ResourcesPage() {
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    supabase
+      .from('blog_posts')
+      .select('slug, title, excerpt, published_at, read_time, category, tags')
+      .eq('status', 'live')
+      .order('published_at', { ascending: false })
+      .then(({ data }) => {
+        setPosts(data || []);
+        setLoading(false);
+      });
+  }, []);
+
   const collectionPageSchema = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     "name": "Resources",
     "description": "Praktische artikelen voor bol.com verkopers over fulfilment, software en groei."
   };
-
-  const posts = [
-    {
-      title: "Van dropshipping naar voorraad",
-      excerpt: "Dropshipper op bol.com? Ontdek waarom verkoop vanuit voorraad via fulfilment de slimme overstap is voor groei, betrouwbaarheid en hogere ranking.",
-      date: "2025-01-15",
-      readTime: "8 min",
-      slug: "van-dropshipping-naar-voorraad-fulfilment"
-    }
-  ];
 
   return (
     <div className="app">
@@ -43,12 +55,16 @@ function ResourcesPage() {
 
         <section className="resources-list">
           <div className="resources-grid">
-            {posts.map((p) => (
+            {loading ? (
+              <div style={{ textAlign: 'center', padding: '48px 0', color: '#94a3b8', fontSize: 14 }}>Artikelen laden...</div>
+            ) : posts.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '48px 0', color: '#94a3b8', fontSize: 14 }}>Binnenkort meer artikelen.</div>
+            ) : posts.map((p) => (
               <article key={p.slug} className="resource-card">
                 <div className="resource-meta">
-                  <span>{p.date}</span>
-                  <span>•</span>
-                  <span>{p.readTime}</span>
+                  <span>{p.published_at ? formatDate(p.published_at) : ''}</span>
+                  {p.read_time && <><span>•</span><span>{p.read_time}</span></>}
+                  {p.category && <><span>•</span><span>{p.category}</span></>}
                 </div>
                 <h2 className="resource-card-title">{p.title}</h2>
                 <p className="resource-card-excerpt">{p.excerpt}</p>
@@ -66,4 +82,3 @@ function ResourcesPage() {
 }
 
 export default ResourcesPage;
-

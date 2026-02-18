@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@gsap/react": "^2.1.2",
+    "@supabase/supabase-js": "^2.96.0",
     "@tabler/icons-react": "^3.36.1",
     "ajv": "8.17.1",
     "clsx": "^2.1.1",

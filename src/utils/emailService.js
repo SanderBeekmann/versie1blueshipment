@@ -1,107 +1,64 @@
-/**
- * Email service utility
- * Sends form data via Formspree
- */
+import { supabase } from '../lib/supabase';
+
+const SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY;
+
+const triggerEmailEdgeFunction = async (intakeId) => {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/send-intake-emails`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'apikey': SUPABASE_ANON_KEY,
+      },
+      body: JSON.stringify({ intakeId }),
+    });
+    if (!res.ok) {
+      const text = await res.text();
+      console.error('Edge function error:', text);
+    }
+  } catch (err) {
+    console.error('Edge function call failed:', err);
+  }
+};
 
 export const sendFunnelEmail = async (formData) => {
   try {
     if (!formData.email || !formData.email.trim()) {
-      return { success: false, error: 'Email is required' };
+      return { success: false, error: 'E-mail is verplicht' };
     }
 
-    const formspreeEndpoint = process.env.REACT_APP_FORMSPREE_ENDPOINT;
+    const shipmentVolume = parseInt(formData.shipmentVolume) || 0;
 
-    console.log('Environment check:', {
-      hasEndpoint: !!formspreeEndpoint,
-      endpoint: formspreeEndpoint,
-      allEnvVars: Object.keys(process.env).filter(k => k.startsWith('REACT_APP_'))
-    });
+    const { data, error } = await supabase
+      .from('intakes')
+      .insert({
+        verkoopkanaal: formData.verkoopkanaal || '',
+        diensten: Array.isArray(formData.diensten) ? formData.diensten : [],
+        shipment_volume: shipmentVolume,
+        grootste_uitdaging: formData.grootsteUitdaging || '',
+        naam: formData.name || '',
+        email: formData.email.trim().toLowerCase(),
+        telefoon: formData.phone || '',
+        bedrijf: formData.company || '',
+        website: formData.website || '',
+        consent: formData.awareOfTimeReservation === true,
+        status: 'nieuw',
+      })
+      .select('id')
+      .single();
 
-    if (!formspreeEndpoint) {
-      console.error('REACT_APP_FORMSPREE_ENDPOINT is not configured');
-      console.error('Available REACT_APP_ env vars:', Object.keys(process.env).filter(k => k.startsWith('REACT_APP_')));
-      return { success: false, error: 'Email service not configured' };
+    if (error) {
+      console.error('Supabase insert error:', error);
+      return { success: false, error: error.message };
     }
 
-    const timestamp = new Date().toLocaleString('nl-NL', {
-      timeZone: 'Europe/Amsterdam',
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
-    });
+    triggerEmailEdgeFunction(data.id);
 
-    const dienstenList = Array.isArray(formData.diensten)
-      ? formData.diensten.join(', ')
-      : '';
-
-    const summary = `
-Nieuwe lead aanvraag - ${timestamp}
-
-Contactgegevens:
-- Naam: ${formData.name || 'Niet ingevuld'}
-- Bedrijf: ${formData.company || 'Niet ingevuld'}
-- E-mail: ${formData.email}
-- Telefoon: ${formData.phone || 'Niet ingevuld'}
-- Website: ${formData.website || 'Niet ingevuld'}
-
-Verkoop & Diensten:
-- Verkoopkanaal: ${formData.verkoopkanaal || 'Niet ingevuld'}
-- Gewenste diensten: ${dienstenList || 'Niet ingevuld'}
-- Shipment volume: ${formData.shipmentVolume || 'Niet ingevuld'} per maand
-
-Uitdaging:
-${formData.grootsteUitdaging || 'Niet ingevuld'}
-    `.trim();
-
-    const payload = {
-      _subject: `Nieuwe Lead: ${formData.name || formData.email} - ${timestamp}`,
-      message: summary,
-      name: formData.name || '',
-      email: formData.email.trim(),
-      phone: formData.phone || '',
-      company: formData.company || '',
-      website: formData.website || '',
-      verkoopkanaal: formData.verkoopkanaal || '',
-      diensten: dienstenList,
-      shipmentVolume: formData.shipmentVolume || '',
-      grootsteUitdaging: formData.grootsteUitdaging || '',
-      timestamp: timestamp
-    };
-
-    console.log('Sending to Formspree:', formspreeEndpoint);
-    console.log('Payload:', payload);
-
-    const response = await fetch(formspreeEndpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      body: JSON.stringify(payload)
-    });
-
-    console.log('Response status:', response.status);
-    console.log('Response ok:', response.ok);
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      console.error('Error response:', errorData);
-      throw new Error(errorData.error || `HTTP ${response.status}: Failed to send email`);
-    }
-
-    const responseData = await response.json();
-    console.log('Success response:', responseData);
-
-    return { success: true, method: 'formspree' };
-  } catch (error) {
-    console.error('Error sending email:', error);
-    console.error('Error details:', {
-      message: error.message,
-      stack: error.stack
-    });
-    return { success: false, error: error.message };
+    return { success: true, intakeId: data.id };
+  } catch (err) {
+    console.error('sendFunnelEmail error:', err);
+    return { success: false, error: err.message };
   }
 };
