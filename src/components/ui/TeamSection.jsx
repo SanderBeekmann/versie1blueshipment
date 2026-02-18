@@ -235,10 +235,8 @@ function TeamSection({ title = 'Our team', groups = [] }) {
 
           {/* CTA Button */}
           <div className="mt-6 md:mt-8 text-center">
-            <a 
-              href="https://calendly.com/mouseclick2017/30min" 
-              target="_blank" 
-              rel="noopener noreferrer"
+            <a
+              href="/intake"
               className="inline-flex items-center justify-center px-6 py-3 bg-orange-500 text-white font-medium rounded-lg transition-colors duration-200 hover:bg-orange-600"
             >
               Neem contact op

@@ -134,10 +134,8 @@ function AboutPage() {
               </div>
 
               <div className="about-hero-ctas">
-                <a 
-                  href="https://calendly.com/mouseclick2017/30min" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
+                <a
+                  href="/intake"
                   className="btn btn-primary"
                 >
                   Ga voor succes

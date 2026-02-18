@@ -136,15 +136,9 @@ const IntakeFunnel = ({ onComplete }) => {
           // Show success state
           setIsSuccess(true);
 
-          // Open Calendly in new tab after a short delay for UX
-          setTimeout(() => {
-            const calendlyUrl = 'https://calendly.com/mouseclick2017/30min';
-            window.open(calendlyUrl, '_blank');
-
-            if (onComplete) {
+          if (onComplete) {
               onComplete(formData);
             }
-          }, 500);
         } else {
           console.error('Failed to send email:', result.error);
           alert('Er is iets misgegaan bij het verzenden van je gegevens. Probeer het opnieuw of neem contact met ons op.');
@@ -301,7 +295,7 @@ const IntakeFunnel = ({ onComplete }) => {
               </div>
               <h2 className="funnel-success-title">Bedankt!</h2>
               <p className="funnel-success-message">
-                Je gegevens zijn verzonden. We openen nu Calendly zodat je een kennismakingsgesprek kunt plannen.
+                Je gegevens zijn verzonden. We nemen zo snel mogelijk contact met je op om een kennismakingsgesprek in te plannen.
               </p>
             </div>
           </div>

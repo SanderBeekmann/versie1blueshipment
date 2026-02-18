@@ -22,10 +22,8 @@ function Hero() {
             </p>
           </div>
 
-          <a 
-            href="https://calendly.com/mouseclick2017/30min" 
-            target="_blank" 
-            rel="noopener noreferrer"
+          <a
+            href="/intake"
             className="btn btn-primary hero-cta"
           >
             Boek een kennismakingsgesprek

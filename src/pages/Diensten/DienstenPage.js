@@ -542,10 +542,10 @@ function DienstenPage() {
       title: 'Kennismaken?',
       description: 'Laten we kennismaken en kijken wat we voor elkaar kunnen betekenen.',
       cta: 'Meer',
-      href: 'https://calendly.com/mouseclick2017/30min',
+      href: '/intake',
       area: 'f',
       sectionId: null,
-      action: 'calendly'
+      action: 'intake'
     }
   ];
 
@@ -664,7 +664,7 @@ function DienstenPage() {
                         <button
                           className="diensten-card__button"
                           onClick={() => {
-                            if (service.action === 'calendly') {
+                            if (service.action === 'intake') {
                               window.location.href = '/intake';
                             } else if (service.sectionId) {
                               scrollToSection(service.sectionId);
@@ -800,7 +800,7 @@ function DienstenPage() {
                             
                             if (button.action === 'whatsapp') {
                               openWhatsApp(button.message || 'Hallo! Ik heb een vraag over deze dienst.');
-                            } else if (button.action === 'calendly') {
+                            } else if (button.action === 'intake') {
                               window.location.href = '/intake';
                             } else if (button.action === 'pricing') {
                               setIsPricingModalOpen(true);

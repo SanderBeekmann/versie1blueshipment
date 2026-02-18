@@ -45,10 +45,9 @@ const IntakeFunnelModal = ({ isOpen, onClose, onComplete }) => {
     if (onComplete) {
       onComplete(formData);
     }
-    // Close modal after a short delay to allow Calendly to open
     setTimeout(() => {
       onClose();
-    }, 500);
+    }, 1500);
   };
 
   return (

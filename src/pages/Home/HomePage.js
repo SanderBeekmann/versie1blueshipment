@@ -100,10 +100,10 @@ function HomePage() {
       title: 'Kennismaken?',
       description: 'Laten we kennismaken en kijken wat we voor elkaar kunnen betekenen.',
       cta: 'Meer',
-      href: 'https://calendly.com/mouseclick2017/30min',
+      href: '/intake',
       area: 'f',
       sectionId: null,
-      action: 'calendly'
+      action: 'intake'
     }
   ];
 
@@ -375,12 +375,10 @@ function HomePage() {
                       className={cardClass}
                       data-area={service.area}
                     >
-                      {service.action === 'calendly' ? (
+                      {service.action === 'intake' ? (
                         <button
                           className="diensten-card__button"
-                          onClick={() => {
-                            window.open('https://calendly.com/mouseclick2017/30min', '_blank', 'noopener,noreferrer');
-                          }}
+                          onClick={() => { window.location.href = '/intake'; }}
                           aria-label={service.title}
                         >
                           <div className="diensten-card__body">
