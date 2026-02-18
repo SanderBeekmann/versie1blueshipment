@@ -501,14 +501,14 @@ export default function AgendaPage() {
                             const isOverdue = !t.completed && new Date(t.due_date) < new Date();
                             return (
                               <div key={`t-${t.id}`} style={{
-                                background: t.completed ? '#f8fafc' : isOverdue ? '#fef2f2' : '#eff6ff',
-                                border: `1px solid ${t.completed ? '#e2e8f0' : isOverdue ? '#fecaca' : '#bfdbfe'}`,
-                                borderLeft: `2px solid ${t.completed ? '#cbd5e1' : isOverdue ? '#ef4444' : '#2563eb'}`,
+                                background: t.completed ? '#f0fdf4' : isOverdue ? '#fef2f2' : '#eff6ff',
+                                border: `1px solid ${t.completed ? '#bbf7d0' : isOverdue ? '#fecaca' : '#bfdbfe'}`,
+                                borderLeft: `2px solid ${t.completed ? '#22c55e' : isOverdue ? '#ef4444' : '#2563eb'}`,
                                 borderRadius: 3,
                                 padding: '1px 4px',
                                 fontSize: 10,
                                 fontWeight: 600,
-                                color: t.completed ? '#94a3b8' : isOverdue ? '#dc2626' : '#1d4ed8',
+                                color: t.completed ? '#15803d' : isOverdue ? '#dc2626' : '#1d4ed8',
                                 lineHeight: 1.3,
                                 overflow: 'hidden',
                                 whiteSpace: 'nowrap',
