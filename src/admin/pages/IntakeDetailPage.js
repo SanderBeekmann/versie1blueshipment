@@ -303,6 +303,14 @@ export default function IntakeDetailPage() {
                 <span className="admin-field-label">Grootste uitdaging</span>
                 <span className="admin-field-value">{intake.grootste_uitdaging || '—'}</span>
               </div>
+              {intake.preferred_date && (
+                <div className="admin-field-row">
+                  <span className="admin-field-label">Voorkeursdatum</span>
+                  <span className="admin-field-value" style={{ color: '#0070ff', fontWeight: 600 }}>
+                    {new Date(intake.preferred_date + 'T00:00:00').toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' })}
+                  </span>
+                </div>
+              )}
               <div className="admin-field-row">
                 <span className="admin-field-label">Consent</span>
                 <span className="admin-field-value">{intake.consent ? '✓ Ja' : '✗ Nee'}</span>

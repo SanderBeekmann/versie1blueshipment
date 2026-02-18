@@ -20,6 +20,7 @@ const IntakeFunnel = ({ onComplete }) => {
     phone: '',
     website: '',
     // Step 5
+    preferredDate: '',
     awareOfTimeReservation: false
   });
 
@@ -98,6 +99,9 @@ const IntakeFunnel = ({ onComplete }) => {
         }
         break;
       case 5:
+        if (!formData.preferredDate) {
+          newErrors.preferredDate = 'Kies een voorkeursdatum';
+        }
         if (!formData.awareOfTimeReservation) {
           newErrors.awareOfTimeReservation = 'Je moet akkoord gaan om door te gaan';
         }
@@ -902,15 +906,45 @@ const IntakeFunnel = ({ onComplete }) => {
                   </p>
                 </div>
 
+                {/* Date picker */}
+                <div className="funnel-input-group" style={{ marginBottom: '24px' }}>
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', color: '#374151', marginBottom: '8px' }}>
+                    Voorkeursdatum voor kennismaking
+                  </label>
+                  <input
+                    type="date"
+                    value={formData.preferredDate}
+                    min={new Date(Date.now() + 86400000).toISOString().split('T')[0]}
+                    onChange={(e) => updateFormData('preferredDate', e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '12px 14px',
+                      border: `2px solid ${errors.preferredDate ? '#ef4444' : formData.preferredDate ? '#0070ff' : '#e5e7eb'}`,
+                      borderRadius: '8px',
+                      fontSize: '15px',
+                      color: '#1f2937',
+                      backgroundColor: '#ffffff',
+                      outline: 'none',
+                      boxSizing: 'border-box',
+                      transition: 'border-color 0.2s ease'
+                    }}
+                  />
+                  {errors.preferredDate && (
+                    <p className="funnel-error-text" style={{ marginTop: '6px' }}>
+                      {errors.preferredDate}
+                    </p>
+                  )}
+                </div>
+
                 {/* Checkbox */}
                 <div className="funnel-input-group" style={{ marginBottom: '30px' }}>
-                  <label 
-                    style={{ 
-                      display: 'flex', 
-                      alignItems: 'flex-start', 
+                  <label
+                    style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
                       cursor: 'pointer',
                       padding: '16px',
-                      border: `2px solid ${formData.awareOfTimeReservation ? '#2563eb' : '#e5e7eb'}`,
+                      border: `2px solid ${formData.awareOfTimeReservation ? '#0070ff' : '#e5e7eb'}`,
                       borderRadius: '8px',
                       backgroundColor: formData.awareOfTimeReservation ? '#eff6ff' : '#ffffff',
                       transition: 'all 0.2s ease'

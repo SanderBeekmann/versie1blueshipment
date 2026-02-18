@@ -118,15 +118,16 @@ export default function IntakesPage() {
                 <th>Kanaal</th>
                 <th>Diensten</th>
                 <th>Shipments</th>
+                <th>Voorkeursdatum</th>
                 <th>Status</th>
                 <th>Datum</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={7} style={{ textAlign: 'center', padding: '40px 16px', color: '#94a3b8' }}>Laden...</td></tr>
+                <tr><td colSpan={8} style={{ textAlign: 'center', padding: '40px 16px', color: '#94a3b8' }}>Laden...</td></tr>
               ) : intakes.length === 0 ? (
-                <tr><td colSpan={7} style={{ textAlign: 'center', padding: '40px 16px', color: '#94a3b8', fontSize: 13 }}>Geen intakes gevonden</td></tr>
+                <tr><td colSpan={8} style={{ textAlign: 'center', padding: '40px 16px', color: '#94a3b8', fontSize: 13 }}>Geen intakes gevonden</td></tr>
               ) : intakes.map(intake => (
                 <tr key={intake.id}>
                   <td>
@@ -149,6 +150,11 @@ export default function IntakesPage() {
                   </td>
                   <td style={{ fontSize: 13, textAlign: 'right', paddingRight: 24 }}>
                     {intake.shipment_volume ?? '—'}
+                  </td>
+                  <td style={{ fontSize: 12, whiteSpace: 'nowrap' }}>
+                    {intake.preferred_date
+                      ? <span style={{ color: '#0070ff', fontWeight: 600 }}>{new Date(intake.preferred_date + 'T00:00:00').toLocaleDateString('nl-NL', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                      : <span style={{ color: '#94a3b8' }}>—</span>}
                   </td>
                   <td>
                     <span className={`admin-badge admin-badge--${intake.status}`}>

@@ -44,6 +44,13 @@ async function sendEmail(to: string, subject: string, html: string): Promise<{ i
   return { id: data.id };
 }
 
+function formatDutchDate(dateStr: unknown): string {
+  if (!dateStr || typeof dateStr !== "string") return "—";
+  const [year, month, day] = dateStr.split("-");
+  const months = ["januari","februari","maart","april","mei","juni","juli","augustus","september","oktober","november","december"];
+  return `${parseInt(day)} ${months[parseInt(month) - 1]} ${year}`;
+}
+
 function buildKlantEmail(intake: Record<string, unknown>, template: { subject: string; intro: string }): { subject: string; html: string } {
   const diensten = Array.isArray(intake.diensten) ? (intake.diensten as string[]).join(", ") : "";
 
@@ -87,6 +94,11 @@ function buildKlantEmail(intake: Record<string, unknown>, template: { subject: s
             <tr><td style="border-top:1px solid #e2e8f0;padding:10px 0 0;">
               <p style="font-size:12px;font-weight:500;color:#64748b;margin:0 0 2px;">Grootste uitdaging</p>
               <p style="font-size:14px;color:#0f172a;margin:0;">${intake.grootste_uitdaging}</p>
+            </td></tr>` : ""}
+            ${intake.preferred_date ? `
+            <tr><td style="border-top:1px solid #e2e8f0;padding:10px 0 0;">
+              <p style="font-size:12px;font-weight:500;color:#64748b;margin:0 0 2px;">Voorkeursdatum kennismaking</p>
+              <p style="font-size:14px;color:#0070ff;font-weight:600;margin:0;">${formatDutchDate(intake.preferred_date)}</p>
             </td></tr>` : ""}
           </table>
 
@@ -175,6 +187,11 @@ function buildInternEmail(intake: Record<string, unknown>, template: { subject: 
             <tr style="border-top:1px solid #e2e8f0;">
               <td style="padding:10px 16px;font-size:13px;color:#64748b;">Uitdaging</td>
               <td style="padding:10px 16px;font-size:13px;color:#0f172a;">${intake.grootste_uitdaging}</td>
+            </tr>` : ""}
+            ${intake.preferred_date ? `
+            <tr style="border-top:1px solid #e2e8f0;background:#eff6ff;">
+              <td style="padding:10px 16px;font-size:13px;color:#64748b;">Voorkeursdatum</td>
+              <td style="padding:10px 16px;font-size:13px;color:#0070ff;font-weight:600;">${formatDutchDate(intake.preferred_date)}</td>
             </tr>` : ""}
             <tr style="border-top:1px solid #e2e8f0;background:#f8fafc;">
               <td style="padding:10px 16px;font-size:13px;color:#64748b;">Consent</td>
