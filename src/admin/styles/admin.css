@@ -419,6 +419,14 @@
   font-size: 14px;
 }
 
+/* ===================== DASHBOARD GRID ===================== */
+.admin-dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 20px;
+  align-items: start;
+}
+
 /* ===================== DETAIL PAGE ===================== */
 .admin-detail-grid {
   display: grid;
@@ -590,10 +598,101 @@
   .admin-detail-grid {
     grid-template-columns: 1fr;
   }
+
+  .admin-dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .admin-table-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .admin-filters {
+    width: 100%;
+  }
+
+  .admin-search-input {
+    width: 100%;
+    min-width: unset;
+    box-sizing: border-box;
+  }
+
+  .admin-filter-select {
+    flex: 1;
+    min-width: 120px;
+  }
+
+  .intake-pipeline-bar {
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    flex-wrap: nowrap;
+  }
+
+  .pipeline-step {
+    flex-shrink: 0;
+  }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .admin-kpi-grid {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .admin-page-title {
+    font-size: 18px;
+  }
+
+  .admin-table th,
+  .admin-table td {
+    padding: 10px 12px;
+  }
+
+  .admin-pagination {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+    padding: 12px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-kpi-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .admin-kpi-card {
+    padding: 14px;
+  }
+
+  .admin-kpi-value {
+    font-size: 22px;
+  }
+
+  .admin-card-body {
+    padding: 14px;
+  }
+
+  .admin-card-header {
+    padding: 12px 14px;
+  }
+
+  .admin-filters {
+    flex-direction: column;
+  }
+
+  .admin-filter-select {
+    width: 100%;
+  }
+
+  .admin-table-header {
+    padding: 12px 14px;
   }
 }

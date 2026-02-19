@@ -300,11 +300,14 @@ export default function CrmPage() {
           font-size: 12px;
           color: #cbd5e1;
         }
-        @media (max-width: 900px) {
+        @media (max-width: 1100px) {
           .crm-board { grid-template-columns: repeat(3, 1fr); }
         }
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
           .crm-board { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 480px) {
+          .crm-board { grid-template-columns: 1fr; }
         }
       `}</style>
     </div>

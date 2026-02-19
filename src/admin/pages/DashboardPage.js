@@ -98,7 +98,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 20, alignItems: 'start' }}>
+          <div className="admin-dashboard-grid">
             <div className="admin-table-wrapper">
               <div className="admin-table-header">
                 <h2 className="admin-table-title">Recente intakes</h2>
