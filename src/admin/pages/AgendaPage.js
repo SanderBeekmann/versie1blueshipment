@@ -386,7 +386,7 @@ export default function AgendaPage() {
         <p className="admin-page-subtitle">Beheer beschikbaarheid en bekijk geplande kennismakingen</p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 24, alignItems: 'start' }}>
+      <div className="agenda-layout">
 
         <div className="admin-card">
           <div className="admin-card-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -443,6 +443,7 @@ export default function AgendaPage() {
                     return (
                       <div
                         key={dateStr}
+                        className="agenda-calendar-cell"
                         onClick={() => setSelectedDate(isSelected ? null : dateStr)}
                         style={{
                           minHeight: 88,
@@ -455,7 +456,7 @@ export default function AgendaPage() {
                           position: 'relative',
                         }}
                       >
-                        <div style={{
+                        <div className="agenda-day-number" style={{
                           width: 22, height: 22,
                           borderRadius: '50%',
                           background: isToday ? '#0070ff' : 'transparent',
@@ -473,7 +474,13 @@ export default function AgendaPage() {
                           </span>
                         </div>
 
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                        {allItems.length > 0 && (
+                          <div className="agenda-event-dots" style={{ display: 'none', gap: 3, justifyContent: 'center', marginBottom: 2 }}>
+                            {dayBookings.length > 0 && <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#f97316' }} />}
+                            {dayTaskItems.length > 0 && <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#2563eb' }} />}
+                          </div>
+                        )}
+                        <div className="agenda-event-pills" style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                           {visibleItems.map((item, idx) => {
                             if (item.type === 'booking') {
                               const b = item.data;

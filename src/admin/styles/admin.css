@@ -419,6 +419,14 @@
   font-size: 14px;
 }
 
+/* ===================== AGENDA LAYOUT ===================== */
+.agenda-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 24px;
+  align-items: start;
+}
+
 /* ===================== DASHBOARD GRID ===================== */
 .admin-dashboard-grid {
   display: grid;
@@ -603,6 +611,10 @@
     grid-template-columns: 1fr;
   }
 
+  .agenda-layout {
+    grid-template-columns: 1fr;
+  }
+
   .admin-page-header {
     flex-direction: column;
     align-items: flex-start;
@@ -694,5 +706,27 @@
 
   .admin-table-header {
     padding: 12px 14px;
+  }
+
+  .agenda-calendar-cell {
+    min-height: 52px !important;
+    padding: 4px 3px 3px !important;
+  }
+
+  .agenda-day-number {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  .agenda-day-number span {
+    font-size: 10px !important;
+  }
+
+  .agenda-event-pills {
+    display: none;
+  }
+
+  .agenda-event-dots {
+    display: flex !important;
   }
 }
